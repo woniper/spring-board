@@ -1,0 +1,12 @@
+- git 이용할때 ide 의존 하지 않고 terminal로 사용하기
+    - branch 사용하기
+    - sourceTree 사용하기
+- 테스트 코드 반드시 작성하기
+
+- 계정별 권한
+    - 생성 : 로그인 사용자
+    - 삭제 : 삭제하는 게시글을 생성한 계정 OR admin 계정 (ROLE_USER, ROLE_ADMIN)
+    - 수정 : 수정하는 게시글을 생성한 계정 OR admin 계정 (ROLE_USER, ROLE_ADMIN)
+    - 조회, 리스트 조회 : 누구나
+    - 내가 쓴 게시글 읽기 : 게시글을 생성한 계정 (ROLE_USER)
+
