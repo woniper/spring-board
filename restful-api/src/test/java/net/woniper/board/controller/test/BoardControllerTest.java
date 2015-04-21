@@ -58,6 +58,7 @@ public class BoardControllerTest {
     @Autowired private WebApplicationContext webApplicationContext;
     @Autowired private Filter springSecurityFilterChain;
 
+
     private MockMvc mock;
     private Board board;
     private User adminUser;
