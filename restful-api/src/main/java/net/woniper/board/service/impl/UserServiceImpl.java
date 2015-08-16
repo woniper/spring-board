@@ -1,6 +1,8 @@
 package net.woniper.board.service.impl;
 
 import net.woniper.board.domain.User;
+import net.woniper.board.errors.support.DuplicateNickNameException;
+import net.woniper.board.errors.support.DuplicateUsernameException;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
@@ -28,6 +30,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserDto.Request userDto) {
+        if(isDuplicationUserName(userDto.getUsername())) {
+            throw new DuplicateUsernameException(userDto.getUsername());
+        }
+
+        if(isDuplicationNickName(userDto.getNickName())) {
+            throw new DuplicateNickNameException(userDto.getNickName());
+        }
+
         User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -49,7 +59,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(UserDto.Request userDto, String username) {
         User user = userRepository.findByUsername(username);
-
         if(user != null) {
             String password = userDto.getPassword();
             String nickName = userDto.getNickName();
@@ -64,7 +73,6 @@ public class UserServiceImpl implements UserService {
                 user.setFirstName(firstName);
             if(!StringUtils.isEmpty(lastName))
                 user.setLastName(lastName);
-            userRepository.flush();
         }
         return user;
     }

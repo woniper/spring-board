@@ -1,8 +1,6 @@
 package net.woniper.board.controller;
 
 import net.woniper.board.domain.User;
-import net.woniper.board.errors.support.DuplicateNickNameException;
-import net.woniper.board.errors.support.DuplicateUsernameException;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
@@ -35,14 +33,6 @@ public class UserController {
             return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
         }
 
-        if(userService.isDuplicationUserName(userDto.getUsername())) {
-            throw new DuplicateUsernameException(userDto.getUsername());
-        }
-
-        if(userService.isDuplicationNickName(userDto.getNickName())) {
-            throw new DuplicateNickNameException(userDto.getNickName());
-        }
-
         User newUser = userService.createUser(userDto);
         return new ResponseEntity<> (modelMapper.map(newUser, UserDto.Response.class), HttpStatus.CREATED);
     }
@@ -51,10 +41,6 @@ public class UserController {
     public ResponseEntity updateUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
             return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
-        }
-
-        if(userService.isDuplicationNickName(userDto.getNickName())) {
-            throw new DuplicateNickNameException(userDto.getNickName());
         }
 
         User updateUser = userService.updateUser(userDto, principal.getName());

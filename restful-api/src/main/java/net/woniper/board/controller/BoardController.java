@@ -142,6 +142,14 @@ public class BoardController {
         return new ResponseEntity<> (HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * 게시판 댓글 입력
+     * @param commentDto
+     * @param boardId
+     * @param result
+     * @param principal
+     * @return
+     */
     @RequestMapping(value = "/board/{boardId}/comment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity createNewComment(@RequestBody @Valid CommentDto commentDto,
                                            @PathVariable("boardId") Long boardId,

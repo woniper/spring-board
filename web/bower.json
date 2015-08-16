@@ -1,0 +1,17 @@
+{
+  "name": "board-front",
+  "version": "0.0.1",
+  "homepage": "https://github.com/Woniper/spring-board",
+  "authors": [
+    "woniper"
+  ],
+  "description": "board front sample",
+  "ignore": [
+    "test"
+  ],
+  "dependencies": {
+    "bootstrap-material-design": "~0.3.0",
+    "react": "~0.13.1",
+    "bootstrap": "~3.3.4"
+  }
+}

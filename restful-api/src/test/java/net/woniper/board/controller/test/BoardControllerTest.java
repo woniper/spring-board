@@ -98,7 +98,7 @@ public class BoardControllerTest {
                 .contentType(mediaType)
                 .content(objectMapper.writeValueAsBytes(newBoard)));
 
-        // thens
+        // then
         resultActions.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title", is(newBoard.getTitle())))

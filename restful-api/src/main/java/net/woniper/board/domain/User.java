@@ -1,6 +1,8 @@
 package net.woniper.board.domain;
 
 import lombok.Data;
+import net.woniper.board.support.dto.UserDto;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
