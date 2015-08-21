@@ -5,6 +5,7 @@ import net.woniper.board.BoardApplication;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.impl.UserServiceImpl;
@@ -68,14 +69,14 @@ public class UserControllerTest {
         user.setFirstName("kyung-won");
         user.setLastName("lee");
         user.setNickName("woniper");
-        user.setAdmin(true);
+        user.setAuthorityType(AuthorityType.ADMIN);
         user = userRepository.save(user);
     }
 
     @Test
     public void test_회원가입() throws Exception {
         // given
-        UserDto.Request newUser = createUserRequest(true);
+        UserDto.Request newUser = createUserRequest(AuthorityType.ADMIN);
 
         // when
         ResultActions resultActions = mock.perform(post("/users")
@@ -89,7 +90,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.firstName", is(newUser.getFirstName())))
                 .andExpect(jsonPath("$.lastName", is(newUser.getLastName())))
                 .andExpect(jsonPath("$.nickName", is(newUser.getNickName())))
-                .andExpect(jsonPath("$.admin", is(newUser.isAdmin())));
+                .andExpect(jsonPath("$.authorityType", is(newUser.getAuthorityType().toString())));
     }
 
     @Test
@@ -131,7 +132,7 @@ public class UserControllerTest {
     @Test
     public void test_회원_아이디_중복() throws Exception {
         // given
-        UserDto.Request requestUser = createUserRequest(true);
+        UserDto.Request requestUser = createUserRequest(AuthorityType.ADMIN);
         requestUser.setUsername("woniper");
 
         // when
@@ -147,7 +148,7 @@ public class UserControllerTest {
     @Test
     public void test_회원_닉네임_중복() throws Exception {
         // given
-        UserDto.Request requestUser = createUserRequest(true);
+        UserDto.Request requestUser = createUserRequest(AuthorityType.ADMIN);
         requestUser.setNickName("woniper");
 
         // when
@@ -163,7 +164,7 @@ public class UserControllerTest {
     @Test
     public void test_내가_쓴_게시글_리스트_조회() throws Exception {
         // given
-        User newUser = createUser(true);
+        User newUser = createUser(AuthorityType.ADMIN);
         createBoardList(10, user);
         createBoardList(10, newUser);
 
@@ -176,25 +177,25 @@ public class UserControllerTest {
         resultActions.andDo(print()).andExpect(status().isOk());
     }
 
-    private User createUser(boolean isAdmin) {
+    private User createUser(AuthorityType authorityType) {
         User newUser = new User();
         newUser.setUsername("newUser");
         newUser.setPassword("12345");
         newUser.setFirstName("kyung-won");
         newUser.setLastName("lee");
         newUser.setNickName("newUser");
-        newUser.setAdmin(isAdmin);
+        newUser.setAuthorityType(authorityType);
         return userRepository.save(newUser);
     }
 
-    private UserDto.Request createUserRequest(boolean isAdmin) {
+    private UserDto.Request createUserRequest(AuthorityType authorityType) {
         UserDto.Request newUser = new UserDto.Request();
         newUser.setUsername("newUser");
         newUser.setPassword("12345");
         newUser.setFirstName("kyung-won");
         newUser.setLastName("lee");
         newUser.setNickName("newUser");
-        newUser.setAdmin(true);
+        newUser.setAuthorityType(authorityType);
         return newUser;
     }
 

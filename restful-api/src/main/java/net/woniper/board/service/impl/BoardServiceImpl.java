@@ -2,6 +2,7 @@ package net.woniper.board.service.impl;
 
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.BoardService;
@@ -75,7 +76,7 @@ public class BoardServiceImpl implements BoardService {
     public Board updateBoard(Board board, String username) {
         User user = userRepository.findByUsername(username);
         Board oldBoard = null;
-        if(user.isAdmin()) {
+        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
             oldBoard = boardRepository.findOne(board.getBoardId());
         } else{
             oldBoard = boardRepository.findByBoardIdAndUser(board.getBoardId(), user);
@@ -94,7 +95,7 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findByUsername(username);
         Board board = null;
 
-        if(user.isAdmin()) {
+        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
             board = boardRepository.findOne(boardId);
         } else {
             board = boardRepository.findByBoardIdAndUser(boardId, user);

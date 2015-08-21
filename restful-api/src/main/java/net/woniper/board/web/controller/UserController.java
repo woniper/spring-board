@@ -2,6 +2,7 @@ package net.woniper.board.web.controller;
 
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
@@ -13,10 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -31,6 +30,11 @@ public class UserController {
     @Autowired private UserService userService;
     @Autowired private BoardService boardService;
     @Autowired private ModelMapper modelMapper;
+
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
+    }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity createNewUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result) {

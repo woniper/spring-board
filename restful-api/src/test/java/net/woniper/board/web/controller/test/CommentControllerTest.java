@@ -6,6 +6,7 @@ import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.CommentRepository;
 import net.woniper.board.repository.UserRepository;
@@ -72,7 +73,7 @@ public class CommentControllerTest {
         boardUser.setFirstName("board");
         boardUser.setLastName("user");
         boardUser.setNickName("board user nickName");
-        boardUser.setAdmin(true);
+        boardUser.setAuthorityType(AuthorityType.ADMIN);
         boardUser = userRepository.save(boardUser);
 
         board = new Board();

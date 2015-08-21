@@ -1,6 +1,7 @@
 package net.woniper.board.config;
 
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +22,10 @@ public class SecurityUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(user.isAdmin()) {
-            return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+            return Arrays.asList(new SimpleGrantedAuthority(AuthorityType.ADMIN.toString()));
         } else {
-            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+            return Arrays.asList(new SimpleGrantedAuthority(AuthorityType.USER.toString()));
         }
     }
 

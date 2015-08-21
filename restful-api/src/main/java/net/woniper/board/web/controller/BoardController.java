@@ -3,6 +3,7 @@ package net.woniper.board.web.controller;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
 import net.woniper.board.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -34,6 +36,11 @@ public class BoardController {
     @Autowired private UserService userService;
     @Autowired private ModelMapper modelMapper;
     @Autowired private CommentService commentService;
+
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
+    }
 
     /**
      * 게시글 생성
@@ -116,7 +123,7 @@ public class BoardController {
                 commentDto.setUserId(commentUser.getUserId());
                 commentDto.setUsername(commentUser.getUsername());
                 commentDto.setNickName(commentUser.getNickName());
-                commentDto.setAdmin(commentUser.isAdmin());
+                commentDto.setAuthorityType(commentUser.getAuthorityType());
             }
 
             responseBoard.setComments(comments);
@@ -162,7 +169,7 @@ public class BoardController {
         User user = comment.getUser();
         responseComment.setUsername(user.getUsername());
         responseComment.setNickName(user.getNickName());
-        responseComment.setAdmin(user.isAdmin());
+        responseComment.setAuthorityType(user.getAuthorityType());
 
         return new ResponseEntity<> (responseComment, HttpStatus.CREATED);
     }
@@ -173,7 +180,7 @@ public class BoardController {
         responseBoard.setUserId(user.getUserId());
         responseBoard.setUsername(user.getUsername());
         responseBoard.setNickName(user.getNickName());
-        responseBoard.setAdmin(user.isAdmin());
+        responseBoard.setAuthorityType(user.getAuthorityType());
         return responseBoard;
     }
 

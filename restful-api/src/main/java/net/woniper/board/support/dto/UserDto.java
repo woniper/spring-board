@@ -1,6 +1,7 @@
 package net.woniper.board.support.dto;
 
 import lombok.Data;
+import net.woniper.board.domain.type.AuthorityType;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,7 +17,7 @@ public class UserDto {
     @NotNull private String firstName;
     @NotNull private String lastName;
     @NotNull private String nickName;
-    private boolean admin = false;
+    private AuthorityType authorityType;
 
     @Data
     public static class Request extends UserDto {

@@ -13,12 +13,10 @@
         - 페이징 **
         - 정렬 (날짜, 조회수, 제목) **
         - 정렬 (날짜, 조회수, 제목) **
-        - orderBy, orderDir 예외 처리
     - 내가 쓴 게시글 리스트 읽기 **
         - 페이징 **
         - 정렬 (날짜, 조회수, 제목) **
         - 정렬 (날짜, 조회수, 제목) **
-        - orderBy, orderDir 예외 처리
     - Board, User domain N:1 처리 **
     - paging 처리 Pageable로 변경
 
@@ -41,7 +39,7 @@
     - 정보 수정 **
     - 탈퇴 (계정 비활성 처리) **
     - security 설정 **
-    - 권한 enum type으로 수정
+    - 권한(AuthorityType) enum type으로 수정 *
 
 - URL 수정
     - 복수

@@ -1,6 +1,7 @@
 package net.woniper.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
@@ -55,7 +56,7 @@ public class BoardApplication {
         userDto.setFirstName("lee");
         userDto.setLastName("kw");
         userDto.setNickName("woniper");
-        userDto.setAdmin(true);
+        userDto.setAuthorityType(AuthorityType.ADMIN);
         userService.createUser(userDto);
 
         for (int i = 0; i < 10; i++) {

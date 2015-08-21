@@ -1,6 +1,7 @@
 package net.woniper.board.support.dto;
 
 import lombok.Data;
+import net.woniper.board.domain.type.AuthorityType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -22,7 +23,8 @@ public class CommentDto implements Serializable {
         private Long userId;
         private String username;
         private String nickName;
-        private boolean admin;
+//        private boolean admin;
+        private AuthorityType authorityType;
     }
 
 }

@@ -5,6 +5,7 @@ import net.woniper.board.BoardApplication;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.service.impl.BoardServiceImpl;
 import net.woniper.board.service.impl.UserServiceImpl;
@@ -73,7 +74,7 @@ public class BoardControllerTest {
         adminUser.setFirstName("kyung-won");
         adminUser.setLastName("lee");
         adminUser.setNickName("woniper");
-        adminUser.setAdmin(true);
+        adminUser.setAuthorityType(AuthorityType.ADMIN);
         adminUser = userService.createUser(modelMapper.map(adminUser, UserDto.Request.class));
 
         board = new Board();
@@ -153,7 +154,7 @@ public class BoardControllerTest {
         // given
         board.setTitle("update Title");
         board.setContent("update Content");
-        User notAdminUser = createUser(false);
+        User notAdminUser = createUser(AuthorityType.USER);
 
         // when
         ResultActions resultActions = mock.perform(put("/boards")
@@ -169,7 +170,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_수정_권한_admin() throws Exception {
         // given
-        User notAdminUser = createUser(false);
+        User notAdminUser = createUser(AuthorityType.USER);
         Board newBoard = createBoard(notAdminUser);
         newBoard.setTitle("update Title");
         newBoard.setContent("update Content");
@@ -210,7 +211,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_삭제_권한_NOT_ACCEPTABLE() throws Exception {
         // given
-        User notAdminUser = createUser(false);
+        User notAdminUser = createUser(AuthorityType.USER);
 
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
@@ -226,7 +227,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_삭제_권한_admin() throws Exception {
         // given
-        User notAdminUser = createUser(false);
+        User notAdminUser = createUser(AuthorityType.USER);
         Board newBoard = createBoard(notAdminUser);
 
         // when
@@ -259,7 +260,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_리스트_조회_로그인() throws Exception {
         // given
-        User newUser = createUser(true);
+        User newUser = createUser(AuthorityType.ADMIN);
         createBoardList(20, newUser);
 
         // when
@@ -272,14 +273,14 @@ public class BoardControllerTest {
                 .andExpect(status().isOk());
     }
 
-    private User createUser(boolean isAdmin) {
+    private User createUser(AuthorityType authorityType) {
         User newUser = new User();
         newUser.setUsername("newUsername");
         newUser.setPassword("newPassword");
         newUser.setFirstName("newUserFirstName");
         newUser.setLastName("newUserLastName");
         newUser.setNickName("newUserName");
-        newUser.setAdmin(isAdmin);
+        newUser.setAuthorityType(authorityType);
         return userService.createUser(modelMapper.map(newUser, UserDto.Request.class));
     }
 
