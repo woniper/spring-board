@@ -1,4 +1,4 @@
-package net.woniper.board.controller.test;
+package net.woniper.board.web.controller.test;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Test;

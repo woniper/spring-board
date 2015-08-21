@@ -20,6 +20,7 @@
         - 정렬 (날짜, 조회수, 제목) **
         - orderBy, orderDir 예외 처리
     - Board, User domain N:1 처리 **
+    - paging 처리 Pageable로 변경
 
 - 댓글
     - 생성 **
@@ -40,6 +41,15 @@
     - 정보 수정 **
     - 탈퇴 (계정 비활성 처리) **
     - security 설정 **
+    - 권한 enum type으로 수정
+
+- URL 수정
+    - 복수
+    - class target으로 RequestMapping 설정
+
+- ResponseEntity 수정
+    - 객체 생성한 코드 모두 ResponseEntity.method로 변경
+    - ResponseEntity<?>로 변경
     
 - 예외처리
     - ControllerAdvice 적용 **

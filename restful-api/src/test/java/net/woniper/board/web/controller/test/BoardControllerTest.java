@@ -1,4 +1,4 @@
-package net.woniper.board.controller.test;
+package net.woniper.board.web.controller.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
@@ -28,7 +28,6 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -199,7 +198,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_삭제() throws Exception {
         // when
-        ResultActions resultActions = mock.perform(delete("/board/" + board.getBoardId())
+        ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
                                             .with(user(new SecurityUserDetails(adminUser)))
                                             .contentType(mediaType));
 
@@ -214,8 +213,9 @@ public class BoardControllerTest {
         User notAdminUser = createUser(false);
 
         // when
-        ResultActions resultActions = mock.perform(delete("/board/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(notAdminUser))));
+        ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(notAdminUser))));
 
         // then
         resultActions.andDo(print())
@@ -230,8 +230,9 @@ public class BoardControllerTest {
         Board newBoard = createBoard(notAdminUser);
 
         // when
-        ResultActions resultActions = mock.perform(delete("/board/" + newBoard.getBoardId())
-                                            .with(user(new SecurityUserDetails(adminUser))));
+        ResultActions resultActions = mock.perform(delete("/boards/" + newBoard.getBoardId())
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(adminUser))));
 
         // then
         resultActions.andDo(print())
@@ -241,7 +242,8 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_조회() throws Exception {
         // when
-        ResultActions resultActions = mock.perform(get("/board/" + board.getBoardId())
+        ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
+                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(adminUser))));
 
         // then
@@ -258,25 +260,16 @@ public class BoardControllerTest {
     public void test_게시글_리스트_조회_로그인() throws Exception {
         // given
         User newUser = createUser(true);
-        List<Board> boardList = createBoardList(20, newUser)
-                .stream().sorted((b1, b2) -> b2.getBoardId().compareTo(b1.getBoardId())).collect(Collectors.toList());
+        createBoardList(20, newUser);
 
         // when
-        ResultActions resultActions = mock.perform(get("/boards/1")
+        ResultActions resultActions = mock.perform(get("/boards?page=0&size=20")
+                                            .contentType(mediaType)
                                             .with(user(new SecurityUserDetails(adminUser))));
 
         // then
-        resultActions.andDo(print()).andExpect(status().isOk());
-        int count = boardList.size();
-
-        for (int i = 0; i < count; i++) {
-            Board newBoard = boardList.get(i);
-            resultActions.andExpect(jsonPath("$.boards[" + i + "].boardId", is(newBoard.getBoardId().intValue())))
-                            .andExpect(jsonPath("$.boards[" + i + "].title", is(newBoard.getTitle())))
-                            .andExpect(jsonPath("$.boards[" + i + "].content", is(newBoard.getContent())))
-                            .andExpect(jsonPath("$.boards[" + i + "].readCount", is(newBoard.getReadCount())))
-                            .andExpect(jsonPath("$.boards[" + i + "].username", is(newUser.getUsername())));
-        }
+        resultActions.andDo(print())
+                .andExpect(status().isOk());
     }
 
     private User createUser(boolean isAdmin) {

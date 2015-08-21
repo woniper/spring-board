@@ -1,4 +1,4 @@
-package net.woniper.board.controller;
+package net.woniper.board.web.controller;
 
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
@@ -7,11 +7,12 @@ import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
-import net.woniper.board.support.dto.BoardListDto;
 import net.woniper.board.support.dto.CommentDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.util.List;
  * Created by woniper on 15. 1. 26..
  */
 @RestController
+@RequestMapping(value = "/boards", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class BoardController {
 
     @Autowired private BoardService boardService;
@@ -40,7 +42,7 @@ public class BoardController {
      * @return
      */
 //    @Secured("ROLE_USER")
-    @RequestMapping(value = "/boards", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity createNewBoard(@RequestBody @Valid BoardDto boardDto, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
             return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
@@ -58,7 +60,7 @@ public class BoardController {
      * @param result
      * @return
      */
-    @RequestMapping(value = "/boards", method = RequestMethod.PUT, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity updateBoard(@RequestBody @Valid Board board, BindingResult result, Principal principal) {
 
         if(result.hasErrors()) {
@@ -80,7 +82,7 @@ public class BoardController {
      * @param boardId
      * @return
      */
-    @RequestMapping(value = "/board/{boardId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.DELETE)
     public ResponseEntity deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
         if(boardService.deleteBoard(boardId, principal.getName()))
             return new ResponseEntity<> (HttpStatus.ACCEPTED);
@@ -93,7 +95,7 @@ public class BoardController {
      * @param boardId
      * @return
      */
-    @RequestMapping(value = "/board/{boardId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
     public ResponseEntity getBoard(@PathVariable("boardId") Long boardId) {
         Board board = boardService.getBoard(boardId);
         BoardDto.Response responseBoard = getBoardResponse(board);
@@ -123,23 +125,19 @@ public class BoardController {
     }
 
     /**
-     *  게시글 리스트 조회
-     * @param page
-     * @param limit
+     * 게시글 리스트 조회
+     * @param pageable
      * @return
      */
-    @RequestMapping(value = "/boards/{page}", method = RequestMethod.GET)
-    public ResponseEntity getBoardList(@PathVariable("page") int page,
-                                       @RequestParam(value = "limit", required = false, defaultValue = "20") int limit,
-                                       @RequestParam(value = "orderBy", required = false, defaultValue = "boardId") String orderBy,
-                                       @RequestParam(value = "orderDir", required = false, defaultValue = "DESC") String orderDir) {
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<?> getBoards(Pageable pageable) {
+        Page<Board> boards = boardService.getBoard(pageable);
 
-        BoardListDto boardListDto = boardService.getBoardList(page, limit, orderBy, orderDir, BoardController.class);
-        if(boardListDto != null) {
-            return new ResponseEntity<> (boardListDto, HttpStatus.OK);
+        if(boards != null) {
+            return ResponseEntity.ok(boards);
         }
 
-        return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -150,7 +148,7 @@ public class BoardController {
      * @param principal
      * @return
      */
-    @RequestMapping(value = "/board/{boardId}/comment", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity createNewComment(@RequestBody @Valid CommentDto commentDto,
                                            @PathVariable("boardId") Long boardId,
                                            BindingResult result,

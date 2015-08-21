@@ -1,4 +1,4 @@
-package net.woniper.board.web;
+package net.woniper.board.config;
 
 import org.springframework.stereotype.Component;
 

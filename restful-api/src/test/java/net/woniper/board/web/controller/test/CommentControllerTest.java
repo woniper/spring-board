@@ -1,4 +1,4 @@
-package net.woniper.board.controller.test;
+package net.woniper.board.web.controller.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
@@ -89,7 +89,7 @@ public class CommentControllerTest {
         commentDto.setContent("new comment content");
 
         // when
-        ResultActions resultActions = mock.perform(post("/board/" + board.getBoardId() + "/comment")
+        ResultActions resultActions = mock.perform(post("/boards/" + board.getBoardId() + "/comments")
                                             .with(user(new SecurityUserDetails(boardUser)))
                                             .contentType(mediaType)
                                             .content(objectMapper.writeValueAsString(commentDto)));
@@ -114,7 +114,8 @@ public class CommentControllerTest {
         comment = commentRepository.save(comment);
 
         // when
-        ResultActions resultActions = mock.perform(get("/board/" + board.getBoardId())
+        ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
+                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(boardUser))));
 
         // then

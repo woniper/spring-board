@@ -1,4 +1,4 @@
-package net.woniper.board.controller.test;
+package net.woniper.board.web.controller.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
@@ -27,7 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -104,9 +103,9 @@ public class UserControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/users")
-                                            .with(user(new SecurityUserDetails(user)))
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(newUser)));
+                .with(user(new SecurityUserDetails(user)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(newUser)));
 
         // then
         resultActions.andDo(print())
@@ -121,6 +120,7 @@ public class UserControllerTest {
     public void test_회원_탈퇴() throws Exception {
         // when
         ResultActions resultActions = mock.perform(delete("/users")
+                                            .contentType(mediaType)
                                             .with(user(new SecurityUserDetails(user))));
 
         // then
@@ -165,51 +165,15 @@ public class UserControllerTest {
         // given
         User newUser = createUser(true);
         createBoardList(10, user);
-        List<Board> boardList = createBoardList(10, newUser)
-                .stream().sorted((b1, b2) -> b2.getBoardId().compareTo(b1.getBoardId())).collect(Collectors.toList());
+        createBoardList(10, newUser);
 
         // when
-        ResultActions resultActions = mock.perform(get("/users/boards/1")
+        ResultActions resultActions = mock.perform(get("/users/boards?page=0&size=20")
+                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(newUser))));
 
         // then
         resultActions.andDo(print()).andExpect(status().isOk());
-
-        int count = boardList.size();
-        for (int i = 0; i < count; i++) {
-            Board board = boardList.get(i);
-            resultActions.andExpect(jsonPath("$.boards[" + i + "].boardId", is(board.getBoardId().intValue())))
-                    .andExpect(jsonPath("$.boards[" + i + "].title", is(board.getTitle())))
-                    .andExpect(jsonPath("$.boards[" + i + "].content", is(board.getContent())))
-                    .andExpect(jsonPath("$.boards[" + i + "].readCount", is(board.getReadCount())))
-                    .andExpect(jsonPath("$.boards[" + i + "].userId", is(newUser.getUserId().intValue())));
-        }
-    }
-
-    @Test
-    public void test_내가_쓴_게시글_정렬_리스트_조회() throws Exception {
-        // given
-        User newUser = createUser(true);
-        List<Board> boardList = createBoardList(10, newUser)
-                .stream().sorted((b1, b2) -> b2.getTitle().compareTo(b1.getTitle())).collect(Collectors.toList());
-
-        // when
-        ResultActions resultActions = mock.perform(get("/users/boards/1?orderBy=title")
-                                            .with(user(new SecurityUserDetails(newUser))));
-
-        // then
-        resultActions.andDo(print()).andExpect(status().isOk());
-        int count = boardList.size();
-
-        for (int i = 0; i < count; i++) {
-            Board board = boardList.get(i);
-            resultActions.andExpect(jsonPath("$.boards[" + i + "].boardId", is(board.getBoardId().intValue())))
-                    .andExpect(jsonPath("$.boards[" + i + "].title", is(board.getTitle())))
-                    .andExpect(jsonPath("$.boards[" + i + "].content", is(board.getContent())))
-                    .andExpect(jsonPath("$.boards[" + i + "].readCount", is(board.getReadCount())))
-                    .andExpect(jsonPath("$.boards[" + i + "].username", is(newUser.getUsername())));
-        }
-
     }
 
     private User createUser(boolean isAdmin) {

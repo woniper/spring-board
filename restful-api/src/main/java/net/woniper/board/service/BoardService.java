@@ -4,7 +4,8 @@ import net.woniper.board.domain.Board;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.support.dto.BoardDto;
-import net.woniper.board.support.dto.BoardListDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Created by woniper on 15. 4. 6..
@@ -19,11 +20,12 @@ public interface BoardService {
 
     Board getBoard(Long boardId);
 
+    Page<Board> getBoard(Pageable pageable);
+
+    Page<Board> getBoard(Pageable pageable, String username);
+
     Board updateBoard(Board board, String username);
 
     boolean deleteBoard(Long boardId, String username);
 
-    BoardListDto getBoardList(int page, int limit, String orderBy, String orderDir, Class clz);
-
-    BoardListDto getUserBoardList(Long userId, int page, int limit, String orderBy, String orderDir, Class clz);
 }
