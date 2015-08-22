@@ -61,9 +61,16 @@
             <artifactId>lombok</artifactId>
             <version>1.14.8</version>
         </dependency>
+        <!-- product DB -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>
+        <!-- test DB -->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>2.3.3</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

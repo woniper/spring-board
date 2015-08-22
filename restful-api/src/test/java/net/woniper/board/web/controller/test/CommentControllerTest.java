@@ -11,6 +11,7 @@ import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.CommentRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.support.dto.CommentDto;
+import net.woniper.board.web.config.test.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +43,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * Created by woniper on 15. 2. 4..
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BoardApplication.class)
+@SpringApplicationConfiguration(classes = {BoardApplication.class, TestDatabaseConfig.class})
 @WebAppConfiguration
 @IntegrationTest("server.port=8888")
 @Transactional
