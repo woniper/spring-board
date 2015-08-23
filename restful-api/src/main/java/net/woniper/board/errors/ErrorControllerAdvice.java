@@ -3,6 +3,8 @@ package net.woniper.board.errors;
 import net.woniper.board.errors.support.DuplicateNickNameException;
 import net.woniper.board.errors.support.DuplicateUsernameException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +18,8 @@ import java.security.Principal;
  */
 @ControllerAdvice
 public class ErrorControllerAdvice {
+
+    private final Log log = LogFactory.getLog(ErrorControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(DuplicateUsernameException.class)
@@ -58,15 +62,9 @@ public class ErrorControllerAdvice {
         if(principal != null) {
             username = principal.getName();
         }
-        StackTraceElement[] elements = exception.getStackTrace();
 
-        // 왜 마지막 스택만 뽑았지??
-        StackTraceElement element = elements[elements.length - 1];
-
-        String logMsg = String.format("username : {%s}, ClassName : {%s}, MethodName : {%s}, LineNumber : {%d}",
-                username, element.getClassName(), element.getMethodName(), element.getLineNumber());
-
-        System.out.println(logMsg);
+        String logMsg = String.format("username : {%s}, error{%s}",username, exception.getMessage());
+        log.error(logMsg);
     }
 
 

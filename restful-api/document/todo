@@ -42,19 +42,18 @@
     - 권한(AuthorityType) enum type으로 수정 *
 
 - URL 수정
-    - 복수
-    - class target으로 RequestMapping 설정
+    - 복수 **
+    - class target으로 RequestMapping 설정 **
 
 - ResponseEntity 수정
-    - 객체 생성한 코드 모두 ResponseEntity.method로 변경
-    - ResponseEntity<?>로 변경
+    - 객체 생성한 코드 모두 ResponseEntity.method로 변경 **
+    - ResponseEntity<?>로 변경 **
     
 - 예외처리
     - ControllerAdvice 적용 **
     - error Dto 처리 **
     - localization 적용
         - error code, error developMessage 추가
-    - 비활성 계정 체크
-    - Exception ExceptionHandler 처리
+    - Exception ExceptionHandler 처리 **
 
-- logback 설정
+- logback 설정 **
