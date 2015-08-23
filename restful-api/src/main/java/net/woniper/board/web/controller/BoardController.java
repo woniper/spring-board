@@ -155,7 +155,7 @@ public class BoardController {
      * @param principal
      * @return
      */
-    @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST)
     public ResponseEntity<?> createNewComment(@RequestBody @Valid CommentDto commentDto,
                                               @PathVariable("boardId") Long boardId,
                                               BindingResult result,
@@ -172,6 +172,17 @@ public class BoardController {
         responseComment.setAuthorityType(user.getAuthorityType());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
+    }
+
+    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteComment(@PathVariable("commentId") Long commentId,
+                                           Principal principal) {
+        if(commentService.deleteComment(commentId, principal.getName())) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        }
+
     }
 
     private BoardDto.Response getBoardResponse(Board board) {

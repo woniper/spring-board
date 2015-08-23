@@ -9,8 +9,9 @@ import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.CommentRepository;
-import net.woniper.board.repository.UserRepository;
+import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.CommentDto;
+import net.woniper.board.support.dto.UserDto;
 import net.woniper.board.web.config.test.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -54,7 +56,7 @@ public class CommentControllerTest {
     @Autowired private WebApplicationContext webApplicationContext;
     @Autowired private Filter springSecurityFilterChain;
     @Autowired private BoardRepository boardRepository;
-    @Autowired private UserRepository userRepository;
+    @Autowired private UserService userService;
     @Autowired private CommentRepository commentRepository;
 
     private MockMvc mock;
@@ -68,14 +70,7 @@ public class CommentControllerTest {
     public void setUp() throws Exception {
         this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
 
-        boardUser = new User();
-        boardUser.setUsername("boardUser");
-        boardUser.setPassword("user Password");
-        boardUser.setFirstName("board");
-        boardUser.setLastName("user");
-        boardUser.setNickName("board user nickName");
-        boardUser.setAuthorityType(AuthorityType.ADMIN);
-        boardUser = userRepository.save(boardUser);
+        boardUser = createUser(AuthorityType.ADMIN);
 
         board = new Board();
         board.setTitle("comment board title");
@@ -107,13 +102,13 @@ public class CommentControllerTest {
     @Test
     public void test_댓글_조회() throws Exception {
         // given
-        Comment comment = new Comment();
-        comment.setContent("comment content");
-        comment.setBoard(board);
-        comment.setUser(boardUser);
-        comment.setDepth(0);
-        board.setComments(Arrays.asList(comment));
-        comment = commentRepository.save(comment);
+        Comment comment = createComment(boardUser, board);
+//        comment.setContent("comment content");
+//        comment.setBoard(board);
+//        comment.setUser(boardUser);
+//        comment.setDepth(0);
+//        board.setComments(Arrays.asList(comment));
+//        comment = commentRepository.save(comment);
 
         // when
         ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
@@ -129,5 +124,82 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.comments[0].content", is(board.getComments().get(0).getContent())))
                 .andExpect(jsonPath("$.userId", is(boardUser.getUserId().intValue())))
                 .andExpect(jsonPath("$.username", is(boardUser.getUsername())));
+    }
+
+    @Test
+    public void test_댓글_삭제_admin_isAccepted() throws Exception {
+        // given
+        User user = createUser(AuthorityType.USER);
+        Comment comment = createComment(user, board);
+
+        // when
+        ResultActions resultActions = mock.perform(delete("/boards/comments/" + comment.getCommentId())
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(boardUser))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isAccepted());
+    }
+
+    @Test
+    public void test_댓글_삭제_user_isAccepted() throws Exception {
+        // given
+        User user = createUser(AuthorityType.USER);
+        Comment comment = createComment(user, board);
+
+        // when
+        ResultActions resultActions = mock.perform(delete("/boards/comments/" + comment.getCommentId())
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isAccepted());
+    }
+    @Test
+    public void test_댓글_삭제_user_isNotAccepted() throws Exception {
+        // given
+        Comment comment = createComment(boardUser, board);
+        User user = createUser(AuthorityType.USER);
+
+        // when
+        ResultActions resultActions = mock.perform(delete("/boards/comments/" + comment.getCommentId())
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isNotAcceptable());
+    }
+
+    private Comment createComment(User user, Board board) {
+        Comment comment = new Comment();
+        comment.setContent("comment content");
+        comment.setBoard(board);
+        comment.setUser(user);
+        comment.setDepth(0);
+        board.setComments(Arrays.asList(comment));
+        return commentRepository.save(comment);
+    }
+
+    private User createUser(AuthorityType authorityType) {
+        User newUser = new User();
+        if(AuthorityType.ADMIN.equals(authorityType)) {
+            newUser.setUsername("newAdminnName");
+            newUser.setPassword("newAdminPassword");
+            newUser.setFirstName("newAdminFirstName");
+            newUser.setLastName("newAdminLastName");
+            newUser.setNickName("newAdminName");
+            newUser.setAuthorityType(authorityType);
+        } else {
+            newUser.setUsername("newUsername");
+            newUser.setPassword("newPassword");
+            newUser.setFirstName("newUserFirstName");
+            newUser.setLastName("newUserLastName");
+            newUser.setNickName("newUserName");
+            newUser.setAuthorityType(authorityType);
+        }
+        return userService.createUser(modelMapper.map(newUser, UserDto.Request.class));
     }
 }

@@ -32,8 +32,6 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     private String nickName;
 
-//    private boolean admin = false;
-
     @Enumerated(EnumType.STRING)
     private AuthorityType authorityType;
 
@@ -47,6 +45,19 @@ public class User implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Comment> comments;
+
+    public User() {}
+
+    public User(String username, String password, String firstName, String lastName,
+                String nickName, AuthorityType authorityType, boolean active) {
+        setUsername(username);
+        setPassword(password);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setNickName(nickName);
+        setAuthorityType(authorityType);
+        setActive(active);
+    }
 
     public int boardCount() {
         return boards != null ? boards.size() : 0;

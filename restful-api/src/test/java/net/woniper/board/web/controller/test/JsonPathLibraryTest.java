@@ -1,6 +1,7 @@
 package net.woniper.board.web.controller.test;
 
 import com.jayway.jsonpath.JsonPath;
+import net.woniper.board.domain.type.AuthorityType;
 import org.junit.Test;
 
 import java.util.List;
@@ -71,7 +72,8 @@ public class JsonPathLibraryTest {
 
     }
 
-
-
-
+    @Test
+    public void testName() throws Exception {
+        System.out.println(AuthorityType.ADMIN);
+    }
 }

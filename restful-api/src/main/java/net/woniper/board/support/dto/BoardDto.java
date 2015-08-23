@@ -25,7 +25,6 @@ public class BoardDto implements Serializable {
         private Long userId;
         private String username;
         private String nickName;
-//        private boolean admin;
         private AuthorityType authorityType;
 
         private List<CommentDto.Response> comments;
