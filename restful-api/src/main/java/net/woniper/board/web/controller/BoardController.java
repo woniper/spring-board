@@ -50,15 +50,15 @@ public class BoardController {
      */
 //    @Secured("ROLE_USER")
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createNewBoard(@RequestBody @Valid BoardDto boardDto, BindingResult result, Principal principal) {
+    public ResponseEntity<?> createNewBoard(@RequestBody @Valid BoardDto boardDto, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
-            return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
         Board board = boardService.createBoard(boardDto, principal.getName());
         BoardDto.Response responseBoard = getBoardResponse(board);
 
-        return new ResponseEntity<> (responseBoard, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseBoard);
     }
 
     /**
@@ -68,19 +68,19 @@ public class BoardController {
      * @return
      */
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity updateBoard(@RequestBody @Valid Board board, BindingResult result, Principal principal) {
+    public ResponseEntity<?> updateBoard(@RequestBody @Valid Board board, BindingResult result, Principal principal) {
 
         if(result.hasErrors()) {
-            return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
         Board updateBoard = boardService.updateBoard(board, principal.getName());
         if(updateBoard != null) {
             BoardDto.Response responseBoard = getBoardResponse(updateBoard);
-            return new ResponseEntity<> (responseBoard, HttpStatus.ACCEPTED);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);
         }
 
-        return new ResponseEntity<> (HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
 
     }
 
@@ -90,11 +90,11 @@ public class BoardController {
      * @return
      */
     @RequestMapping(value = "/{boardId}", method = RequestMethod.DELETE)
-    public ResponseEntity deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
+    public ResponseEntity<?> deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
         if(boardService.deleteBoard(boardId, principal.getName()))
-            return new ResponseEntity<> (HttpStatus.ACCEPTED);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         else
-            return new ResponseEntity<> (HttpStatus.NOT_ACCEPTABLE);
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
     /**
@@ -103,7 +103,7 @@ public class BoardController {
      * @return
      */
     @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
-    public ResponseEntity getBoard(@PathVariable("boardId") Long boardId) {
+    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
         Board board = boardService.getBoard(boardId);
         BoardDto.Response responseBoard = getBoardResponse(board);
         User user = board.getUser();
@@ -128,7 +128,7 @@ public class BoardController {
 
             responseBoard.setComments(comments);
         }
-        return new ResponseEntity<> (responseBoard, HttpStatus.OK);
+        return ResponseEntity.ok(responseBoard);
     }
 
     /**
@@ -156,12 +156,12 @@ public class BoardController {
      * @return
      */
     @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity createNewComment(@RequestBody @Valid CommentDto commentDto,
-                                           @PathVariable("boardId") Long boardId,
-                                           BindingResult result,
-                                           Principal principal) {
+    public ResponseEntity<?> createNewComment(@RequestBody @Valid CommentDto commentDto,
+                                              @PathVariable("boardId") Long boardId,
+                                              BindingResult result,
+                                              Principal principal) {
         if(result.hasErrors()) {
-            return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
         Comment comment = commentService.createComment(commentDto, boardId, principal.getName());
@@ -171,7 +171,7 @@ public class BoardController {
         responseComment.setNickName(user.getNickName());
         responseComment.setAuthorityType(user.getAuthorityType());
 
-        return new ResponseEntity<> (responseComment, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
     }
 
     private BoardDto.Response getBoardResponse(Board board) {

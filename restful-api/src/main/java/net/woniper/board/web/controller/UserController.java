@@ -37,31 +37,31 @@ public class UserController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity createNewUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result) {
+    public ResponseEntity<?> createNewUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result) {
 
         if(result.hasErrors()) {
-            return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
         User newUser = userService.createUser(userDto);
-        return new ResponseEntity<> (modelMapper.map(newUser, UserDto.Response.class), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(newUser, UserDto.Response.class));
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity updateUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result, Principal principal) {
+    public ResponseEntity<?> updateUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result, Principal principal) {
         if(result.hasErrors()) {
-            return new ResponseEntity<> (result.getAllErrors(), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
         User updateUser = userService.updateUser(userDto, principal.getName());
         if(updateUser != null)
-            return new ResponseEntity<> (modelMapper.map(updateUser, UserDto.Response.class), HttpStatus.ACCEPTED);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
 
         return new ResponseEntity<> (HttpStatus.NOT_ACCEPTABLE);
     }
 
     @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity deleteUser(Principal principal) {
+    public ResponseEntity<?> deleteUser(Principal principal) {
         if(userService.deleteUser(principal.getName()))
             return new ResponseEntity<> (HttpStatus.ACCEPTED);
 
