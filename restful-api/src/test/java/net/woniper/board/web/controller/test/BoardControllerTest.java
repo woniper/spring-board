@@ -7,10 +7,10 @@ import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
-import net.woniper.board.service.impl.BoardServiceImpl;
-import net.woniper.board.service.impl.UserServiceImpl;
+import net.woniper.board.service.BoardService;
+import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
-import net.woniper.board.support.dto.UserDto;
+import net.woniper.board.web.builder.EntityBuilder;
 import net.woniper.board.web.config.test.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,38 +52,27 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class BoardControllerTest {
 
     @Autowired private BoardRepository boardRepository;
-    @Autowired private BoardServiceImpl boardService;
-    @Autowired private UserServiceImpl userService;
+    @Autowired private BoardService boardService;
+    @Autowired private UserService userService;
     @Autowired private ObjectMapper objectMapper;
     @Autowired private ModelMapper modelMapper;
     @Autowired private WebApplicationContext webApplicationContext;
     @Autowired private Filter springSecurityFilterChain;
 
-
     private MockMvc mock;
     private Board board;
-    private User adminUser;
+    private User admin;
+    private User user;
+
     private String mediaType = MediaType.APPLICATION_JSON_VALUE;
 
     @Before
     public void setUp() throws Exception {
         this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
 
-        adminUser = new User();
-        adminUser.setUsername("admin");
-        adminUser.setPassword("12345");
-        adminUser.setFirstName("kyung-won");
-        adminUser.setLastName("lee");
-        adminUser.setNickName("woniper");
-        adminUser.setAuthorityType(AuthorityType.ADMIN);
-        adminUser = userService.createUser(modelMapper.map(adminUser, UserDto.Request.class));
-
-        board = new Board();
-        board.setTitle("testTitle");
-        board.setContent("testContent");
-        board.setUser(adminUser);
-        board = boardRepository.save(board);
-
+        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
+        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+        board = boardRepository.save(EntityBuilder.createBoard(admin));
     }
 
     @Test
@@ -95,7 +84,7 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(post("/boards")
-                .with(user(new SecurityUserDetails(adminUser)))
+                .with(user(new SecurityUserDetails(admin)))
                 .contentType(mediaType)
                 .content(objectMapper.writeValueAsBytes(newBoard)));
 
@@ -104,19 +93,17 @@ public class BoardControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.title", is(newBoard.getTitle())))
                 .andExpect(jsonPath("$.content", is(newBoard.getContent())))
-                .andExpect(jsonPath("$.userId", is(adminUser.getUserId().intValue())));
+                .andExpect(jsonPath("$.userId", is(admin.getUserId().intValue())));
     }
 
     @Test
     public void test_게시글_생성_valid_check() throws Exception {
         // given
-        Board newBoard = new Board();
-        newBoard.setTitle("");  // 최소 2자 이상 입력
-        newBoard.setContent("newContent");
+        BoardDto newBoard = new BoardDto("", "newContent");   // title : 최소 2자 이상
 
         // when
         ResultActions resultActions = mock.perform(post("/boards")
-                .with(user(new SecurityUserDetails(adminUser)))
+                .with(user(new SecurityUserDetails(admin)))
                 .contentType(mediaType)
                 .content(objectMapper.writeValueAsBytes(newBoard)));
 
@@ -134,7 +121,7 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/boards")
-                                            .with(user(new SecurityUserDetails(adminUser)))
+                                            .with(user(new SecurityUserDetails(admin)))
                                             .contentType(mediaType)
                                             .content(objectMapper.writeValueAsBytes(board)));
 
@@ -155,11 +142,10 @@ public class BoardControllerTest {
         // given
         board.setTitle("update Title");
         board.setContent("update Content");
-        User notAdminUser = createUser(AuthorityType.USER);
 
         // when
         ResultActions resultActions = mock.perform(put("/boards")
-                                            .with(user(new SecurityUserDetails(notAdminUser)))
+                                            .with(user(new SecurityUserDetails(user)))
                                             .contentType(mediaType)
                                             .content(objectMapper.writeValueAsBytes(board)));
 
@@ -171,14 +157,13 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_수정_권한_admin() throws Exception {
         // given
-        User notAdminUser = createUser(AuthorityType.USER);
-        Board newBoard = createBoard(notAdminUser);
+        Board newBoard = boardRepository.save(EntityBuilder.createBoard(user));
         newBoard.setTitle("update Title");
         newBoard.setContent("update Content");
 
         // when
         ResultActions resultActions = mock.perform(put("/boards")
-                                            .with(user(new SecurityUserDetails(adminUser)))
+                                            .with(user(new SecurityUserDetails(admin)))
                                             .contentType(mediaType)
                                             .content(objectMapper.writeValueAsBytes(newBoard)));
 
@@ -189,7 +174,7 @@ public class BoardControllerTest {
                 .andExpect(jsonPath("$.title", is(newBoard.getTitle())))
                 .andExpect(jsonPath("$.content", is(newBoard.getContent())))
                 .andExpect(jsonPath("$.readCount", is(newBoard.getReadCount())))
-                .andExpect(jsonPath("$.userId", is(notAdminUser.getUserId().intValue())));
+                .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())));
     }
 
     @Test
@@ -201,7 +186,7 @@ public class BoardControllerTest {
     public void test_게시글_삭제() throws Exception {
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(adminUser)))
+                                            .with(user(new SecurityUserDetails(admin)))
                                             .contentType(mediaType));
 
         //then
@@ -212,12 +197,10 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_삭제_권한_NOT_ACCEPTABLE() throws Exception {
         // given
-        User notAdminUser = createUser(AuthorityType.USER);
-
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
                 .contentType(mediaType)
-                .with(user(new SecurityUserDetails(notAdminUser))));
+                .with(user(new SecurityUserDetails(user))));
 
         // then
         resultActions.andDo(print())
@@ -228,13 +211,12 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_삭제_권한_admin() throws Exception {
         // given
-        User notAdminUser = createUser(AuthorityType.USER);
-        Board newBoard = createBoard(notAdminUser);
+        Board newBoard = boardRepository.save(EntityBuilder.createBoard(user));
 
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + newBoard.getBoardId())
                 .contentType(mediaType)
-                .with(user(new SecurityUserDetails(adminUser))));
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
@@ -246,7 +228,7 @@ public class BoardControllerTest {
         // when
         ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
                 .contentType(mediaType)
-                .with(user(new SecurityUserDetails(adminUser))));
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
@@ -255,43 +237,23 @@ public class BoardControllerTest {
                 .andExpect(jsonPath("$.title", is(board.getTitle())))
                 .andExpect(jsonPath("$.content", is(board.getContent())))
                 .andExpect(jsonPath("$.readCount", is(board.getReadCount())))
-                .andExpect(jsonPath("$.username", is(adminUser.getUsername())));
+                .andExpect(jsonPath("$.username", is(admin.getUsername())));
     }
 
     @Test
     public void test_게시글_리스트_조회_로그인() throws Exception {
         // given
-        User newUser = createUser(AuthorityType.ADMIN);
-        createBoardList(20, newUser);
+//        User newUser = createUser(AuthorityType.ADMIN);
+        createBoardList(20, admin);
 
         // when
         ResultActions resultActions = mock.perform(get("/boards?page=0&size=20")
                                             .contentType(mediaType)
-                                            .with(user(new SecurityUserDetails(adminUser))));
+                                            .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
                 .andExpect(status().isOk());
-    }
-
-    private User createUser(AuthorityType authorityType) {
-        User newUser = new User();
-        newUser.setUsername("newUsername");
-        newUser.setPassword("newPassword");
-        newUser.setFirstName("newUserFirstName");
-        newUser.setLastName("newUserLastName");
-        newUser.setNickName("newUserName");
-        newUser.setAuthorityType(authorityType);
-        return userService.createUser(modelMapper.map(newUser, UserDto.Request.class));
-    }
-
-
-    private Board createBoard(User user) {
-        Board newBoard = new Board();
-        newBoard.setTitle("newBoard");
-        newBoard.setContent("newContent");
-        newBoard.setUser(user);
-        return boardRepository.save(newBoard);
     }
 
     private List<Board> createBoardList(int size, User user) {

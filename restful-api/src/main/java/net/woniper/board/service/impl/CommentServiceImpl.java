@@ -58,4 +58,22 @@ public class CommentServiceImpl implements CommentService {
 
         return false;
     }
+
+    @Override
+    public Comment updateComment(Long commentId, CommentDto commentDto, String username) {
+        User user = userRepository.findByUsername(username);
+        Comment comment = null;
+
+        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+            comment = commentRepository.findOne(commentId);
+        } else {
+            comment = commentRepository.findByCommentIdAndUser(commentId, user);
+        }
+
+        if(comment != null) {
+            comment.update(commentDto);
+        }
+
+        return comment;
+    }
 }

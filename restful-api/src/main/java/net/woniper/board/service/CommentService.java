@@ -11,4 +11,6 @@ public interface CommentService {
     Comment createComment(CommentDto commentDto, Long boardId, String username);
 
     boolean deleteComment(Long commentId, String username);
+
+    Comment updateComment(Long commentId, CommentDto commentDto, String username);
 }

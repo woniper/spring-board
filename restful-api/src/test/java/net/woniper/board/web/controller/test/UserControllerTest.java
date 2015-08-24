@@ -8,8 +8,9 @@ import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
-import net.woniper.board.service.impl.UserServiceImpl;
+import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
+import net.woniper.board.web.builder.EntityBuilder;
 import net.woniper.board.web.config.test.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,15 +50,17 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class UserControllerTest {
 
     @Autowired private UserRepository userRepository;
-    @Autowired private UserServiceImpl userService;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private WebApplicationContext webApplicationContext;
-    @Autowired private ModelMapper modelMapper;
     @Autowired private BoardRepository boardRepository;
+    @Autowired private UserService userService;
+
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private ModelMapper modelMapper;
+    @Autowired private WebApplicationContext webApplicationContext;
     @Autowired private Filter springSecurityFilterChain;
 
     private MockMvc mock;
-    private User user = new User();
+    private User admin;
+    private User user;
     private String mediaType = MediaType.APPLICATION_JSON_VALUE;
 
     @Before
@@ -65,24 +68,21 @@ public class UserControllerTest {
         this.mock = webAppContextSetup(webApplicationContext)
                         .addFilter(springSecurityFilterChain).build();
 
-        user.setUsername("woniper");
-        user.setPassword("12345");
-        user.setFirstName("kyung-won");
-        user.setLastName("lee");
-        user.setNickName("woniper");
-        user.setAuthorityType(AuthorityType.ADMIN);
-        user = userRepository.save(user);
+        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
+        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
     }
 
     @Test
     public void test_회원가입() throws Exception {
         // given
-        UserDto.Request newUser = createUserRequest(AuthorityType.ADMIN);
+        UserDto.Request newUser = modelMapper.map(EntityBuilder.createUser(AuthorityType.ADMIN), UserDto.Request.class);
+        newUser.setUsername("signupTestUsername");
+        newUser.setNickName("signupTestNickName");
 
         // when
         ResultActions resultActions = mock.perform(post("/users")
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(newUser)));
+                    .contentType(mediaType)
+                    .content(objectMapper.writeValueAsBytes(newUser)));
 
         // then
         resultActions.andDo(print())
@@ -97,7 +97,7 @@ public class UserControllerTest {
     @Test
     public void test_회원_정보_수정() throws Exception {
         // given
-        UserDto.Request newUser = modelMapper.map(user, UserDto.Request.class);
+        UserDto.Request newUser = modelMapper.map(admin, UserDto.Request.class);
         newUser.setPassword("updatePassword");
         newUser.setFirstName("updateFirstName");
         newUser.setLastName("updateLastName");
@@ -105,7 +105,7 @@ public class UserControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/users")
-                .with(user(new SecurityUserDetails(user)))
+                .with(user(new SecurityUserDetails(admin)))
                 .contentType(mediaType)
                 .content(objectMapper.writeValueAsBytes(newUser)));
 
@@ -123,7 +123,7 @@ public class UserControllerTest {
         // when
         ResultActions resultActions = mock.perform(delete("/users")
                                             .contentType(mediaType)
-                                            .with(user(new SecurityUserDetails(user))));
+                                            .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
@@ -133,8 +133,8 @@ public class UserControllerTest {
     @Test
     public void test_회원_아이디_중복() throws Exception {
         // given
-        UserDto.Request requestUser = createUserRequest(AuthorityType.ADMIN);
-        requestUser.setUsername("woniper");
+        UserDto.Request requestUser = modelMapper.map(EntityBuilder.createUser(AuthorityType.ADMIN), UserDto.Request.class);
+        requestUser.setUsername(admin.getUsername());
 
         // when
         ResultActions resultActions = mock.perform(post("/users")
@@ -149,8 +149,9 @@ public class UserControllerTest {
     @Test
     public void test_회원_닉네임_중복() throws Exception {
         // given
-        UserDto.Request requestUser = createUserRequest(AuthorityType.ADMIN);
-        requestUser.setNickName("woniper");
+        UserDto.Request requestUser = modelMapper.map(EntityBuilder.createUser(AuthorityType.ADMIN), UserDto.Request.class);
+        requestUser.setUsername("nickNameTest");
+        requestUser.setNickName(admin.getNickName());
 
         // when
         ResultActions resultActions = mock.perform(post("/users")
@@ -165,40 +166,40 @@ public class UserControllerTest {
     @Test
     public void test_내가_쓴_게시글_리스트_조회() throws Exception {
         // given
-        User newUser = createUser(AuthorityType.ADMIN);
+//        User newUser = createUser(AuthorityType.ADMIN);
+        createBoardList(10, admin);
         createBoardList(10, user);
-        createBoardList(10, newUser);
 
         // when
         ResultActions resultActions = mock.perform(get("/users/boards?page=0&size=20")
                 .contentType(mediaType)
-                .with(user(new SecurityUserDetails(newUser))));
+                .with(user(new SecurityUserDetails(user))));
 
         // then
         resultActions.andDo(print()).andExpect(status().isOk());
     }
 
-    private User createUser(AuthorityType authorityType) {
-        User newUser = new User();
-        newUser.setUsername("newUser");
-        newUser.setPassword("12345");
-        newUser.setFirstName("kyung-won");
-        newUser.setLastName("lee");
-        newUser.setNickName("newUser");
-        newUser.setAuthorityType(authorityType);
-        return userRepository.save(newUser);
-    }
+//    private User createUser(AuthorityType authorityType) {
+//        User newUser = new User();
+//        newUser.setUsername("newUser");
+//        newUser.setPassword("12345");
+//        newUser.setFirstName("kyung-won");
+//        newUser.setLastName("lee");
+//        newUser.setNickName("newUser");
+//        newUser.setAuthorityType(authorityType);
+//        return userRepository.save(newUser);
+//    }
 
-    private UserDto.Request createUserRequest(AuthorityType authorityType) {
-        UserDto.Request newUser = new UserDto.Request();
-        newUser.setUsername("newUser");
-        newUser.setPassword("12345");
-        newUser.setFirstName("kyung-won");
-        newUser.setLastName("lee");
-        newUser.setNickName("newUser");
-        newUser.setAuthorityType(authorityType);
-        return newUser;
-    }
+//    private UserDto.Request createUserRequest(AuthorityType authorityType) {
+//        UserDto.Request newUser = new UserDto.Request();
+//        newUser.setUsername("newUser");
+//        newUser.setPassword("12345");
+//        newUser.setFirstName("kyung-won");
+//        newUser.setLastName("lee");
+//        newUser.setNickName("newUser");
+//        newUser.setAuthorityType(authorityType);
+//        return newUser;
+//    }
 
     private List<Board> createBoardList(int size, User user) {
         List<Board> list = new ArrayList<>();

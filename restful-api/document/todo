@@ -6,6 +6,9 @@
         - 생성한 계정 or admin 계정만 "삭제" 가능 **
     - 수정 **
         - 생성한 계정 or admin 계정만 "수정" 가능 **
+        - update method Entity에 생성
+        - BoardController parameter BoardDto로 변경
+        - BoardController boardId PathVariable로 받기
         - valid 체크
     - 조회 **
         - 비로그인 사용자도 읽기 가능 **
@@ -23,10 +26,12 @@
 - 댓글
     - 생성 **
         - valid 체크
-    - 삭제
-        - 생성한 계정 or admin 계정만 "삭제" 가능
+    - 삭제 **
+        - 생성한 계정 or admin 계정만 "삭제" 가능 **
     - 수정
-        - 생성한 계정 or admin 계정만 "삭제" 가능
+        - 생성한 계정 or admin 계정만 "수정" 가능
+        - update method Entity에 생성
+        - BoardController commentId PathVariable로 받기
     - 조회(board) **
     - 내가 쓴 댓글의 게시글 리스트 보기
 

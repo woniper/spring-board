@@ -3,6 +3,8 @@ package net.woniper.board.support.dto;
 import lombok.Data;
 import net.woniper.board.domain.type.AuthorityType;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -13,8 +15,18 @@ import java.util.List;
 @Data
 public class BoardDto implements Serializable {
 
+    @NotNull @Size(min = 2)
     private String title;
+
+    @NotNull @Size(min = 2)
     private String content;
+
+    public BoardDto() {}
+
+    public BoardDto(String title, String content) {
+        setTitle(title);
+        setContent(content);
+    }
 
     @Data
     public static class Response extends BoardDto {
@@ -29,4 +41,5 @@ public class BoardDto implements Serializable {
 
         private List<CommentDto.Response> comments;
     }
+
 }

@@ -1,6 +1,7 @@
 package net.woniper.board.domain;
 
 import lombok.Data;
+import net.woniper.board.support.dto.CommentDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,4 +32,7 @@ public class Comment implements Serializable {
     @JoinColumn(name = "userId")
     private User user;
 
+    public void update(CommentDto commentDto) {
+        setContent(commentDto.getContent());
+    }
 }

@@ -37,6 +37,13 @@ public class Board implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
+    public Board() {}
+
+    public Board(String title, String content) {
+        setTitle(title);
+        setContent(content);
+    }
+
     public int commentCount() {
         return comments != null ? comments.size() : 0;
     }

@@ -182,7 +182,29 @@ public class BoardController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
         }
+    }
 
+    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateComment(@PathVariable("commentId") Long commentId,
+                                           @RequestBody @Valid CommentDto commentDto,
+                                           BindingResult result,
+                                           Principal principal) {
+
+        if(result.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+        }
+
+        Comment comment = commentService.updateComment(commentId, commentDto, principal.getName());
+        if(comment != null) {
+            CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
+            User user = comment.getUser();
+            responseComment.setUsername(user.getUsername());
+            responseComment.setNickName(user.getNickName());
+            responseComment.setAuthorityType(user.getAuthorityType());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseComment);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }
 
     private BoardDto.Response getBoardResponse(Board board) {
