@@ -67,14 +67,17 @@ public class BoardController {
      * @param result
      * @return
      */
-    @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateBoard(@RequestBody @Valid Board board, BindingResult result, Principal principal) {
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> updateBoard(@PathVariable("boardId") Long boardId,
+                                         @RequestBody @Valid BoardDto board,
+                                         BindingResult result,
+                                         Principal principal) {
 
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Board updateBoard = boardService.updateBoard(board, principal.getName());
+        Board updateBoard = boardService.updateBoard(boardId, board, principal.getName());
         if(updateBoard != null) {
             BoardDto.Response responseBoard = getBoardResponse(updateBoard);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);

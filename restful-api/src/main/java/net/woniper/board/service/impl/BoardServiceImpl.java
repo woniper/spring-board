@@ -75,21 +75,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board updateBoard(Board board, String username) {
+    public Board updateBoard(Long boardId, BoardDto boardDto, String username) {
         User user = userRepository.findByUsername(username);
-        Board oldBoard = null;
+        Board board = null;
         if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-            oldBoard = boardRepository.findOne(board.getBoardId());
+            board = boardRepository.findOne(boardId);
         } else{
-            oldBoard = boardRepository.findByBoardIdAndUser(board.getBoardId(), user);
+            board = boardRepository.findByBoardIdAndUser(boardId, user);
         }
 
-        if(oldBoard != null) {
-            oldBoard.setTitle(board.getTitle());
-            oldBoard.setContent(board.getContent());
-            boardRepository.flush();
+        if(board != null) {
+            board.update(boardDto);
         }
-        return oldBoard;
+        return board;
     }
 
     @Override

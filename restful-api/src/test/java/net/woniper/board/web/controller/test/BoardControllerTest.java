@@ -118,12 +118,13 @@ public class BoardControllerTest {
         // given
         board.setTitle("update Title");
         board.setContent("update Content");
+        BoardDto boardDto = modelMapper.map(board, BoardDto.class);
 
         // when
-        ResultActions resultActions = mock.perform(put("/boards")
+        ResultActions resultActions = mock.perform(put("/boards/" + board.getBoardId())
                                             .with(user(new SecurityUserDetails(admin)))
                                             .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(board)));
+                                            .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         resultActions.andDo(print())
@@ -142,12 +143,13 @@ public class BoardControllerTest {
         // given
         board.setTitle("update Title");
         board.setContent("update Content");
+        BoardDto boardDto = modelMapper.map(board, BoardDto.class);
 
         // when
-        ResultActions resultActions = mock.perform(put("/boards")
+        ResultActions resultActions = mock.perform(put("/boards/" + board.getBoardId())
                                             .with(user(new SecurityUserDetails(user)))
                                             .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(board)));
+                                            .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         resultActions.andDo(print())
@@ -160,12 +162,13 @@ public class BoardControllerTest {
         Board newBoard = boardRepository.save(EntityBuilder.createBoard(user));
         newBoard.setTitle("update Title");
         newBoard.setContent("update Content");
+        BoardDto boardDto = modelMapper.map(newBoard, BoardDto.class);
 
         // when
-        ResultActions resultActions = mock.perform(put("/boards")
+        ResultActions resultActions = mock.perform(put("/boards/" + newBoard.getBoardId())
                                             .with(user(new SecurityUserDetails(admin)))
                                             .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(newBoard)));
+                                            .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         resultActions.andDo(print())

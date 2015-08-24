@@ -1,6 +1,7 @@
 package net.woniper.board.domain;
 
 import lombok.Data;
+import net.woniper.board.support.dto.BoardDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,5 +47,10 @@ public class Board implements Serializable {
 
     public int commentCount() {
         return comments != null ? comments.size() : 0;
+    }
+
+    public void update(BoardDto boardDto) {
+        setTitle(boardDto.getTitle());
+        setContent(boardDto.getContent());
     }
 }

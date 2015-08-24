@@ -24,7 +24,7 @@ public interface BoardService {
 
     Page<Board> getBoard(Pageable pageable, String username);
 
-    Board updateBoard(Board board, String username);
+    Board updateBoard(Long boardId, BoardDto boardDto, String username);
 
     boolean deleteBoard(Long boardId, String username);
 
