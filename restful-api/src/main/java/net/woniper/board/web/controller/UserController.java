@@ -1,5 +1,6 @@
 package net.woniper.board.web.controller;
 
+import com.wordnik.swagger.annotations.*;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,7 @@ import java.security.Principal;
 /**
  * Created by woniper on 15. 1. 28..
  */
+@Api(value = "/users", description = "user account, update, delete")
 @RestController
 @RequestMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
 public class UserController {
@@ -36,8 +39,14 @@ public class UserController {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
 
+    @ApiOperation(value = "account user", response = UserDto.Response.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "success account user", response = UserDto.Response.class),
+        @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
+    })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createNewUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result) {
+    public ResponseEntity<?> createNewUser(@ApiParam(required = true) @RequestBody @Valid UserDto.Request userDto,
+                                           BindingResult result) {
 
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
@@ -47,8 +56,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(newUser, UserDto.Response.class));
     }
 
+    @ApiOperation(value = "update user", response = UserDto.Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success update user", response = UserDto.Response.class),
+            @ApiResponse(code = 406, message = "fail update user"),
+            @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
+    })
     @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@RequestBody @Valid UserDto.Request userDto, BindingResult result, Principal principal) {
+    public ResponseEntity<?> updateUser(@ApiParam(required = true) @RequestBody @Valid UserDto.Request userDto,
+                                        BindingResult result,
+                                        Principal principal) {
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
@@ -60,6 +77,11 @@ public class UserController {
         return new ResponseEntity<> (HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @ApiOperation(value = "delete user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success delete user"),
+            @ApiResponse(code = 400, message = "fail delete user")
+    })
     @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(Principal principal) {
         if(userService.deleteUser(principal.getName()))
@@ -68,8 +90,19 @@ public class UserController {
         return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
     }
 
+    @ApiOperation(value = "delete user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "success find user board"),
+            @ApiResponse(code = 204, message = "No Content")
+    })
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(value = "page", dataType = "Integer", paramType = "query", required = false),
+            @ApiImplicitParam(value = "size", dataType = "Integer", paramType = "query", required = false),
+            @ApiImplicitParam(name = "sort", value = "sort=name,ase", dataType = "String", paramType = "query", required = false),
+    })
     @RequestMapping(value = "/boards", method = RequestMethod.GET)
-    public ResponseEntity<?> getUserBoardList(Pageable pageable, Principal principal) {
+    public ResponseEntity<?> getUserBoardList(Pageable pageable,
+                                              Principal principal) {
         Page<Board> boards = boardService.getBoard(pageable, principal.getName());
 
         if(boards != null) {

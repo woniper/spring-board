@@ -1,5 +1,6 @@
 package net.woniper.board.support.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Data;
 import net.woniper.board.domain.type.AuthorityType;
 
@@ -19,11 +20,13 @@ public class UserDto {
     @NotNull private String nickName;
     private AuthorityType authorityType;
 
+    @ApiModel(value = "user Request")
     @Data
     public static class Request extends UserDto {
         @Size(min = 5) @NotNull private String password;
     }
 
+    @ApiModel(value = "user Response")
     @Data
     public static class Response extends UserDto {
         private Long userId;
