@@ -3,6 +3,7 @@ package net.woniper.board.support.dto;
 import lombok.Data;
 import net.woniper.board.domain.type.AuthorityType;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import java.util.Date;
 @Data
 public class CommentDto implements Serializable {
 
+    @NotNull
     private String content;
 
     @Data

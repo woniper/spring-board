@@ -28,6 +28,6 @@ public class UserDto {
     public static class Response extends UserDto {
         private Long userId;
         private Date joinDate;
-        private boolean active = true;
+        private boolean active;
     }
 }
