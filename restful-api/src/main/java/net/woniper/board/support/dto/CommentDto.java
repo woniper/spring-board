@@ -1,5 +1,6 @@
 package net.woniper.board.support.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Data;
 import net.woniper.board.domain.type.AuthorityType;
 
@@ -10,12 +11,14 @@ import java.util.Date;
 /**
  * Created by woniper on 15. 2. 4..
  */
+@ApiModel(value = "comment Request")
 @Data
 public class CommentDto implements Serializable {
 
     @NotNull
     private String content;
 
+    @ApiModel(value = "comment Response")
     @Data
     public static class Response extends CommentDto {
         private Long commentId;

@@ -90,15 +90,15 @@ public class UserController {
         return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
     }
 
-    @ApiOperation(value = "delete user")
+    @ApiOperation(value = "get user boards")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "success find user board"),
             @ApiResponse(code = 204, message = "No Content")
     })
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(value = "page", dataType = "Integer", paramType = "query", required = false),
-            @ApiImplicitParam(value = "size", dataType = "Integer", paramType = "query", required = false),
-            @ApiImplicitParam(name = "sort", value = "sort=name,ase", dataType = "String", paramType = "query", required = false),
+            @ApiImplicitParam(name = "page", value = "page", dataType = "Long", paramType = "query", required = false),
+            @ApiImplicitParam(name = "size", value = "size", dataType = "Long", paramType = "query", required = false),
+            @ApiImplicitParam(name = "sort", value = "ex) sort=name,ase", dataType = "String", paramType = "query", required = false)
     })
     @RequestMapping(value = "/boards", method = RequestMethod.GET)
     public ResponseEntity<?> getUserBoardList(Pageable pageable,

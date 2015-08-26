@@ -22,6 +22,7 @@
         - 정렬 (날짜, 조회수, 제목) **
     - Board, User domain N:1 처리 **
     - paging 처리 Pageable로 변경 **
+    - 게시판 type 설정(어떤 게시판인지 구분하는 type)
 
 - 댓글
     - 생성 **
@@ -62,4 +63,4 @@
     - Exception ExceptionHandler 처리 **
 
 - logback 설정 **
-- swagger 설정
+- swagger 설정 **

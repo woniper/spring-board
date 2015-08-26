@@ -1,5 +1,6 @@
 package net.woniper.board.support.dto;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Data;
 import net.woniper.board.domain.type.AuthorityType;
 
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * Created by woniper on 15. 2. 1..
  */
+@ApiModel(value = "board Request")
 @Data
 public class BoardDto implements Serializable {
 
@@ -28,6 +30,7 @@ public class BoardDto implements Serializable {
         setContent(content);
     }
 
+    @ApiModel(value = "board Response")
     @Data
     public static class Response extends BoardDto {
         private Long boardId;

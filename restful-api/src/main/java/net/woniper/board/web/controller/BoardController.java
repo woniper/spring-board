@@ -1,5 +1,6 @@
 package net.woniper.board.web.controller;
 
+import com.wordnik.swagger.annotations.*;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
 import net.woniper.board.domain.User;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,9 +50,15 @@ public class BoardController {
      * @param result
      * @return
      */
-//    @Secured("ROLE_USER")
+    @ApiOperation(value = "insert board")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "success insert board", response = BoardDto.Response.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
+    })
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createNewBoard(@RequestBody @Valid BoardDto boardDto, BindingResult result, Principal principal) {
+    public ResponseEntity<?> createNewBoard(@ApiParam(required = true) @RequestBody @Valid BoardDto boardDto,
+                                            BindingResult result,
+                                            Principal principal) {
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
@@ -67,9 +75,15 @@ public class BoardController {
      * @param result
      * @return
      */
+    @ApiOperation(value = "update board")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success insert board", response = BoardDto.Response.class),
+            @ApiResponse(code = 406, message = "fail insert board"),
+            @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
+    })
     @RequestMapping(value = "/{boardId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateBoard(@PathVariable("boardId") Long boardId,
-                                         @RequestBody @Valid BoardDto board,
+    public ResponseEntity<?> updateBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
+                                         @ApiParam(required = true) @RequestBody @Valid BoardDto board,
                                          BindingResult result,
                                          Principal principal) {
 
@@ -92,8 +106,14 @@ public class BoardController {
      * @param boardId
      * @return
      */
+    @ApiOperation(value = "delete board")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success delete board"),
+            @ApiResponse(code = 406, message = "fail delete board")
+    })
     @RequestMapping(value = "/{boardId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteBoard(@PathVariable("boardId") Long boardId, Principal principal) {
+    public ResponseEntity<?> deleteBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
+                                         Principal principal) {
         if(boardService.deleteBoard(boardId, principal.getName()))
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         else
@@ -105,33 +125,44 @@ public class BoardController {
      * @param boardId
      * @return
      */
+    @ApiOperation(value = "get board")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "success get board", response = BoardDto.Response.class),
+            @ApiResponse(code = 204, message = "No Content")
+    })
     @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
-    public ResponseEntity<?> getBoard(@PathVariable("boardId") Long boardId) {
+    public ResponseEntity<?> getBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId) {
         Board board = boardService.getBoard(boardId);
-        BoardDto.Response responseBoard = getBoardResponse(board);
-        User user = board.getUser();
-        responseBoard.setUserId(user.getUserId());
-        responseBoard.setUsername(user.getUsername());
-        responseBoard.setNickName(user.getNickName());
 
-        List<Comment> commentList = board.getComments();
+        if(board != null) {
+            BoardDto.Response responseBoard = getBoardResponse(board);
+            User user = board.getUser();
+            responseBoard.setUserId(user.getUserId());
+            responseBoard.setUsername(user.getUsername());
+            responseBoard.setNickName(user.getNickName());
 
-        if(commentList != null && !commentList.isEmpty()) {
-            List<CommentDto.Response> comments = modelMapper.map(commentList, new TypeToken<List<CommentDto.Response>>() {}.getType());
+            List<Comment> commentList = board.getComments();
 
-            int count = commentList.size();
-            for (int i = 0; i < count; i++) {
-                User commentUser = commentList.get(i).getUser();
-                CommentDto.Response commentDto = comments.get(i);
-                commentDto.setUserId(commentUser.getUserId());
-                commentDto.setUsername(commentUser.getUsername());
-                commentDto.setNickName(commentUser.getNickName());
-                commentDto.setAuthorityType(commentUser.getAuthorityType());
+            if(commentList != null && !commentList.isEmpty()) {
+                List<CommentDto.Response> comments = modelMapper.map(commentList,
+                        new TypeToken<List<CommentDto.Response>>() {}.getType());
+
+                int count = commentList.size();
+                for (int i = 0; i < count; i++) {
+                    User commentUser = commentList.get(i).getUser();
+                    CommentDto.Response commentDto = comments.get(i);
+                    commentDto.setUserId(commentUser.getUserId());
+                    commentDto.setUsername(commentUser.getUsername());
+                    commentDto.setNickName(commentUser.getNickName());
+                    commentDto.setAuthorityType(commentUser.getAuthorityType());
+                }
+
+                responseBoard.setComments(comments);
             }
-
-            responseBoard.setComments(comments);
+            return ResponseEntity.ok(responseBoard);
         }
-        return ResponseEntity.ok(responseBoard);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -139,12 +170,24 @@ public class BoardController {
      * @param pageable
      * @return
      */
+    @ApiOperation(value = "get board list")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "success get board", response = BoardDto.Response.class),
+            @ApiResponse(code = 204, message = "No Content")
+    })
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "page", value = "page", dataType = "Long", paramType = "query", required = false),
+            @ApiImplicitParam(name = "size", value = "size", dataType = "Long", paramType = "query", required = false),
+            @ApiImplicitParam(name = "sort", value = "ex) sort=name,ase", dataType = "String", paramType = "query", required = false)
+    })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getBoards(Pageable pageable) {
         Page<Board> boards = boardService.getBoard(pageable);
 
         if(boards != null) {
-            return ResponseEntity.ok(boards);
+            Page<BoardDto.Response> boardDtos = modelMapper.map(boards,
+                        new TypeToken<Page<BoardDto.Response>>(){}.getType());
+            return ResponseEntity.ok(boardDtos);
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -158,9 +201,15 @@ public class BoardController {
      * @param principal
      * @return
      */
+    @ApiOperation(value = "insert comment")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "success insert comment", response = CommentDto.Response.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class),
+            @ApiResponse(code = 400, message = "Bad Request(No Content)")
+    })
     @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST)
-    public ResponseEntity<?> createNewComment(@RequestBody @Valid CommentDto commentDto,
-                                              @PathVariable("boardId") Long boardId,
+    public ResponseEntity<?> createNewComment(@ApiParam(required = true) @RequestBody @Valid CommentDto commentDto,
+                                              @ApiParam(required = true) @PathVariable("boardId") Long boardId,
                                               BindingResult result,
                                               Principal principal) {
         if(result.hasErrors()) {
@@ -168,17 +217,25 @@ public class BoardController {
         }
 
         Comment comment = commentService.createComment(commentDto, boardId, principal.getName());
-        CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
-        User user = comment.getUser();
-        responseComment.setUsername(user.getUsername());
-        responseComment.setNickName(user.getNickName());
-        responseComment.setAuthorityType(user.getAuthorityType());
+        if(comment != null) {
+            CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
+            User user = comment.getUser();
+            responseComment.setUsername(user.getUsername());
+            responseComment.setNickName(user.getNickName());
+            responseComment.setAuthorityType(user.getAuthorityType());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    @ApiOperation(value = "delete comment")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success delete comment"),
+            @ApiResponse(code = 406, message = "fail delete comment")
+    })
     @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteComment(@PathVariable("commentId") Long commentId,
+    public ResponseEntity<?> deleteComment(@ApiParam(required = true) @PathVariable("commentId") Long commentId,
                                            Principal principal) {
         if(commentService.deleteComment(commentId, principal.getName())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
@@ -187,9 +244,15 @@ public class BoardController {
         }
     }
 
+    @ApiOperation(value = "update comment")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "success update comment", response = CommentDto.Response.class),
+            @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class),
+            @ApiResponse(code = 406, message = "fail update comment")
+    })
     @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateComment(@PathVariable("commentId") Long commentId,
-                                           @RequestBody @Valid CommentDto commentDto,
+    public ResponseEntity<?> updateComment(@ApiParam(required = true) @PathVariable("commentId") Long commentId,
+                                           @ApiParam(required = true) @RequestBody @Valid CommentDto commentDto,
                                            BindingResult result,
                                            Principal principal) {
 
