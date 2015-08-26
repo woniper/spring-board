@@ -63,4 +63,6 @@
     - Exception ExceptionHandler 처리 **
 
 - logback 설정 **
-- swagger 설정 **
+- swagger
+    - 설정 **
+    - admin 계정만 접근 가능 **
