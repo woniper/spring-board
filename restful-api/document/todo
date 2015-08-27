@@ -45,7 +45,9 @@
     - 정보 수정 **
     - 탈퇴 (계정 비활성 처리) **
     - security 설정 **
-    - 권한(AuthorityType) enum type으로 수정 *
+    - 권한(AuthorityType) enum type으로 수정 **
+    - social login
+
 
 - URL 수정
     - 복수 **
