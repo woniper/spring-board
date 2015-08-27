@@ -10,8 +10,6 @@
     "test"
   ],
   "dependencies": {
-    "bootstrap-material-design": "~0.3.0",
-    "react": "~0.13.1",
-    "bootstrap": "~3.3.4"
+    "react": "~0.13.3"
   }
 }
