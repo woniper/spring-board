@@ -1,10 +1,13 @@
 package net.woniper.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.woniper.board.domain.Board;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
+import net.woniper.board.service.CommentService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
+import net.woniper.board.support.dto.CommentDto;
 import net.woniper.board.support.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,9 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -42,6 +47,8 @@ public class BoardApplication {
         // test context
         UserService userService = context.getBean(UserService.class);
         BoardService boardService = context.getBean(BoardService.class);
+        CommentService commentService = context.getBean(CommentService.class);
+
         UserDto.Request userDto = new UserDto.Request();
         userDto.setUsername("lkw1989");
         userDto.setPassword("12345");
@@ -52,11 +59,16 @@ public class BoardApplication {
         userService.createUser(userDto);
 
         for (int i = 0; i < 10; i++) {
+            String username = userDto.getUsername();
             BoardDto boardDto = new BoardDto();
             boardDto.setTitle("test title" + i);
             boardDto.setContent("test content" + i);
-            boardService.createBoard(boardDto, userDto.getUsername());
+            Board board = boardService.createBoard(boardDto, username);
+            CommentDto commentDto = new CommentDto();
+            commentDto.setContent("test comment content" + i);
+            commentService.createComment(commentDto, board.getBoardId(), username);
         }
+
     }
 
     @Autowired private EntityManagerFactory factory;

@@ -56,4 +56,8 @@ public class Board implements Serializable {
         setTitle(boardDto.getTitle());
         setContent(boardDto.getContent());
     }
+
+    public void read() {
+        readCount++;
+    }
 }

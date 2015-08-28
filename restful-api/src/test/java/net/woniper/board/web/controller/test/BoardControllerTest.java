@@ -246,7 +246,6 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_리스트_조회_로그인() throws Exception {
         // given
-//        User newUser = createUser(AuthorityType.ADMIN);
         createBoardList(20, admin);
 
         // when

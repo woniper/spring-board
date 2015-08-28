@@ -53,9 +53,8 @@ public class BoardServiceImpl implements BoardService {
     public Board getBoard(Long boardId) {
         Board board = boardRepository.findOne(boardId);
         if(board != null)
-            board.setReadCount(board.getReadCount() + 1);
+            board.read();
 
-        boardRepository.flush();
         return board;
     }
 

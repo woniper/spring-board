@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username);
         if(user != null) {
             user.setActive(false);
-            userRepository.flush();
             return true;
         }
         return false;

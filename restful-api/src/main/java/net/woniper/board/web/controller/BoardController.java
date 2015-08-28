@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -136,21 +137,17 @@ public class BoardController {
 
         if(board != null) {
             BoardDto.Response responseBoard = getBoardResponse(board);
-            User user = board.getUser();
-            responseBoard.setUserId(user.getUserId());
-            responseBoard.setUsername(user.getUsername());
-            responseBoard.setNickName(user.getNickName());
-
             List<Comment> commentList = board.getComments();
 
             if(commentList != null && !commentList.isEmpty()) {
                 List<CommentDto.Response> comments = modelMapper.map(commentList,
                         new TypeToken<List<CommentDto.Response>>() {}.getType());
 
-                int count = commentList.size();
-                for (int i = 0; i < count; i++) {
+                int size = commentList.size();
+                for (int i = 0; i < size; i++) {
                     User commentUser = commentList.get(i).getUser();
                     CommentDto.Response commentDto = comments.get(i);
+
                     commentDto.setUserId(commentUser.getUserId());
                     commentDto.setUsername(commentUser.getUsername());
                     commentDto.setNickName(commentUser.getNickName());
@@ -185,9 +182,25 @@ public class BoardController {
         Page<Board> boards = boardService.getBoard(pageable);
 
         if(boards != null) {
-            Page<BoardDto.Response> boardDtos = modelMapper.map(boards,
-                        new TypeToken<Page<BoardDto.Response>>(){}.getType());
-            return ResponseEntity.ok(boardDtos);
+            List<Board> boardList = boards.getContent();
+            List<BoardDto.ListResponse> boardContents = modelMapper.map(boardList,
+                    new TypeToken<List<BoardDto.ListResponse>>() {}.getType());
+
+            if(boardContents != null) {
+                int size = boardContents.size();
+                for (int i = 0; i < size; i++) {
+                    User user = boardList.get(i).getUser();
+                    BoardDto.ListResponse boardDto = boardContents.get(i);
+
+                    boardDto.setUserId(user.getUserId());
+                    boardDto.setUsername(user.getUsername());
+                    boardDto.setNickName(user.getNickName());
+                    boardDto.setAuthorityType(user.getAuthorityType());
+                }
+
+                Page<BoardDto.ListResponse> boardPages = new PageImpl<BoardDto.ListResponse>(boardContents, pageable, boards.getTotalElements());
+                return ResponseEntity.ok(boardPages);
+            }
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

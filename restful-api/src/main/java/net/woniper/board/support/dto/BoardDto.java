@@ -33,17 +33,22 @@ public class BoardDto implements Serializable {
 
     @ApiModel(value = "board Response")
     @Getter @Setter
-    public static class Response extends BoardDto {
+    public static class Response extends ListResponse {
+        private List<CommentDto.Response> comments;
+    }
+
+    @ApiModel(value = "board list Response")
+    @Getter @Setter
+    public static class ListResponse extends BoardDto {
         private Long boardId;
         private int readCount;
-        private Date createDate = new Date();
+        private Date createDate;
 
         private Long userId;
         private String username;
         private String nickName;
         private AuthorityType authorityType;
-
-        private List<CommentDto.Response> comments;
     }
+
 
 }
