@@ -78,7 +78,7 @@
                 var state = this;
                 $.ajax({
                     type: "GET",
-                    url: "http://localhost:8080/boards",
+                    url: "http://localhost:8080/boards?page=0&size=20&sort=createDate,desc",
                     contentType: "application/json",
                     success: function(data) {
                         state.setState({ boardContent: data.content});
@@ -98,23 +98,42 @@
                             <tr>
                                 <td>{boardContent[i].boardId}</td>
                                 <td>{boardContent[i].title}</td>
-                                <td>{boardContent[i].title}</td>
-                                <td>{boardContent[i].readCount}</td>
+                                <td>{boardContent[i].nickName}</td>
+                                <td>{boardContent[i].createDate}</td>
                                 <td>{boardContent[i].readCount}</td>
                             </tr>
                         )
                     }
                 }
 
+                return (<tbody>{items}</tbody>)
+            }
+        });
+
+        var Footer = React.createClass({
+            render: function() {
                 return (
-                    <tbody>
-                        {items}
-                    </tbody>
+                    <div className="row">
+                        <div className="col-lg-12 text-center">
+                            <div className="panel">
+                                <div className="panel-body">
+                                    <ul className="pagination">
+                                        <li><a href="#">1</a></li>
+                                        <li><a href="#">2</a></li>
+                                        <li><a href="#">3</a></li>
+                                        <li><a href="#">4</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 )
             }
         });
 
         var BoardRender = React.render(<Board />, document.getElementById("page-wrapper"));
+        React.render(<Footer />, document.getElementById("footer"));
+
     </script>
 
 </head>
@@ -125,6 +144,7 @@
         <!-- Navigation -->
         <div id="navigation"></div>
         <div id="page-wrapper"></div>
+        <div id="footer"></div>
     </div>
 
     <!-- jQuery -->
