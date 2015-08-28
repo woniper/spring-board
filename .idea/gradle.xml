@@ -6,6 +6,11 @@
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/../../../다운로드/rocking-the-rest-api-master" />
         <option name="gradleHome" value="/usr/local/Cellar/gradle/2.3" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/../../../다운로드/rocking-the-rest-api-master" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>
