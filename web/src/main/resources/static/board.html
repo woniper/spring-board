@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>SB Admin - Bootstrap Admin Template</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- reactjs-->
+    <script src="components/react/react.js"></script>
+    <script src="components/react/JSXTransformer.js"></script>
+    <script type="text/jsx" src="js/component/Navigation.js"></script>
+    <script type="text/jsx">
+        var Header = React.createClass({
+            render: function() {
+                return(
+                    <div className="row">
+                        <div className="col-lg-12">
+                            <h1 className="page-header">
+                                Board
+                            </h1>
+                        </div>
+                    </div>
+                )
+            }
+        });
+
+        var Board = React.createClass({
+            render: function() {
+                return (
+                    <div className="container-fluid">
+                        <Header />
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <div className="table-responsive">
+                                    <table className="table table-bordered table-hover">
+                                        <thead>
+                                            <tr className="success">
+                                                <th>*</th>
+                                                <th>제목</th>
+                                                <th>작성자</th>
+                                                <th>작성일</th>
+                                                <th>조회수</th>
+                                            </tr>
+                                        </thead>
+                                        <BoardItem />
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        });
+
+        var BoardItem = React.createClass({
+            getInitialState: function() {
+                return {
+                    boardContent: null
+                }
+            },
+            componentDidMount: function() {
+                var state = this;
+                $.ajax({
+                    type: "GET",
+                    url: "http://localhost:8080/boards",
+                    contentType: "application/json",
+                    success: function(data) {
+                        state.setState({ boardContent: data.content});
+                    },
+                    error: function(request, status, error) {
+                        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    }
+                });
+            },
+            render: function() {
+                var items = [];
+                var boardContent = this.state.boardContent;
+                if(boardContent != null) {
+                    var length = boardContent.length;
+                    for(var i = 0; i < length; i++) {
+                        items.push(
+                            <tr>
+                                <td>{boardContent[i].boardId}</td>
+                                <td>{boardContent[i].title}</td>
+                                <td>{boardContent[i].title}</td>
+                                <td>{boardContent[i].readCount}</td>
+                                <td>{boardContent[i].readCount}</td>
+                            </tr>
+                        )
+                    }
+                }
+
+                return (
+                    <tbody>
+                        {items}
+                    </tbody>
+                )
+            }
+        });
+
+        var BoardRender = React.render(<Board />, document.getElementById("page-wrapper"));
+    </script>
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+        <!-- Navigation -->
+        <div id="navigation"></div>
+        <div id="page-wrapper"></div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
