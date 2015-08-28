@@ -1,0 +1,21 @@
+- View Components
+    - Navigation : 상단 메뉴, 좌단 메뉴
+    - Login : 로그인 화면
+    - Board : 게시판
+
+- login
+    - spring security
+    - 자동 로그인
+    - Admin, User 구분 처리
+
+- 게시판
+    - 리스트 보기
+    - 자세히 보기
+    - 쓰기
+    - 수정
+    - 삭제
+    - 댓글
+        - 리스트 보기
+        - 쓰기
+        - 수정
+        - 삭제
