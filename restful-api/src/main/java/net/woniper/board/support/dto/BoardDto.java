@@ -1,7 +1,8 @@
 package net.woniper.board.support.dto;
 
 import com.wordnik.swagger.annotations.ApiModel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
 
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import java.util.List;
  * Created by woniper on 15. 2. 1..
  */
 @ApiModel(value = "board Request")
-@Data
+@Getter @Setter
 public class BoardDto implements Serializable {
 
     @NotNull @Size(min = 2)
@@ -31,7 +32,7 @@ public class BoardDto implements Serializable {
     }
 
     @ApiModel(value = "board Response")
-    @Data
+    @Getter @Setter
     public static class Response extends BoardDto {
         private Long boardId;
         private int readCount;

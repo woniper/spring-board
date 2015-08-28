@@ -22,8 +22,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private UserDetailsService userDetailsService;
 
-    private final static String[] VIEW_URL = {"/components/**", "/index"};
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
@@ -35,7 +33,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/boards/**", "/test").permitAll()
-//                .antMatchers(VIEW_URL).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic();

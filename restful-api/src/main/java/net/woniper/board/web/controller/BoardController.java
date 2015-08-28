@@ -31,7 +31,7 @@ import java.util.List;
  * Created by woniper on 15. 1. 26..
  */
 @RestController
-@RequestMapping(value = "/boards", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/boards", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BoardController {
 
     @Autowired private BoardService boardService;

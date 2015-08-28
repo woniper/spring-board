@@ -1,6 +1,7 @@
 package net.woniper.board.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
  * Created by woniper on 15. 1. 28..
  */
 @Entity(name = "user")
-@Data
+@Getter @Setter
 public class User implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

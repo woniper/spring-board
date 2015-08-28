@@ -1,6 +1,8 @@
 package net.woniper.board.domain;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import net.woniper.board.support.dto.BoardDto;
 
 import javax.persistence.*;
@@ -12,7 +14,7 @@ import java.util.List;
 * Created by woniper on 15. 1. 26..
 */
 @Entity(name = "board")
-@Data
+@Getter @Setter
 public class Board implements Serializable {
 
     @Id
@@ -33,6 +35,7 @@ public class Board implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId")
+    @JsonIgnore
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.ALL)

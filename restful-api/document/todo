@@ -68,3 +68,7 @@
 - swagger
     - 설정 **
     - admin 계정만 접근 가능 **
+
+- error
+    - Could not write content: Infinite recursion (StackOverflowError) (through reference chain: net.woniper.board.domain.Board["user"]->net.woniper.board.domain.User_$$_jvstb24_0["boards"]->
+    - GET, DELETE content-type 없애기

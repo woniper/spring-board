@@ -1,6 +1,7 @@
 package net.woniper.board.domain;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.woniper.board.support.dto.CommentDto;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Date;
  * Created by woniper on 15. 2. 4..
  */
 @Entity(name = "comment")
-@Data
+@Getter @Setter
 public class Comment implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)

@@ -1,7 +1,8 @@
 package net.woniper.board.support.dto;
 
 import com.wordnik.swagger.annotations.ApiModel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
 
 import javax.validation.constraints.NotNull;
@@ -11,7 +12,7 @@ import java.util.Date;
 /**
  * Created by woniper on 15. 1. 28..
  */
-@Data
+@Getter @Setter
 public class UserDto {
 
     @Size(min = 5) @NotNull private String username;
@@ -21,13 +22,13 @@ public class UserDto {
     private AuthorityType authorityType;
 
     @ApiModel(value = "user Request")
-    @Data
+    @Getter @Setter
     public static class Request extends UserDto {
         @Size(min = 5) @NotNull private String password;
     }
 
     @ApiModel(value = "user Response")
-    @Data
+    @Getter @Setter
     public static class Response extends UserDto {
         private Long userId;
         private Date joinDate;

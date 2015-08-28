@@ -16,10 +16,7 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -32,11 +29,6 @@ public class BoardApplication {
     @Bean
     WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addViewControllers(ViewControllerRegistry registry) {
-//                registry.addViewController("/").setViewName("index.html");
-            }
-
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addWebRequestInterceptor(oeiv());
