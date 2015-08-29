@@ -166,40 +166,16 @@ public class UserControllerTest {
     @Test
     public void test_내가_쓴_게시글_리스트_조회() throws Exception {
         // given
-//        User newUser = createUser(AuthorityType.ADMIN);
         createBoardList(10, admin);
         createBoardList(10, user);
 
         // when
         ResultActions resultActions = mock.perform(get("/users/boards?page=0&size=20")
-                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(user))));
 
         // then
         resultActions.andDo(print()).andExpect(status().isOk());
     }
-
-//    private User createUser(AuthorityType authorityType) {
-//        User newUser = new User();
-//        newUser.setUsername("newUser");
-//        newUser.setPassword("12345");
-//        newUser.setFirstName("kyung-won");
-//        newUser.setLastName("lee");
-//        newUser.setNickName("newUser");
-//        newUser.setAuthorityType(authorityType);
-//        return userRepository.save(newUser);
-//    }
-
-//    private UserDto.Request createUserRequest(AuthorityType authorityType) {
-//        UserDto.Request newUser = new UserDto.Request();
-//        newUser.setUsername("newUser");
-//        newUser.setPassword("12345");
-//        newUser.setFirstName("kyung-won");
-//        newUser.setLastName("lee");
-//        newUser.setNickName("newUser");
-//        newUser.setAuthorityType(authorityType);
-//        return newUser;
-//    }
 
     private List<Board> createBoardList(int size, User user) {
         List<Board> list = new ArrayList<>();

@@ -189,8 +189,7 @@ public class BoardControllerTest {
     public void test_게시글_삭제() throws Exception {
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(admin)))
-                                            .contentType(mediaType));
+                                            .with(user(new SecurityUserDetails(admin))));
 
         //then
         resultActions.andDo(print())
@@ -202,7 +201,6 @@ public class BoardControllerTest {
         // given
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
-                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(user))));
 
         // then
@@ -218,7 +216,6 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + newBoard.getBoardId())
-                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(admin))));
 
         // then
@@ -230,7 +227,6 @@ public class BoardControllerTest {
     public void test_게시글_조회() throws Exception {
         // when
         ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
-                .contentType(mediaType)
                 .with(user(new SecurityUserDetails(admin))));
 
         // then
@@ -250,7 +246,6 @@ public class BoardControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(get("/boards?page=0&size=20")
-                                            .contentType(mediaType)
                                             .with(user(new SecurityUserDetails(admin))));
 
         // then
