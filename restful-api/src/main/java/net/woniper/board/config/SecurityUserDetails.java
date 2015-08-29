@@ -23,9 +23,9 @@ public class SecurityUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-            return Arrays.asList(new SimpleGrantedAuthority(AuthorityType.ADMIN.toString()));
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_ADMIN"));
         } else {
-            return Arrays.asList(new SimpleGrantedAuthority(AuthorityType.USER.toString()));
+            return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
         }
     }
 

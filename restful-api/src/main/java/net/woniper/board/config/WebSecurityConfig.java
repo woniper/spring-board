@@ -31,12 +31,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.GET, "/boards/**", "/test").permitAll()
-                .anyRequest().authenticated()
+            .antMatchers("/swagger", "/swagger/index.html").hasRole("ADMIN")
+            .antMatchers(HttpMethod.GET, "/users/boards/**").hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.PUT).hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN", "USER")
+            .antMatchers(HttpMethod.POST, "/users").permitAll()
+            .anyRequest().permitAll()
                 .and()
-                .httpBasic();
-
-        http.logout().logoutUrl("/logout").permitAll();
+            .httpBasic();
+//                .and()
+//            // login
+//            .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
+//                .and()
+//            // logout
+//            .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                .invalidateHttpSession(true).deleteCookies("JSESSIONID")
+//                .logoutSuccessUrl("/").permitAll();
     }
 }
