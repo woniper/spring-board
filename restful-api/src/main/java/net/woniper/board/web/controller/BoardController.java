@@ -183,14 +183,14 @@ public class BoardController {
 
         if(boards != null) {
             List<Board> boardList = boards.getContent();
-            List<BoardDto.ListResponse> boardContents = modelMapper.map(boardList,
+            List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardList,
                     new TypeToken<List<BoardDto.ListResponse>>() {}.getType());
 
-            if(boardContents != null) {
-                int size = boardContents.size();
+            if(boardListResponses != null && !boardListResponses.isEmpty()) {
+                int size = boardListResponses.size();
                 for (int i = 0; i < size; i++) {
                     User user = boardList.get(i).getUser();
-                    BoardDto.ListResponse boardDto = boardContents.get(i);
+                    BoardDto.ListResponse boardDto = boardListResponses.get(i);
 
                     boardDto.setUserId(user.getUserId());
                     boardDto.setUsername(user.getUsername());
@@ -198,7 +198,7 @@ public class BoardController {
                     boardDto.setAuthorityType(user.getAuthorityType());
                 }
 
-                Page<BoardDto.ListResponse> boardPages = new PageImpl<BoardDto.ListResponse>(boardContents, pageable, boards.getTotalElements());
+                Page<BoardDto.ListResponse> boardPages = new PageImpl<BoardDto.ListResponse>(boardListResponses, pageable, boards.getTotalElements());
                 return ResponseEntity.ok(boardPages);
             }
         }

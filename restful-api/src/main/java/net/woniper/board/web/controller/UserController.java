@@ -6,10 +6,13 @@ import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
+import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.UserDto;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 /**
  * Created by woniper on 15. 1. 28..
@@ -106,7 +110,26 @@ public class UserController {
         Page<Board> boards = boardService.getBoard(pageable, principal.getName());
 
         if(boards != null) {
-            return ResponseEntity.ok(boards);
+
+            List<Board> boardList = boards.getContent();
+            List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardList,
+                    new TypeToken<List<BoardDto.ListResponse>>(){}.getType());
+
+            if(boardListResponses != null && !boardListResponses.isEmpty()) {
+                int size = boardListResponses.size();
+
+                for (int i = 0; i < size; i++) {
+                    User user = boardList.get(i).getUser();
+                    BoardDto.ListResponse boardDto = boardListResponses.get(i);
+
+                    boardDto.setUserId(user.getUserId());
+                    boardDto.setUsername(user.getUsername());
+                    boardDto.setNickName(user.getNickName());
+                    boardDto.setAuthorityType(user.getAuthorityType());
+                }
+                Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());
+                return ResponseEntity.ok(boardPages);
+            }
         }
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
