@@ -27,7 +27,7 @@ import java.security.Principal;
  */
 @Api(value = "/users", description = "user account, update, delete")
 @RestController
-@RequestMapping(value = "/users", consumes = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/users")
 public class UserController {
 
     @Autowired private UserService userService;
@@ -44,7 +44,7 @@ public class UserController {
         @ApiResponse(code = 201, message = "success account user", response = UserDto.Response.class),
         @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNewUser(@ApiParam(required = true) @RequestBody @Valid UserDto.Request userDto,
                                            BindingResult result) {
 
@@ -62,7 +62,7 @@ public class UserController {
             @ApiResponse(code = 406, message = "fail update user"),
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@ApiParam(required = true) @RequestBody @Valid UserDto.Request userDto,
                                         BindingResult result,
                                         Principal principal) {

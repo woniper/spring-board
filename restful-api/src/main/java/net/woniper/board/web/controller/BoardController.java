@@ -32,7 +32,7 @@ import java.util.List;
  * Created by woniper on 15. 1. 26..
  */
 @RestController
-@RequestMapping(value = "/boards", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/boards")
 public class BoardController {
 
     @Autowired private BoardService boardService;
@@ -56,7 +56,7 @@ public class BoardController {
             @ApiResponse(code = 201, message = "success insert board", response = BoardDto.Response.class),
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNewBoard(@ApiParam(required = true) @RequestBody @Valid BoardDto boardDto,
                                             BindingResult result,
                                             Principal principal) {
@@ -82,7 +82,7 @@ public class BoardController {
             @ApiResponse(code = 406, message = "fail insert board"),
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(value = "/{boardId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{boardId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
                                          @ApiParam(required = true) @RequestBody @Valid BoardDto board,
                                          BindingResult result,
@@ -220,7 +220,7 @@ public class BoardController {
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class),
             @ApiResponse(code = 400, message = "Bad Request(No Content)")
     })
-    @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST)
+    @RequestMapping(value = "/{boardId}/comments", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createNewComment(@ApiParam(required = true) @RequestBody @Valid CommentDto commentDto,
                                               @ApiParam(required = true) @PathVariable("boardId") Long boardId,
                                               BindingResult result,
@@ -263,7 +263,7 @@ public class BoardController {
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class),
             @ApiResponse(code = 406, message = "fail update comment")
     })
-    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateComment(@ApiParam(required = true) @PathVariable("commentId") Long commentId,
                                            @ApiParam(required = true) @RequestBody @Valid CommentDto commentDto,
                                            BindingResult result,
