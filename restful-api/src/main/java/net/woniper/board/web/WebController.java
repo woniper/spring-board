@@ -1,11 +1,13 @@
 package net.woniper.board.web;
 
-import org.springframework.security.access.annotation.Secured;
+import net.woniper.board.domain.User;
+import net.woniper.board.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,17 +17,36 @@ import java.util.Map;
 @RestController
 public class WebController {
 
+    @Autowired private UserService userService;
+
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public Map<String, String> test() {
-        Map<String, String> map = new HashMap<>();
+    public Map<String, Object> test(Principal principal) {
+        Map<String, Object> map = new HashMap<>();
         map.put("title", "board");
+
+        User user = userService.getUser(principal.getName());
+        if(user != null) {
+            map.put("username", user.getUsername());
+            map.put("authority", user.getAuthorityType());
+        }
         return map;
     }
 
-    @RequestMapping(value = {"/", "/swagger"}, method = RequestMethod.GET)
-    @Secured(value = "ADMIN")
-    public ModelAndView index() {
-        return new ModelAndView("redirect:/swagger/index.html");
+    @RequestMapping(value = "/web-session", method = RequestMethod.GET)
+    public Map<String, Object> session(Principal principal) {
+        Map<String, Object> map = new HashMap<>();
+        if(principal != null) {
+            User user = userService.getUser(principal.getName());
+            map.put("session", true);
+            map.put("username", user.getUsername());
+            map.put("name", user.getLastName() + " " + user.getFirstName());
+            map.put("nickName", user.getNickName());
+            map.put("authorityType", user.getAuthorityType());
+        } else {
+            map.put("session", false);
+        }
+
+        return map;
     }
 
 }

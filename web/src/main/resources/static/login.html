@@ -27,6 +27,7 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
 </head>
 <body>
     <!--login modal-->
@@ -40,7 +41,7 @@
                 <div class="modal-body">
                     <form class="form col-md-12 center-block" action="/login" method="post">
                         <div class="form-group">
-                            <input type="text" class="form-control input-lg" placeholder="username" id="username" name="username">
+                            <input type="text" class="form-control input-lg" placeholder="username" id="username" name="username" autofocus>
                         </div>
                         <div class="form-group">
                             <input type="password" class="form-control input-lg" placeholder="password" id="password" name="password">
@@ -59,11 +60,22 @@
             </div>
         </div>
     </div>
-    <!-- script references -->
-    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>-->
-    <!--<script src="js/bootstrap.min.js"></script>-->
     <!-- jQuery -->
     <script src="js/jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "/web-session",
+                success: function(data) {
+                    var isSession = data.session;
+                    if(isSession) {
+                        location.href = "/";
+                    }
+                }
+            })
+        })
+    </script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>

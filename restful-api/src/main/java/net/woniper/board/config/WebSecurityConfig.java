@@ -30,17 +30,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-        .authorizeRequests()
-            .antMatchers("/swagger", "/swagger/index.html").hasRole("ADMIN")
-            .antMatchers(HttpMethod.GET, "/users/boards/**").hasAnyRole("ADMIN", "USER")
-            .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "USER")
-            .antMatchers(HttpMethod.PUT).hasAnyRole("ADMIN", "USER")
-            .antMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN", "USER")
-            .antMatchers(HttpMethod.POST, "/users").permitAll()
-            .anyRequest().permitAll()
-                .and()
-            .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
-                .and()
-            .logout().logoutUrl("/logout").logoutSuccessUrl("/").permitAll();
+            .authorizeRequests()
+                .antMatchers("/swagger", "/swagger/index.html").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/users/boards/**", "/test").hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.PUT).hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN", "USER")
+                .antMatchers(HttpMethod.POST, "/users").permitAll()
+                .anyRequest().permitAll()
+            .and()
+                .formLogin().loginPage("/login")
+                    .failureUrl("/login?error").defaultSuccessUrl("/")
+            .and()
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/").permitAll()
+            .and()
+                // 동시 로그인 세션 : 1, 중복 로그인시 기존 세션 종료 후 url : /
+                .sessionManagement().maximumSessions(1).expiredUrl("/");
     }
 }
