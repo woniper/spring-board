@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -32,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -78,7 +78,7 @@ public class BoardControllerTest {
     @Test
     public void test_게시글_생성() throws Exception {
         // given
-        BoardDto newBoard = new BoardDto();
+        BoardDto newBoard = new BoardDto("newBoard", "newContent");
         newBoard.setTitle("newBoard");
         newBoard.setContent("newContent");
 
@@ -127,15 +127,7 @@ public class BoardControllerTest {
                                             .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
-        resultActions.andDo(print())
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.boardId", is(board.getBoardId().intValue())))
-                .andExpect(jsonPath("$.title", not("title")))
-                .andExpect(jsonPath("$.title", is(board.getTitle())))
-                .andExpect(jsonPath("$.content", not("content")))
-                .andExpect(jsonPath("$.content", is(board.getContent())))
-                .andExpect(jsonPath("$.readCount", is(board.getReadCount())));
-
+        equalsResultDataAndThen(resultActions, status().isAccepted(), board, admin);
     }
 
     @Test
@@ -171,13 +163,7 @@ public class BoardControllerTest {
                                             .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
-        resultActions.andDo(print())
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.boardId", is(newBoard.getBoardId().intValue())))
-                .andExpect(jsonPath("$.title", is(newBoard.getTitle())))
-                .andExpect(jsonPath("$.content", is(newBoard.getContent())))
-                .andExpect(jsonPath("$.readCount", is(newBoard.getReadCount())))
-                .andExpect(jsonPath("$.userId", is(user.getUserId().intValue())));
+        equalsResultDataAndThen(resultActions, status().isAccepted(), newBoard, user);
     }
 
     @Test
@@ -230,13 +216,7 @@ public class BoardControllerTest {
                 .with(user(new SecurityUserDetails(admin))));
 
         // then
-        resultActions.andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId", is(board.getBoardId().intValue())))
-                .andExpect(jsonPath("$.title", is(board.getTitle())))
-                .andExpect(jsonPath("$.content", is(board.getContent())))
-                .andExpect(jsonPath("$.readCount", is(board.getReadCount())))
-                .andExpect(jsonPath("$.username", is(admin.getUsername())));
+        equalsResultDataAndThen(resultActions, status().isOk(), board, admin);
     }
 
     @Test
@@ -251,6 +231,17 @@ public class BoardControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher, Board board, User user) throws Exception {
+        resultActions.andDo(print())
+                .andExpect(resultMatcher)
+                .andExpect(jsonPath("$.boardId", is(board.getBoardId().intValue())))
+                .andExpect(jsonPath("$.title", is(board.getTitle())))
+                .andExpect(jsonPath("$.content", is(board.getContent())))
+                .andExpect(jsonPath("$.readCount", is(board.getReadCount())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())));
+
     }
 
     private List<Board> createBoardList(int size, User user) {

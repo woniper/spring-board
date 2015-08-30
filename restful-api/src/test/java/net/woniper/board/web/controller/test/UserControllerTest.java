@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -85,13 +86,7 @@ public class UserControllerTest {
                     .content(objectMapper.writeValueAsBytes(newUser)));
 
         // then
-        resultActions.andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username", is(newUser.getUsername())))
-                .andExpect(jsonPath("$.firstName", is(newUser.getFirstName())))
-                .andExpect(jsonPath("$.lastName", is(newUser.getLastName())))
-                .andExpect(jsonPath("$.nickName", is(newUser.getNickName())))
-                .andExpect(jsonPath("$.authorityType", is(newUser.getAuthorityType().toString())));
+        equalsResultDataAndThen(resultActions, status().isCreated(), newUser);
     }
 
     @Test
@@ -110,12 +105,7 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsBytes(newUser)));
 
         // then
-        resultActions.andDo(print())
-                .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.username", is(newUser.getUsername())))
-                .andExpect(jsonPath("$.firstName", is(newUser.getFirstName())))
-                .andExpect(jsonPath("$.lastName", is(newUser.getLastName())))
-                .andExpect(jsonPath("$.nickName", is(newUser.getNickName())));
+        equalsResultDataAndThen(resultActions, status().isAccepted(), newUser);
     }
 
     @Test
@@ -175,6 +165,16 @@ public class UserControllerTest {
 
         // then
         resultActions.andDo(print()).andExpect(status().isOk());
+    }
+
+    private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher, UserDto.Request userDto) throws Exception {
+        resultActions.andDo(print())
+                .andExpect(resultMatcher)
+                .andExpect(jsonPath("$.username", is(userDto.getUsername())))
+                .andExpect(jsonPath("$.firstName", is(userDto.getFirstName())))
+                .andExpect(jsonPath("$.lastName", is(userDto.getLastName())))
+                .andExpect(jsonPath("$.nickName", is(userDto.getNickName())))
+                .andExpect(jsonPath("$.authorityType", is(userDto.getAuthorityType().toString())));
     }
 
     private List<Board> createBoardList(int size, User user) {
