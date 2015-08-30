@@ -56,19 +56,20 @@ public class ViewControllerTest {
 
     @Test
     public void testSwaggerAdminRequest() throws Exception {
-        ResultActions resultActions = mock.perform(get("/swagger").with(user(new SecurityUserDetails(admin))));
-        resultActions.andDo(print()).andExpect(status().isFound());
+        ResultActions resultActions = mock.perform(get("/swagger/index.html")
+                .with(user(new SecurityUserDetails(admin))));
+        resultActions.andDo(print()).andExpect(status().isOk());
     }
 
     @Test
     public void testSwaggerUserRequest() throws Exception {
-        ResultActions resultActions = mock.perform(get("/swagger").with(user(new SecurityUserDetails(user))));
+        ResultActions resultActions = mock.perform(get("/swagger/index.html").with(user(new SecurityUserDetails(user))));
         resultActions.andDo(print()).andExpect(status().isForbidden());
     }
 
     @Test
-    public void testSwaggerNonUserRequest() throws Exception {
-        ResultActions resultActions = mock.perform(get("/swagger"));
-        resultActions.andDo(print()).andExpect(status().isUnauthorized());
+    public void testSwaggerNoneUserRequest() throws Exception {
+        ResultActions resultActions = mock.perform(get("/swagger/index.html"));
+        resultActions.andDo(print()).andExpect(status().isFound());
     }
 }
