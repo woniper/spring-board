@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-            .authorizeRequests()
+        .authorizeRequests()
             .antMatchers("/swagger", "/swagger/index.html").hasRole("ADMIN")
             .antMatchers(HttpMethod.GET, "/users/boards/**").hasAnyRole("ADMIN", "USER")
             .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "USER")
@@ -39,14 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.POST, "/users").permitAll()
             .anyRequest().permitAll()
                 .and()
-            .httpBasic();
-//                .and()
-//            // login
-//            .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
-//                .and()
-//            // logout
-//            .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                .invalidateHttpSession(true).deleteCookies("JSESSIONID")
-//                .logoutSuccessUrl("/").permitAll();
+            .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
+                .and()
+            .logout().logoutUrl("/logout").logoutSuccessUrl("/").permitAll();
     }
 }
