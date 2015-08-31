@@ -41,7 +41,53 @@
         });
 
         var Board = React.createClass({
+            getInitialState: function() {
+                return {
+                    boardContents: [],
+                    currentPage: 0,
+                    totalPages: 0,
+                    first: false,
+                    last: false
+                }
+            },
+            requestBoardContents: function(event) {
+                console.log(event.type);
+                var page = 0;
+                var state = this;
+                $.ajax({
+                    type: "GET",
+                    url: "/boards?page="+ page +"&size=10&sort=createDate,desc",
+                    contentType: "application/json",
+                    success: function(data) {
+                        if(data != null) {
+                            state.setState({
+                                boardContents: data.content,
+                                currentPage: page,
+                                totalPages: data.totalPages,
+                                first: data.first,
+                                last: data.last
+                            });
+                        }
+                    },
+                    error: function(request, status, error) {
+                        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+                    }
+                });
+            },
+            componentDidMount: function() {
+                this.requestBoardContents(0);
+            },
             render: function() {
+                var self = this.state;
+                var boardContents = self.boardContents;
+                var totalPages = self.totalPages;
+                var currentPage = self.currentPage;
+                var pagingItem = [];
+
+                for(var i = currentPage; i < totalPages; i++) {
+                    pagingItem.push(<li><a id={i} onClick={self.requestBoardContents}>{i + 1}</a></li>)
+                }
+
                 return (
                     <div className="container-fluid">
                         <Header />
@@ -58,8 +104,27 @@
                                                 <th>조회수</th>
                                             </tr>
                                         </thead>
-                                        <BoardItem />
+                                        <tbody>
+                                            {
+                                                boardContents.map(function(data) {
+                                                    return (<BoardItem key={data.boardId} data={data} />);
+                                                })
+                                            }
+                                        </tbody>
                                     </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-lg-12 text-center">
+                                <div className="panel">
+                                    <div className="panel-body">
+                                        <ul className="pagination">
+                                            <li><a id={currentPage-1} onClick={self.requestBoardContents}>&laquo;</a></li>
+                                            { pagingItem }
+                                            <li><a id={currentPage+1} onClick={self.requestBoardContents}>&raquo;</a></li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -69,70 +134,20 @@
         });
 
         var BoardItem = React.createClass({
-            getInitialState: function() {
-                return {
-                    boardContent: null
-                }
-            },
-            componentDidMount: function() {
-                var state = this;
-                $.ajax({
-                    type: "GET",
-                    url: "http://localhost:8080/boards?page=0&size=20&sort=createDate,desc",
-                    contentType: "application/json",
-                    success: function(data) {
-                        state.setState({ boardContent: data.content});
-                    },
-                    error: function(request, status, error) {
-                        alert("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
-                    }
-                });
-            },
-            render: function() {
-                var items = [];
-                var boardContent = this.state.boardContent;
-                if(boardContent != null) {
-                    var length = boardContent.length;
-                    for(var i = 0; i < length; i++) {
-                        items.push(
-                            <tr>
-                                <td>{boardContent[i].boardId}</td>
-                                <td>{boardContent[i].title}</td>
-                                <td>{boardContent[i].nickName}</td>
-                                <td>{boardContent[i].createDate}</td>
-                                <td>{boardContent[i].readCount}</td>
-                            </tr>
-                        )
-                    }
-                }
-
-                return (<tbody>{items}</tbody>)
-            }
-        });
-
-        var Footer = React.createClass({
-            render: function() {
-                return (
-                    <div className="row">
-                        <div className="col-lg-12 text-center">
-                            <div className="panel">
-                                <div className="panel-body">
-                                    <ul className="pagination">
-                                        <li><a href="#">1</a></li>
-                                        <li><a href="#">2</a></li>
-                                        <li><a href="#">3</a></li>
-                                        <li><a href="#">4</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )
-            }
+           render: function() {
+               return (
+                   <tr>
+                       <td>{this.props.data.boardId}</td>
+                       <td>{this.props.data.title}</td>
+                       <td>{this.props.data.nickName}</td>
+                       <td>{this.props.data.createDate}</td>
+                       <td>{this.props.data.readCount}</td>
+                   </tr>
+               )
+           }
         });
 
         var BoardRender = React.render(<Board />, document.getElementById("page-wrapper"));
-        React.render(<Footer />, document.getElementById("footer"));
 
     </script>
 
@@ -144,7 +159,6 @@
         <!-- Navigation -->
         <div id="navigation"></div>
         <div id="page-wrapper"></div>
-        <div id="footer"></div>
     </div>
 
     <!-- jQuery -->
