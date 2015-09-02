@@ -65,7 +65,7 @@ public class BoardApplication {
         userDto.setAuthorityType(AuthorityType.ADMIN);
         userService.createUser(userDto);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 30; i++) {
             String username = userDto.getUsername();
             BoardDto boardDto = new BoardDto();
             boardDto.setTitle("test title" + i);
