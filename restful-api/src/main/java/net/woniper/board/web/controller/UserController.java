@@ -94,6 +94,33 @@ public class UserController {
         return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
     }
 
+    @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
+    public ResponseEntity<?> getUser(@PathVariable("userId") Long userId, Principal principal) {
+        User user = userService.getUser(userId, principal.getName());
+
+        if(user != null) {
+            return ResponseEntity.ok(modelMapper.map(user, UserDto.Response.class));
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<?> getUsers(Pageable pageable) {
+        Page<User> users = userService.getUser(pageable);
+
+        if(users != null) {
+            List<User> userList = users.getContent();
+            List<UserDto.Response> userListResponse = modelMapper.map(userList,
+                    new TypeToken<List<UserDto.Response>>(){}.getType());
+
+            if(userListResponse != null && !userListResponse.isEmpty()) {
+                return ResponseEntity.ok(new PageImpl<>(userListResponse, pageable, users.getTotalElements()));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @ApiOperation(value = "get user boards")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "success find user board"),

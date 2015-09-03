@@ -1,6 +1,7 @@
 package net.woniper.board.service.impl;
 
 import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.errors.support.DuplicateNickNameException;
 import net.woniper.board.errors.support.DuplicateUsernameException;
 import net.woniper.board.repository.UserRepository;
@@ -9,6 +10,9 @@ import net.woniper.board.support.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +53,36 @@ public class UserServiceImpl implements UserService {
     public User getUser(String username) {
         return userRepository.findByUsername(username);
     }
+
+    @Override
+    public User getUser(Long userId) {
+        return userRepository.findOne(userId);
+    }
+
+    @Override
+    public Page<User> getUser(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    @Override
+    public User getUser(Long userId, String username) {
+        User user = getUser(username);
+
+        if(user != null) {
+            User resultUser = getUser(userId);
+            if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+                return resultUser;
+            } else {
+                if(user.getUserId().equals(resultUser.getUserId())) {
+                    return resultUser;
+                } else {
+                    throw new AccessDeniedException("accessDenied " + username);
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean isDuplicationUserName(String username) {
         return userRepository.findByUsername(username) != null;

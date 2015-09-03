@@ -7,7 +7,6 @@ import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
-import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
 import net.woniper.board.web.builder.EntityBuilder;
@@ -19,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -50,7 +50,6 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @Transactional
 public class UserControllerTest {
 
-    @Autowired private UserRepository userRepository;
     @Autowired private BoardRepository boardRepository;
     @Autowired private UserService userService;
 
@@ -167,7 +166,84 @@ public class UserControllerTest {
         resultActions.andDo(print()).andExpect(status().isOk());
     }
 
-    private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher, UserDto.Request userDto) throws Exception {
+    @Test
+    public void test_회원_조회_자기자신_user() throws Exception {
+        // given
+        Long userId = user.getUserId();
+
+        // when
+        ResultActions resultActions = mock.perform(get("/users/" + userId.intValue())
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        equalsResultDataAndThen(resultActions, status().isOk(), user);
+    }
+
+    @Test
+    public void test_회원_조회_자기자신_admin() throws Exception {
+        // given
+        Long userId = admin.getUserId();
+
+        // when
+        ResultActions resultActions = mock.perform(get("/users/" + userId.intValue())
+                .with(user(new SecurityUserDetails(admin))));
+
+        // then
+        equalsResultDataAndThen(resultActions, status().isOk(), admin);
+    }
+
+    @Test
+    public void test_다른_회원_조회_admin() throws Exception {
+        // given
+        Long userId = user.getUserId();
+
+        // when
+        ResultActions resultActions = mock.perform(get("/users/" + userId.intValue())
+                .with(user(new SecurityUserDetails(admin))));
+
+        // then
+        equalsResultDataAndThen(resultActions, status().isOk(), user);
+    }
+
+    @Test
+    public void test_다른_회원_조회_user() throws Exception {
+        // given
+        Long adminId = admin.getUserId();
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        // when
+        ResultActions resultActions = mock.perform(get("/users/" + adminId.intValue())
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isNotAcceptable())
+                .andExpect(jsonPath("$.status", is(status.value())))
+                .andExpect(jsonPath("$.message", is(status.getReasonPhrase())));
+    }
+
+    @Test
+    public void test_회원_리스트_조회_admin() throws Exception {
+        // when
+        ResultActions resultActions = mock.perform(get("/users")
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        resultActions.andDo(print()).andExpect(status().isOk());
+    }
+
+    @Test
+    public void test_회원_리스트_조회_user() throws Exception {
+        // when
+        ResultActions resultActions = mock.perform(get("/users")
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        resultActions.andDo(print()).andExpect(status().isForbidden());
+    }
+
+    private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher,
+                                         UserDto.Request userDto) throws Exception {
         resultActions.andDo(print())
                 .andExpect(resultMatcher)
                 .andExpect(jsonPath("$.username", is(userDto.getUsername())))
@@ -175,6 +251,12 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName", is(userDto.getLastName())))
                 .andExpect(jsonPath("$.nickName", is(userDto.getNickName())))
                 .andExpect(jsonPath("$.authorityType", is(userDto.getAuthorityType().toString())));
+    }
+
+    private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher,
+                                         User user) throws Exception {
+        UserDto.Request userDto = modelMapper.map(user, UserDto.Request.class);
+        equalsResultDataAndThen(resultActions, resultMatcher, userDto);
     }
 
     private List<Board> createBoardList(int size, User user) {
