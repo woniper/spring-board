@@ -226,7 +226,7 @@ public class UserControllerTest {
     public void test_회원_리스트_조회_admin() throws Exception {
         // when
         ResultActions resultActions = mock.perform(get("/users")
-                .with(user(new SecurityUserDetails(user))));
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print()).andExpect(status().isOk());
