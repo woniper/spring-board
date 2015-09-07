@@ -1,7 +1,6 @@
 package net.woniper.board.support.dto;
 
 import com.wordnik.swagger.annotations.ApiModel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
@@ -25,7 +24,7 @@ public class CommentDto implements Serializable {
     public static class Response extends CommentDto {
         private Long commentId;
         private int depth;
-        private Date createDate = new Date();
+        private Date createDate;
 
         private Long userId;
         private String username;

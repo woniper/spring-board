@@ -62,7 +62,8 @@ public class CommentControllerTest {
     // fixture data
     private User admin;
     private User user;
-    private Board board;
+    private Board adminBoard;
+    private Board userBoard;
     private Comment adminComment;
     private Comment userComment;
 
@@ -72,9 +73,10 @@ public class CommentControllerTest {
 
         admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
         user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
-        board = boardRepository.save(EntityBuilder.createBoard(admin));
-        adminComment = commentRepository.save(EntityBuilder.createComment(admin, board));
-        userComment = commentRepository.save(EntityBuilder.createComment(user, board));
+        adminBoard = boardRepository.save(EntityBuilder.createBoard(admin));
+        userBoard = boardRepository.save(EntityBuilder.createBoard(user));
+        adminComment = commentRepository.save(EntityBuilder.createComment(adminBoard));
+        userComment = commentRepository.save(EntityBuilder.createComment(userBoard));
     }
 
     @Test
@@ -84,16 +86,15 @@ public class CommentControllerTest {
         commentDto.setContent("new comment content");
 
         // when
-        ResultActions resultActions = mock.perform(post("/boards/" + board.getBoardId() + "/comments")
-                                            .with(user(new SecurityUserDetails(admin)))
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsString(commentDto)));
+        ResultActions resultActions = mock.perform(post("/boards/" + adminBoard.getBoardId() + "/comments")
+                .with(user(new SecurityUserDetails(admin)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsString(commentDto)));
 
         // then
         resultActions.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.content", is(commentDto.getContent())))
-                .andExpect(jsonPath("$.userId", is(admin.getUserId().intValue())))
                 .andExpect(jsonPath("$.username", is(admin.getUsername())));
     }
 
@@ -101,17 +102,17 @@ public class CommentControllerTest {
     public void test_댓글_조회() throws Exception {
         // given
         // when
-        ResultActions resultActions = mock.perform(get("/boards/" + board.getBoardId())
+        ResultActions resultActions = mock.perform(get("/boards/" + adminBoard.getBoardId())
                 .contentType(mediaType)
                 .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.boardId", is(board.getBoardId().intValue())))
-                .andExpect(jsonPath("$.title", is(board.getTitle())))
-                .andExpect(jsonPath("$.comments[0].commentId", is(board.getComments().get(0).getCommentId().intValue())))
-                .andExpect(jsonPath("$.comments[0].content", is(board.getComments().get(0).getContent())))
+                .andExpect(jsonPath("$.boardId", is(adminBoard.getBoardId().intValue())))
+                .andExpect(jsonPath("$.title", is(adminBoard.getTitle())))
+                .andExpect(jsonPath("$.comments[0].commentId", is(adminBoard.getComments().get(0).getCommentId().intValue())))
+                .andExpect(jsonPath("$.comments[0].content", is(adminBoard.getComments().get(0).getContent())))
                 .andExpect(jsonPath("$.userId", is(admin.getUserId().intValue())))
                 .andExpect(jsonPath("$.username", is(admin.getUsername())));
     }
@@ -169,7 +170,8 @@ public class CommentControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.content", is(userComment.getContent())));
+                .andExpect(jsonPath("$.content", is(userComment.getContent())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())));
     }
 
     @Test
@@ -186,7 +188,8 @@ public class CommentControllerTest {
         // then
         resultActions.andDo(print())
                 .andExpect(status().isAccepted())
-                .andExpect(jsonPath("$.content", is(userComment.getContent())));
+                .andExpect(jsonPath("$.content", is(userComment.getContent())))
+                .andExpect(jsonPath("$.username", is(user.getUsername())));
     }
 
     @Test

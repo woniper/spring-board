@@ -6,6 +6,7 @@ import net.woniper.board.domain.type.AuthorityType;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,10 +43,7 @@ public class User implements Serializable {
     private Date joinDate = new Date();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<Board> boards;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<Comment> comments;
+    private List<Board> boards = new ArrayList<>();
 
     public User() {}
 
@@ -62,10 +60,6 @@ public class User implements Serializable {
 
     public int boardCount() {
         return boards != null ? boards.size() : 0;
-    }
-
-    public int commentCount() {
-        return comments != null ? comments.size() : 0;
     }
 
 }

@@ -8,7 +8,7 @@ import net.woniper.board.support.dto.CommentDto;
  */
 public interface CommentService {
 
-    Comment createComment(CommentDto commentDto, Long boardId, String username);
+    Comment createComment(CommentDto commentDto, Long boardId);
 
     boolean deleteComment(Long commentId, String username);
 

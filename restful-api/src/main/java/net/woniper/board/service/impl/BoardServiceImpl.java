@@ -14,8 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-
 /**
  * Created by woniper on 15. 1. 26..
  */
@@ -40,13 +38,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board createBoard(BoardDto boardDto, String username) {
-        Board board = new Board();
-        board.setTitle(boardDto.getTitle());
-        board.setContent(boardDto.getContent());
+        Board board = modelMapper.map(boardDto, Board.class);
         User user = userRepository.findByUsername(username);
-        user.setBoards(Arrays.asList(board));
-        board.setUser(user);
-        return boardRepository.save(board);
+        if(user != null) {
+            board.setUser(user);
+//            user.addBoard(board);
+            return boardRepository.save(board);
+        }
+        return null;
     }
 
     @Override

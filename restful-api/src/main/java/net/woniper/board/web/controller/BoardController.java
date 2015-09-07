@@ -145,7 +145,7 @@ public class BoardController {
 
                 int size = commentList.size();
                 for (int i = 0; i < size; i++) {
-                    User commentUser = commentList.get(i).getUser();
+                    User commentUser = commentList.get(i).getBoard().getUser();
                     CommentDto.Response commentDto = comments.get(i);
 
                     commentDto.setUserId(commentUser.getUserId());
@@ -229,10 +229,11 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Comment comment = commentService.createComment(commentDto, boardId, principal.getName());
+        Comment comment = commentService.createComment(commentDto, boardId);
         if(comment != null) {
             CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
-            User user = comment.getUser();
+            User user = comment.getBoard().getUser();
+            responseComment.setUserId(user.getUserId());
             responseComment.setUsername(user.getUsername());
             responseComment.setNickName(user.getNickName());
             responseComment.setAuthorityType(user.getAuthorityType());
@@ -276,7 +277,8 @@ public class BoardController {
         Comment comment = commentService.updateComment(commentId, commentDto, principal.getName());
         if(comment != null) {
             CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
-            User user = comment.getUser();
+            User user = comment.getBoard().getUser();
+            responseComment.setUserId(user.getUserId());
             responseComment.setUsername(user.getUsername());
             responseComment.setNickName(user.getNickName());
             responseComment.setAuthorityType(user.getAuthorityType());

@@ -7,6 +7,7 @@ import net.woniper.board.support.dto.BoardDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,13 +40,21 @@ public class Board implements Serializable {
     private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Comment> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     public Board() {}
 
     public Board(String title, String content) {
         setTitle(title);
         setContent(content);
+    }
+
+    public void setUser(User user) {
+        if(this.user != null) {
+            this.user.getBoards().remove(this);
+        }
+        this.user = user;
+        user.getBoards().add(this);
     }
 
     public int commentCount() {

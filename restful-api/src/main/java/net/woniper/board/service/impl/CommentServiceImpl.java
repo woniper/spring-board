@@ -11,6 +11,7 @@ import net.woniper.board.service.CommentService;
 import net.woniper.board.support.dto.CommentDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,14 +28,14 @@ public class CommentServiceImpl implements CommentService {
     @Autowired private ModelMapper modelMapper;
 
     @Override
-    public Comment createComment(CommentDto commentDto, Long boardId, String username) {
-        User user = userRepository.findByUsername(username);
+    public Comment createComment(CommentDto commentDto, Long boardId) {
         Board board = boardRepository.findOne(boardId);
         if(board != null) {
-            Comment newComment = modelMapper.map(commentDto, Comment.class);
-            newComment.setUser(user);
-            newComment.setBoard(board);
-            return commentRepository.save(newComment);
+            Comment comment = modelMapper.map(commentDto, Comment.class);
+            comment.setBoard(board);
+//            user.addComment(comment);
+//            board.addComment(comment);
+            return commentRepository.save(comment);
         }
         return null;
     }
@@ -43,16 +44,15 @@ public class CommentServiceImpl implements CommentService {
     public boolean deleteComment(Long commentId, String username) {
         User user = userRepository.findByUsername(username);
         if(user != null) {
-            Comment comment = null;
-            if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-                comment = commentRepository.findOne(commentId);
-            } else {
-                comment = commentRepository.findByCommentIdAndUser(commentId, user);
-            }
-
+            Comment comment = commentRepository.findOne(commentId);
             if(comment != null) {
-                commentRepository.delete(commentId);
-                return true;
+                if(isAccessCommentUser(comment, user)) {
+                    commentRepository.delete(comment);
+                    return true;
+                } else {
+                    throw new AccessDeniedException("accessDenied " + username);
+
+                }
             }
         }
 
@@ -62,18 +62,19 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment updateComment(Long commentId, CommentDto commentDto, String username) {
         User user = userRepository.findByUsername(username);
-        Comment comment = null;
-
-        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-            comment = commentRepository.findOne(commentId);
-        } else {
-            comment = commentRepository.findByCommentIdAndUser(commentId, user);
-        }
-
+        Comment comment = commentRepository.findOne(commentId);
         if(comment != null) {
-            comment.update(commentDto);
+            if(isAccessCommentUser(comment, user)) {
+                comment.update(commentDto);
+            } else {
+                throw new AccessDeniedException("accessDenied " + username);
+            }
         }
-
         return comment;
+    }
+
+    private boolean isAccessCommentUser(Comment comment, User user) {
+        return AuthorityType.ADMIN == user.getAuthorityType() ||
+               user.getUserId().equals(comment.getBoard().getUser().getUserId());
     }
 }

@@ -7,8 +7,6 @@ import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.support.dto.UserDto;
 import org.modelmapper.ModelMapper;
 
-import java.util.Arrays;
-
 /**
  * Created by woniper on 15. 8. 24..
  */
@@ -36,13 +34,11 @@ public class EntityBuilder {
         return modelMapper.map(user, UserDto.Request.class);
     }
 
-    public static Comment createComment(User user, Board board) {
+    public static Comment createComment(Board board) {
         Comment comment = new Comment();
         comment.setContent("comment content");
         comment.setBoard(board);
-        comment.setUser(user);
         comment.setDepth(0);
-        board.setComments(Arrays.asList(comment));
         return comment;
     }
 

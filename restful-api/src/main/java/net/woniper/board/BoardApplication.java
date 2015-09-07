@@ -73,7 +73,7 @@ public class BoardApplication {
             Board board = boardService.createBoard(boardDto, username);
             CommentDto commentDto = new CommentDto();
             commentDto.setContent("test comment content" + i);
-            commentService.createComment(commentDto, board.getBoardId(), username);
+            commentService.createComment(commentDto, board.getBoardId());
         }
 
     }

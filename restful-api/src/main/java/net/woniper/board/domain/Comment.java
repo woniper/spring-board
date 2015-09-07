@@ -29,9 +29,13 @@ public class Comment implements Serializable {
     @JoinColumn(name = "boardId")
     private Board board;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private User user;
+    public void setBoard(Board board) {
+        if(this.board != null) {
+            this.board.getComments().remove(this);
+        }
+        this.board = board;
+        board.getComments().add(this);
+    }
 
     public void update(CommentDto commentDto) {
         setContent(commentDto.getContent());
