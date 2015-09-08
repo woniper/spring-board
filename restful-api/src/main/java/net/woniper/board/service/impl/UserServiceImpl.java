@@ -2,8 +2,8 @@ package net.woniper.board.service.impl;
 
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
-import net.woniper.board.errors.support.DuplicateNickNameException;
-import net.woniper.board.errors.support.DuplicateUsernameException;
+import net.woniper.board.errors.support.NickNameDuplicateException;
+import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
@@ -37,11 +37,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(UserDto.Request userDto) {
         if(isDuplicationUserName(userDto.getUsername())) {
-            throw new DuplicateUsernameException(userDto.getUsername());
+            throw new UsernameDuplicateException(userDto.getUsername());
         }
 
         if(isDuplicationNickName(userDto.getNickName())) {
-            throw new DuplicateNickNameException(userDto.getNickName());
+            throw new NickNameDuplicateException(userDto.getNickName());
         }
 
         User user = modelMapper.map(userDto, User.class);

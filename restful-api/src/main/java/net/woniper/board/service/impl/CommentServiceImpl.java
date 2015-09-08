@@ -33,8 +33,6 @@ public class CommentServiceImpl implements CommentService {
         if(board != null) {
             Comment comment = modelMapper.map(commentDto, Comment.class);
             comment.setBoard(board);
-//            user.addComment(comment);
-//            board.addComment(comment);
             return commentRepository.save(comment);
         }
         return null;

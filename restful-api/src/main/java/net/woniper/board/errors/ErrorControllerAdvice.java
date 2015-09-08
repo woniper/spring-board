@@ -1,7 +1,7 @@
 package net.woniper.board.errors;
 
-import net.woniper.board.errors.support.DuplicateNickNameException;
-import net.woniper.board.errors.support.DuplicateUsernameException;
+import net.woniper.board.errors.support.NickNameDuplicateException;
+import net.woniper.board.errors.support.UsernameDuplicateException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,8 +24,8 @@ public class ErrorControllerAdvice {
     private final Log log = LogFactory.getLog(ErrorControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DuplicateUsernameException.class)
-    public ErrorResponse duplicateUsernameException(DuplicateUsernameException exception, Principal principal) {
+    @ExceptionHandler(UsernameDuplicateException.class)
+    public ErrorResponse duplicateUsernameException(UsernameDuplicateException exception, Principal principal) {
         printLog(exception, principal);
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorResponse error = new ErrorResponse();
@@ -36,8 +36,8 @@ public class ErrorControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler(DuplicateNickNameException.class)
-    public ErrorResponse duplicateNickNameException(DuplicateNickNameException exception, Principal principal) {
+    @ExceptionHandler(NickNameDuplicateException.class)
+    public ErrorResponse duplicateNickNameException(NickNameDuplicateException exception, Principal principal) {
         printLog(exception, principal);
         HttpStatus status = HttpStatus.CONFLICT;
         ErrorResponse error = new ErrorResponse();

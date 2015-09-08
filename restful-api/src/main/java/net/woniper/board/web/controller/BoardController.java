@@ -7,7 +7,6 @@ import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
-import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.CommentDto;
 import org.modelmapper.ModelMapper;
@@ -36,7 +35,6 @@ import java.util.List;
 public class BoardController {
 
     @Autowired private BoardService boardService;
-    @Autowired private UserService userService;
     @Autowired private ModelMapper modelMapper;
     @Autowired private CommentService commentService;
 

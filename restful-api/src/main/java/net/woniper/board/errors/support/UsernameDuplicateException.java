@@ -5,11 +5,11 @@ import lombok.Getter;
 /**
  * Created by woniper on 15. 2. 9..
  */
-public class DuplicateUsernameException extends RuntimeException {
+public class UsernameDuplicateException extends RuntimeException {
 
     @Getter private final String username;
 
-    public DuplicateUsernameException(String username) {
+    public UsernameDuplicateException(String username) {
         this.username = username;
     }
 }
