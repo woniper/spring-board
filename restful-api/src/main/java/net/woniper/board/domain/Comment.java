@@ -26,7 +26,6 @@ public class Comment implements Serializable {
     private Date createDate = new Date();
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "boardId")
     private Board board;
 
     public void setBoard(Board board) {

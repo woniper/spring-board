@@ -35,7 +35,6 @@ public class Board implements Serializable {
     private Date createDate = new Date();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
     @JsonIgnore
     private User user;
 
