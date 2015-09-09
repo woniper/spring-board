@@ -1,4 +1,4 @@
-package net.woniper.board.web.controller.test;
+package net.woniper.board.test.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
@@ -7,10 +7,11 @@ import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
+import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
-import net.woniper.board.web.builder.EntityBuilder;
-import net.woniper.board.web.config.test.TestDatabaseConfig;
+import net.woniper.board.test.config.TestDatabaseConfig;
+import net.woniper.board.builder.EntityBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -51,7 +53,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 public class UserControllerTest {
 
     @Autowired private BoardRepository boardRepository;
+    @Autowired private UserRepository userRepository;
     @Autowired private UserService userService;
+
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private ModelMapper modelMapper;

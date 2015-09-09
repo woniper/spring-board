@@ -42,7 +42,6 @@ public class BoardServiceImpl implements BoardService {
         User user = userRepository.findByUsername(username);
         if(user != null) {
             board.setUser(user);
-//            user.addBoard(board);
             return boardRepository.save(board);
         }
         return null;

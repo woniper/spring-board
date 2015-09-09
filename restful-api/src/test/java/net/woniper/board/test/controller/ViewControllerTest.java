@@ -1,12 +1,12 @@
-package net.woniper.board.web.controller.test;
+package net.woniper.board.test.controller;
 
 import net.woniper.board.BoardApplication;
+import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.UserService;
-import net.woniper.board.web.builder.EntityBuilder;
-import net.woniper.board.web.config.test.TestDatabaseConfig;
+import net.woniper.board.test.config.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
