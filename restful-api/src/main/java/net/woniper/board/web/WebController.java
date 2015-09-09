@@ -1,4 +1,4 @@
-package net.woniper.board.web;
+package net.woniper.board;
 
 import net.woniper.board.domain.User;
 import net.woniper.board.service.UserService;
