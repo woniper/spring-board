@@ -97,12 +97,7 @@ public class UserController {
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("userId") Long userId, Principal principal) {
         User user = userService.getUser(userId, principal.getName());
-
-        if(user != null) {
-            return ResponseEntity.ok(modelMapper.map(user, UserDto.Response.class));
-        }
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.ok(modelMapper.map(user, UserDto.Response.class));
     }
 
     @RequestMapping(method = RequestMethod.GET)

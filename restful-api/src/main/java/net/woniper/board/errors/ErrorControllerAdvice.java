@@ -1,10 +1,10 @@
 package net.woniper.board.errors;
 
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.errors.support.NickNameDuplicateException;
+import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,9 +19,8 @@ import java.security.Principal;
  */
 @ControllerAdvice
 @ResponseBody
+@Slf4j
 public class ErrorControllerAdvice {
-
-    private final Log log = LogFactory.getLog(ErrorControllerAdvice.class);
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UsernameDuplicateException.class)
@@ -59,6 +58,19 @@ public class ErrorControllerAdvice {
         return error;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {UserNotFoundException.class})
+    public ErrorResponse userNotFoundException(UserNotFoundException exception) {
+        printLog(exception, null);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus(status.value());
+        error.setMessage(status.getReasonPhrase());
+        error.setDeveloperMassage("Not Found User Name Or Id : " + exception.getUser());
+        return error;
+    }
+
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public @ResponseBody ErrorResponse exception(Exception exception, Principal principal) {
@@ -77,8 +89,7 @@ public class ErrorControllerAdvice {
             username = principal.getName();
         }
 
-        String logMsg = String.format("username : {%s}, error{%s}",username, exception.getMessage());
-        log.error(logMsg);
+        log.error("username : {%s}, error : {%s}",username, exception.getMessage());
     }
 
 
