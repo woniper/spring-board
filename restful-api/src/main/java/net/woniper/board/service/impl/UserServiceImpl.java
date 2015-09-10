@@ -3,6 +3,7 @@ package net.woniper.board.service.impl;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.errors.support.NickNameDuplicateException;
+import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
@@ -51,11 +52,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(String username) {
-        return userRepository.findByUsername(username);
+        User user = userRepository.findByUsername(username);
+
+        if(user == null)
+            throw new UserNotFoundException(username);
+
+        return user;
     }
 
     @Override
     public User getUser(Long userId) {
+        User user = userRepository.findOne(userId);
+
+        if(user == null)
+            throw new UserNotFoundException(String.valueOf(userId));
+
         return userRepository.findOne(userId);
     }
 
@@ -67,20 +78,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(Long userId, String username) {
         User user = getUser(username);
-
-        if(user != null) {
-            User resultUser = getUser(userId);
-            if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+        User resultUser = getUser(userId);
+        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+            return resultUser;
+        } else {
+            if(user.getUserId().equals(resultUser.getUserId()) && user.isActive()) {
                 return resultUser;
-            } else {
-                if(user.getUserId().equals(resultUser.getUserId())) {
-                    return resultUser;
-                } else {
-                    throw new AccessDeniedException("accessDenied " + username);
-                }
             }
         }
-        return null;
+        throw new AccessDeniedException("accessDenied " + username);
     }
 
     @Override
