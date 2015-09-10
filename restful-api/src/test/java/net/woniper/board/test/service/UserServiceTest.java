@@ -5,6 +5,7 @@ import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.errors.support.NickNameDuplicateException;
+import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
@@ -19,9 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Created by woniper on 15. 2. 4..
@@ -86,7 +85,29 @@ public class UserServiceTest {
         String fullName = this.user.getLastName() + " " + this.user.getFirstName();
         assertEquals(fullName, createUser.getFullName());
         assertEquals(this.user.getAuthorityType(), createUser.getAuthorityType());
-
     }
 
+    @Test(expected = UserNotFoundException.class)
+    public void test_Not_Found_User_Name_Exception() throws Exception {
+        // given
+        String username = "notUser";
+
+        // when
+        userService.getUser(username);
+
+        // then
+        fail("Not Found User Name : " + username);
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void test_Not_Foun_User_Id_Exception() throws Exception {
+        // given
+        Long userId = Long.MAX_VALUE;
+
+        // when
+        userService.getUser(userId);
+
+        // then
+        fail("Not Foun User Id : " + userId);
+    }
 }
