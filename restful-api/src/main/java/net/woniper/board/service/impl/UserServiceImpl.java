@@ -8,7 +8,6 @@ import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -79,12 +78,8 @@ public class UserServiceImpl implements UserService {
     public User getUser(Long userId, String username) {
         User user = getUser(username);
         User resultUser = getUser(userId);
-        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+        if(isAccessUser(user, resultUser)) {
             return resultUser;
-        } else {
-            if(user.getUserId().equals(resultUser.getUserId()) && user.isActive()) {
-                return resultUser;
-            }
         }
         throw new AccessDeniedException("accessDenied " + username);
     }
@@ -100,21 +95,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(UserDto.Request userDto, String username) {
-        User user = userRepository.findByUsername(username);
-        if(user != null) {
-            String password = userDto.getPassword();
-            String nickName = userDto.getNickName();
-            String firstName = userDto.getFirstName();
-            String lastName = userDto.getLastName();
+        if(!userDto.getUsername().equals(username))
+            throw new AccessDeniedException("accessDenied" + username);
 
-            if(!StringUtils.isEmpty(password))
-                user.setPassword(passwordEncoder.encode(password));
-            if(!StringUtils.isEmpty(nickName))
-                user.setNickName(nickName);
-            if(!StringUtils.isEmpty(firstName))
-                user.setFirstName(firstName);
-            if(!StringUtils.isEmpty(lastName))
-                user.setLastName(lastName);
+        User user = getUser(username);
+        if(user != null) {
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            user.update(userDto);
         }
         return user;
     }
@@ -127,5 +114,10 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    private boolean isAccessUser(User user, User requestUser) {
+        return (AuthorityType.ADMIN == user.getAuthorityType()) ||
+               (user.getUserId().equals(requestUser.getUserId()) && user.isActive());
     }
 }

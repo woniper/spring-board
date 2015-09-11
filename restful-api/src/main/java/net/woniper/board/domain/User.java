@@ -3,6 +3,7 @@ package net.woniper.board.domain;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.support.dto.UserDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -68,4 +69,11 @@ public class User implements Serializable {
         return getLastName() + " " + getFirstName();
     }
 
+    @Transient
+    public void update(UserDto.Request userDto) {
+        setPassword(userDto.getPassword());
+        setNickName(userDto.getNickName());
+        setFirstName(userDto.getFirstName());
+        setLastName(userDto.getLastName());
+    }
 }
