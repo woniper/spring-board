@@ -58,8 +58,14 @@ public class User implements Serializable {
         setActive(active);
     }
 
-    public int boardCount() {
+    @Transient
+    public int getBoardCount() {
         return boards != null ? boards.size() : 0;
+    }
+
+    @Transient
+    public String getFullName() {
+        return getLastName() + " " + getFirstName();
     }
 
 }
