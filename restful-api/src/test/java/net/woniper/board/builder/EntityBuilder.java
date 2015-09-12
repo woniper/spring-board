@@ -1,4 +1,4 @@
-package net.woniper.board.web.builder;
+package net.woniper.board.builder;
 
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
@@ -17,7 +17,7 @@ public class EntityBuilder {
     public static UserDto.Request createUser(AuthorityType authorityType) {
         User user = new User();
         if(AuthorityType.ADMIN.equals(authorityType)) {
-            user.setUsername("newAdminnName");
+            user.setUsername("newAdminName");
             user.setPassword("newAdminPassword");
             user.setFirstName("newAdminFirstName");
             user.setLastName("newAdminLastName");
