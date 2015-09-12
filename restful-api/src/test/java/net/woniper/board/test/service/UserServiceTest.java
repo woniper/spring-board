@@ -171,4 +171,15 @@ public class UserServiceTest {
         assertEquals(userDto.getFirstName(), updateUser.getFirstName());
         assertEquals(userDto.getLastName(), updateUser.getLastName());
     }
+
+    @Test
+    public void test_회원탈퇴() throws Exception {
+        // when
+        boolean isDelete = userService.deleteUser(user.getUsername());
+
+        // then
+        assertTrue(isDelete);
+        assertEquals(false, user.isActive());
+
+    }
 }
