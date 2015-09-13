@@ -10,6 +10,7 @@ import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.test.config.TestDatabaseConfig;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by woniper on 15. 2. 4..
@@ -51,4 +54,15 @@ public class BoardServiceTest {
                 (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Response.class), user.getUsername());
     }
 
+    @Test
+    public void test_getBoard_readCount() throws Exception {
+        // given
+        assertEquals(0, userBoard.getReadCount());
+
+        // when
+        Board board = boardService.getBoard(userBoard.getBoardId());
+
+        // then
+        assertEquals(1, board.getReadCount());
+    }
 }
