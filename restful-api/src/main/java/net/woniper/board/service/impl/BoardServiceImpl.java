@@ -3,6 +3,7 @@ package net.woniper.board.service.impl;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.BoardService;
@@ -40,11 +41,11 @@ public class BoardServiceImpl implements BoardService {
     public Board createBoard(BoardDto boardDto, String username) {
         Board board = modelMapper.map(boardDto, Board.class);
         User user = userRepository.findByUsername(username);
-        if(user != null) {
-            board.setUser(user);
-            return boardRepository.save(board);
-        }
-        return null;
+        if(user == null)
+            throw new UserNotFoundException(username);
+
+        board.setUser(user);
+        return boardRepository.save(board);
     }
 
     @Override
@@ -64,11 +65,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Page<Board> getBoard(Pageable pageable, String username) {
         User user = userRepository.findByUsername(username);
-        if(user != null) {
-            return boardRepository.findByUser(user, pageable);
-        }
+        if(user == null)
+            throw new UserNotFoundException(username);
 
-        return null;
+        return boardRepository.findByUser(user, pageable);
     }
 
     @Override

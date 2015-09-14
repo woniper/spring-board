@@ -5,6 +5,7 @@ import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
@@ -21,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by woniper on 15. 2. 4..
@@ -55,7 +57,7 @@ public class BoardServiceTest {
     }
 
     @Test
-    public void test_getBoard_readCount() throws Exception {
+    public void test_getBoard() throws Exception {
         // given
         assertEquals(0, userBoard.getReadCount());
 
@@ -64,5 +66,20 @@ public class BoardServiceTest {
 
         // then
         assertEquals(1, board.getReadCount());
+        assertEquals(userBoard.getBoardId(), board.getBoardId());
+        assertEquals(userBoard.getTitle(), board.getTitle());
+    }
+
+    @Test(expected = UserNotFoundException.class)
+    public void test_createBoard_UserNotFound() throws Exception {
+        // given
+        BoardDto boardDto = modelMapper.map(EntityBuilder.createBoard(user), BoardDto.class);
+
+        // when
+        boardService.createBoard(boardDto, "notUser");
+
+        // then
+        fail("UserNotFoundException");
+
     }
 }
