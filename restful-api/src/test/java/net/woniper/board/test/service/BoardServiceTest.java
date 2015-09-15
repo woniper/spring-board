@@ -5,6 +5,7 @@ import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.errors.support.BoardNotFoundException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
@@ -80,6 +81,33 @@ public class BoardServiceTest {
 
         // then
         fail("UserNotFoundException");
+    }
 
+    @Test(expected = BoardNotFoundException.class)
+    public void test_updateBoard_admin_notFoundException() throws Exception {
+        // given
+        Long boardId = Long.MAX_VALUE;
+        BoardDto boardDto = modelMapper.map(adminBoard, BoardDto.class);
+        String username = admin.getUsername();
+
+        // when
+        boardService.updateBoard(boardId, boardDto, username);
+
+        // then
+        fail("Board Not Found Exception");
+    }
+
+    @Test(expected = BoardNotFoundException.class)
+    public void test_updateBoard_user_notFoundException() throws Exception {
+        // given
+        Long boardId = Long.MAX_VALUE;
+        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        String username = user.getUsername();
+
+        // when
+        boardService.updateBoard(boardId, boardDto, username);
+
+        // then
+        fail("Board Not Found Exception");
     }
 }
