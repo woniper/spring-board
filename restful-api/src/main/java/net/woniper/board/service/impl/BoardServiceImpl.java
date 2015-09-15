@@ -3,10 +3,12 @@ package net.woniper.board.service.impl;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.errors.support.BoardNotFoundException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.BoardService;
+import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ public class BoardServiceImpl implements BoardService {
 
     private BoardRepository boardRepository;
     private UserRepository userRepository;
+    @Autowired private UserService userService;
     @Autowired private ModelMapper modelMapper;
 
     @Autowired
@@ -73,17 +76,18 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public Board updateBoard(Long boardId, BoardDto boardDto, String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userService.getUser(username);
         Board board = null;
-        if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
+        if(isAccessPossibleUser(user)) {
             board = boardRepository.findOne(boardId);
         } else{
             board = boardRepository.findByBoardIdAndUser(boardId, user);
         }
 
-        if(board != null) {
-            board.update(boardDto);
-        }
+        if(board == null)
+            throw new BoardNotFoundException();
+
+        board.update(boardDto);
         return board;
     }
 
@@ -104,6 +108,10 @@ public class BoardServiceImpl implements BoardService {
         } else {
             return false;
         }
+    }
+
+    private boolean isAccessPossibleUser(User user) {
+        return AuthorityType.ADMIN == user.getAuthorityType();
     }
 
     /**

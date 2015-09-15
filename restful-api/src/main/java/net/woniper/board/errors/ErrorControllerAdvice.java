@@ -1,6 +1,7 @@
 package net.woniper.board.errors;
 
 import lombok.extern.slf4j.Slf4j;
+import net.woniper.board.errors.support.BoardNotFoundException;
 import net.woniper.board.errors.support.NickNameDuplicateException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
@@ -70,6 +71,17 @@ public class ErrorControllerAdvice {
         return error;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {BoardNotFoundException.class})
+    public ErrorResponse boardNotFoundException(BoardNotFoundException exception) {
+        printLog(exception, null);
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus(status.value());
+        error.setMessage(status.getReasonPhrase());
+        error.setDeveloperMassage("Board Not Found Exception");
+        return error;
+    }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
