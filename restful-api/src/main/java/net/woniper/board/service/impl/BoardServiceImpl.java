@@ -54,9 +54,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Board getBoard(Long boardId) {
         Board board = boardRepository.findOne(boardId);
-        if(board != null)
-            board.read();
+        if(board == null)
+            throw new BoardNotFoundException();
 
+        board.read();
         return board;
     }
 
