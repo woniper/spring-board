@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findOne(commentId);
         if(comment != null) {
             if(isAccessCommentUser(comment, user)) {
-                comment.update(commentDto);
+                comment.patch(commentDto);
             } else {
                 throw new AccessDeniedException("accessDenied " + username);
             }

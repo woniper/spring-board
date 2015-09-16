@@ -88,7 +88,7 @@ public class BoardServiceImpl implements BoardService {
         if(board == null)
             throw new BoardNotFoundException();
 
-        board.update(boardDto);
+        board.patch(boardDto);
         return board;
     }
 

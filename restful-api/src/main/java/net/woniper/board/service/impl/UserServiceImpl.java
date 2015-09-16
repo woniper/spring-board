@@ -99,10 +99,11 @@ public class UserServiceImpl implements UserService {
             throw new AccessDeniedException("accessDenied" + username);
 
         User user = getUser(username);
-        if(user != null) {
-            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-            user.update(userDto);
-        }
+        if(isDuplicationNickName(userDto.getNickName()))
+            throw new NickNameDuplicateException(userDto.getNickName());
+
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.patch(userDto);
         return user;
     }
 
