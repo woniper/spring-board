@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.support.dto.BoardDto;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -56,15 +57,29 @@ public class Board implements Serializable {
         user.getBoards().add(this);
     }
 
+    @Transient
     public int commentCount() {
         return comments != null ? comments.size() : 0;
     }
 
+    @Transient
+    public void patch(BoardDto boardDto) {
+        String title = boardDto.getTitle();
+        String content = boardDto.getContent();
+        if(StringUtils.isNotEmpty(title))
+            setTitle(title);
+
+        if(StringUtils.isNotEmpty(content))
+            setContent(content);
+    }
+
+    @Transient
     public void update(BoardDto boardDto) {
         setTitle(boardDto.getTitle());
         setContent(boardDto.getContent());
     }
 
+    @Transient
     public void read() {
         readCount++;
     }

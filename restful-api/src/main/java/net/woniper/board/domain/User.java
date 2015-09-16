@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.support.dto.UserDto;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -67,6 +68,23 @@ public class User implements Serializable {
     @Transient
     public String getFullName() {
         return getLastName() + " " + getFirstName();
+    }
+
+    @Transient
+    public void patch(UserDto.Request userDto) {
+        String password = userDto.getPassword();
+        String nickName = userDto.getNickName();
+        String firstName = userDto.getFirstName();
+        String lastName = userDto.getLastName();
+
+        if(StringUtils.isNotEmpty(password))
+            setPassword(password);
+        if(StringUtils.isNotEmpty(nickName))
+            setNickName(nickName);
+        if(StringUtils.isNotEmpty(firstName))
+            setFirstName(firstName);
+        if(StringUtils.isNotEmpty(lastName))
+            setLastName(lastName);
     }
 
     @Transient

@@ -3,6 +3,7 @@ package net.woniper.board.domain;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.support.dto.CommentDto;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,6 +37,14 @@ public class Comment implements Serializable {
         board.getComments().add(this);
     }
 
+    @Transient
+    public void patch(CommentDto commentDto) {
+        String content = commentDto.getContent();
+        if(StringUtils.isNotEmpty(content))
+            setContent(content);
+    }
+
+    @Transient
     public void update(CommentDto commentDto) {
         setContent(commentDto.getContent());
     }
