@@ -19,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -254,6 +255,23 @@ public class BoardControllerTest {
             list.add(newBoard);
         }
         return boardRepository.save(list);
+    }
+
+    @Test
+    public void test_getBoard_BoardNotFoundException() throws Exception {
+        // given
+        Long boardId = Long.MAX_VALUE;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        // when
+        ResultActions resultActions = mock.perform(get("/boards/" + boardId.intValue())
+                    .with(user(new SecurityUserDetails(admin))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("status", is(status.value())))
+                .andExpect(jsonPath("message", is(status.getReasonPhrase())));
     }
 
     @Test

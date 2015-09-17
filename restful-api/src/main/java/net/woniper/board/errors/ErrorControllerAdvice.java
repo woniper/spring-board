@@ -61,8 +61,8 @@ public class ErrorControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = {UserNotFoundException.class})
-    public ErrorResponse userNotFoundException(UserNotFoundException exception) {
-        printLog(exception, null);
+    public ErrorResponse userNotFoundException(UserNotFoundException exception, Principal principal) {
+        printLog(exception, principal);
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErrorResponse error = new ErrorResponse();
         error.setStatus(status.value());
@@ -73,8 +73,8 @@ public class ErrorControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = {BoardNotFoundException.class})
-    public ErrorResponse boardNotFoundException(BoardNotFoundException exception) {
-        printLog(exception, null);
+    public ErrorResponse boardNotFoundException(BoardNotFoundException exception, Principal principal) {
+        printLog(exception, principal);
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErrorResponse error = new ErrorResponse();
         error.setStatus(status.value());

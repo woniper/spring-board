@@ -247,6 +247,23 @@ public class UserControllerTest {
         resultActions.andDo(print()).andExpect(status().isForbidden());
     }
 
+    @Test
+    public void test_getUser_UserNotFoundException() throws Exception {
+        // given
+        Long userId = Long.MAX_VALUE;
+        HttpStatus status = HttpStatus.NOT_FOUND;
+
+        // when
+        ResultActions resultActions = mock.perform(get("/users/" + userId.intValue())
+                .with(user(new SecurityUserDetails(admin))));
+
+        // then
+        resultActions.andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status", is(status.value())))
+                .andExpect(jsonPath("$.message", is(status.getReasonPhrase())));
+    }
+
     private void equalsResultDataAndThen(ResultActions resultActions, ResultMatcher resultMatcher,
                                          UserDto.Request userDto) throws Exception {
         resultActions.andDo(print())
