@@ -110,4 +110,43 @@ public class BoardServiceTest {
         // then
         fail("Board Not Found Exception");
     }
+
+    @Test
+    public void test_deleteBoard_admin이_다른_user_Board_삭제() throws Exception {
+        // given
+        Long userBoardId = userBoard.getBoardId();
+        String adminUsername = admin.getUsername();
+
+        // when
+        boolean isDelete = boardService.deleteBoard(userBoardId, adminUsername);
+
+        // then
+        assertEquals(true, isDelete);
+    }
+
+    @Test
+    public void test_deleteBoard_user가_다른_user_Board_삭제() throws Exception {
+        // given
+        Long adminBoardId = adminBoard.getBoardId();
+        String username = user.getUsername();
+
+        // when
+        boolean isDelete = boardService.deleteBoard(adminBoardId, username);
+
+        // then
+        assertEquals(false, isDelete);
+    }
+
+    @Test
+    public void test_deleteBoard_자신이쓴_Board_삭제() throws Exception {
+        // given
+        Long userBoardId = userBoard.getBoardId();
+        String username = user.getUsername();
+
+        // when
+        boolean isDelete = boardService.deleteBoard(userBoardId, username);
+
+        // then
+        assertEquals(true, isDelete);
+    }
 }

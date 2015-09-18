@@ -94,11 +94,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public boolean deleteBoard(Long boardId, String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userService.getUser(username);
         Board board = null;
 
         if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-            board = boardRepository.findOne(boardId);
+            board = getBoard(boardId);
         } else {
             board = boardRepository.findByBoardIdAndUser(boardId, user);
         }
