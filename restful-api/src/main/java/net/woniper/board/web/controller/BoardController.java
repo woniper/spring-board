@@ -43,6 +43,8 @@ public class BoardController {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
 
+    // todo PATCH 추가
+
     /**
      * 게시글 생성
      * @param boardDto
@@ -91,13 +93,8 @@ public class BoardController {
         }
 
         Board updateBoard = boardService.updateBoard(boardId, board, principal.getName());
-        if(updateBoard != null) {
-            BoardDto.Response responseBoard = getBoardResponse(updateBoard);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
-
+        BoardDto.Response responseBoard = getBoardResponse(updateBoard);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);
     }
 
     /**
@@ -132,32 +129,27 @@ public class BoardController {
     @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId) {
         Board board = boardService.getBoard(boardId);
+        BoardDto.Response responseBoard = getBoardResponse(board);
+        List<Comment> commentList = board.getComments();
 
-        if(board != null) {
-            BoardDto.Response responseBoard = getBoardResponse(board);
-            List<Comment> commentList = board.getComments();
+        if(commentList != null && !commentList.isEmpty()) {
+            List<CommentDto.Response> comments = modelMapper.map(commentList,
+                    new TypeToken<List<CommentDto.Response>>() {}.getType());
 
-            if(commentList != null && !commentList.isEmpty()) {
-                List<CommentDto.Response> comments = modelMapper.map(commentList,
-                        new TypeToken<List<CommentDto.Response>>() {}.getType());
+            int size = commentList.size();
+            for (int i = 0; i < size; i++) {
+                User commentUser = commentList.get(i).getBoard().getUser();
+                CommentDto.Response commentDto = comments.get(i);
 
-                int size = commentList.size();
-                for (int i = 0; i < size; i++) {
-                    User commentUser = commentList.get(i).getBoard().getUser();
-                    CommentDto.Response commentDto = comments.get(i);
-
-                    commentDto.setUserId(commentUser.getUserId());
-                    commentDto.setUsername(commentUser.getUsername());
-                    commentDto.setNickName(commentUser.getNickName());
-                    commentDto.setAuthorityType(commentUser.getAuthorityType());
-                }
-
-                responseBoard.setComments(comments);
+                commentDto.setUserId(commentUser.getUserId());
+                commentDto.setUsername(commentUser.getUsername());
+                commentDto.setNickName(commentUser.getNickName());
+                commentDto.setAuthorityType(commentUser.getAuthorityType());
             }
-            return ResponseEntity.ok(responseBoard);
-        }
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            responseBoard.setComments(comments);
+        }
+        return ResponseEntity.ok(responseBoard);
     }
 
     /**
@@ -196,7 +188,7 @@ public class BoardController {
                     boardDto.setAuthorityType(user.getAuthorityType());
                 }
 
-                Page<BoardDto.ListResponse> boardPages = new PageImpl<BoardDto.ListResponse>(boardListResponses, pageable, boards.getTotalElements());
+                Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());
                 return ResponseEntity.ok(boardPages);
             }
         }
@@ -228,17 +220,13 @@ public class BoardController {
         }
 
         Comment comment = commentService.createComment(commentDto, boardId);
-        if(comment != null) {
-            CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
-            User user = comment.getBoard().getUser();
-            responseComment.setUserId(user.getUserId());
-            responseComment.setUsername(user.getUsername());
-            responseComment.setNickName(user.getNickName());
-            responseComment.setAuthorityType(user.getAuthorityType());
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
+        User user = comment.getBoard().getUser();
+        responseComment.setUserId(user.getUserId());
+        responseComment.setUsername(user.getUsername());
+        responseComment.setNickName(user.getNickName());
+        responseComment.setAuthorityType(user.getAuthorityType());
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
     }
 
     @ApiOperation(value = "delete comment")
@@ -273,17 +261,13 @@ public class BoardController {
         }
 
         Comment comment = commentService.updateComment(commentId, commentDto, principal.getName());
-        if(comment != null) {
-            CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
-            User user = comment.getBoard().getUser();
-            responseComment.setUserId(user.getUserId());
-            responseComment.setUsername(user.getUsername());
-            responseComment.setNickName(user.getNickName());
-            responseComment.setAuthorityType(user.getAuthorityType());
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseComment);
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+        CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
+        User user = comment.getBoard().getUser();
+        responseComment.setUserId(user.getUserId());
+        responseComment.setUsername(user.getUsername());
+        responseComment.setNickName(user.getNickName());
+        responseComment.setAuthorityType(user.getAuthorityType());
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseComment);
     }
 
     private BoardDto.Response getBoardResponse(Board board) {

@@ -146,7 +146,7 @@ public class BoardControllerTest {
 
         // then
         resultActions.andDo(print())
-                .andExpect(status().isNotAcceptable());
+                .andExpect(status().isNotFound());
     }
 
     @Test

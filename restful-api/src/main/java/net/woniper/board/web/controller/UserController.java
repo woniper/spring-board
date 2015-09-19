@@ -43,6 +43,8 @@ public class UserController {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
 
+    // todo PATCH 추가
+
     @ApiOperation(value = "account user", response = UserDto.Response.class)
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "success account user", response = UserDto.Response.class),
@@ -75,10 +77,7 @@ public class UserController {
         }
 
         User updateUser = userService.updateUser(userDto, principal.getName());
-        if(updateUser != null)
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
-
-        return new ResponseEntity<> (HttpStatus.NOT_ACCEPTABLE);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
     }
 
     @ApiOperation(value = "delete user")
