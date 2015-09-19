@@ -55,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
     public Board getBoard(Long boardId) {
         Board board = boardRepository.findOne(boardId);
         if(board == null)
-            throw new BoardNotFoundException();
+            throw new BoardNotFoundException(boardId);
 
         board.read();
         return board;
@@ -86,7 +86,7 @@ public class BoardServiceImpl implements BoardService {
         }
 
         if(board == null)
-            throw new BoardNotFoundException();
+            throw new BoardNotFoundException(boardId);
 
         board.patch(boardDto);
         return board;

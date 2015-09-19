@@ -1,10 +1,7 @@
 package net.woniper.board.errors;
 
 import lombok.extern.slf4j.Slf4j;
-import net.woniper.board.errors.support.BoardNotFoundException;
-import net.woniper.board.errors.support.NickNameDuplicateException;
-import net.woniper.board.errors.support.UserNotFoundException;
-import net.woniper.board.errors.support.UsernameDuplicateException;
+import net.woniper.board.errors.support.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -63,10 +60,7 @@ public class ErrorControllerAdvice {
     @ExceptionHandler(value = {UserNotFoundException.class})
     public ErrorResponse userNotFoundException(UserNotFoundException exception, Principal principal) {
         printLog(exception, principal);
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorResponse error = new ErrorResponse();
-        error.setStatus(status.value());
-        error.setMessage(status.getReasonPhrase());
+        ErrorResponse error = getNotFoundErrorResponse();
         error.setDeveloperMassage("Not Found User Name Or Id : " + exception.getUser());
         return error;
     }
@@ -75,11 +69,17 @@ public class ErrorControllerAdvice {
     @ExceptionHandler(value = {BoardNotFoundException.class})
     public ErrorResponse boardNotFoundException(BoardNotFoundException exception, Principal principal) {
         printLog(exception, principal);
-        HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorResponse error = new ErrorResponse();
-        error.setStatus(status.value());
-        error.setMessage(status.getReasonPhrase());
-        error.setDeveloperMassage("Board Not Found Exception");
+        ErrorResponse error = getNotFoundErrorResponse();
+        error.setDeveloperMassage("Board Not Found Exception : " + exception.getBoardId());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {CommentNotFoundException.class})
+    public ErrorResponse commentNotFoundException(CommentNotFoundException exception, Principal principal) {
+        printLog(exception, principal);
+        ErrorResponse error = getNotFoundErrorResponse();
+        error.setDeveloperMassage("Comment Not Found Exception : " + exception.getCommentId());
         return error;
     }
 
@@ -93,6 +93,14 @@ public class ErrorControllerAdvice {
         error.setMessage(status.getReasonPhrase());
         error.setDeveloperMassage(exception.getMessage());
         return error;
+    }
+
+    private ErrorResponse getNotFoundErrorResponse() {
+        HttpStatus status = HttpStatus.NOT_FOUND;
+        ErrorResponse response = new ErrorResponse();
+        response.setStatus(status.value());
+        response.setMessage(status.getReasonPhrase());
+        return response;
     }
 
     private void printLog(Exception exception, Principal principal) {
