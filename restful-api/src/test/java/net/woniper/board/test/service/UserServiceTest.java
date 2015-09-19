@@ -157,7 +157,7 @@ public class UserServiceTest {
     public void test_회원_정보_수정() throws Exception {
         // given
         userDto.setPassword("tt11");
-        userDto.setNickName("woniper");
+        userDto.setNickName("updateNickName");
         userDto.setFirstName("won");
         userDto.setLastName("lee");
 
