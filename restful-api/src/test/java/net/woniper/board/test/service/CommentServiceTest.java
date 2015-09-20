@@ -19,11 +19,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Created by woniper on 15. 2. 4..
@@ -47,6 +49,9 @@ public class CommentServiceTest {
     private Board adminBoard;
     private Board userBoard;
 
+    private Comment adminComment;
+    private Comment userComment;
+
     @Before
     public void setUp() throws Exception {
         admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
@@ -56,6 +61,12 @@ public class CommentServiceTest {
                 (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Response.class), admin.getUsername());
         userBoard = boardService.createBoard
                 (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Response.class), user.getUsername());
+
+        adminComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(adminBoard),
+                CommentDto.class), adminBoard.getBoardId());
+
+        userComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(userBoard),
+                CommentDto.class), userBoard.getBoardId());
     }
 
     @Test
@@ -69,6 +80,57 @@ public class CommentServiceTest {
 
         // then
         assertEquals(commentDto.getContent(), newComment.getContent());
+    }
 
+    @Test
+    public void test_deleteComment_admin이_user_comment_삭제() throws Exception {
+        // given
+        Long commentId = userComment.getCommentId();
+        String username = admin.getUsername();
+
+        // when
+        boolean isDelete = commentService.deleteComment(commentId, username);
+
+        // then
+        assertEquals(true, isDelete);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void test_deleteComment_user가_admin_comment_삭제() throws Exception {
+        // given
+        Long commentId = adminComment.getCommentId();
+        String username = user.getUsername();
+
+        // when
+        commentService.deleteComment(commentId, username);
+
+        // then
+        fail("not delete");
+    }
+
+    @Test
+    public void test_deleteComment_user() throws Exception {
+        // given
+        Long commentId = userComment.getCommentId();
+        String username = user.getUsername();
+
+        // when
+        boolean isDelete = commentService.deleteComment(commentId, username);
+
+        // then
+        assertEquals(true, isDelete);
+    }
+
+    @Test
+    public void test_deleteComment_admin() throws Exception {
+        // given
+        Long commentId = adminComment.getCommentId();
+        String username = admin.getUsername();
+
+        // when
+        boolean isDelete = commentService.deleteComment(commentId, username);
+
+        // then
+        assertEquals(true, isDelete);
     }
 }
