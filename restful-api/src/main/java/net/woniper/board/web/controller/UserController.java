@@ -22,6 +22,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -42,8 +43,6 @@ public class UserController {
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
-
-    // todo PATCH 추가
 
     @ApiOperation(value = "account user", response = UserDto.Response.class)
     @ApiResponses(value = {
@@ -68,15 +67,14 @@ public class UserController {
             @ApiResponse(code = 406, message = "fail update user"),
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = {RequestMethod.PUT, RequestMethod.PATCH}, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@ApiParam(required = true) @RequestBody @Valid UserDto.Request userDto,
-                                        BindingResult result,
-                                        Principal principal) {
+                                        BindingResult result, Principal principal, HttpServletRequest request) {
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        User updateUser = userService.updateUser(userDto, principal.getName());
+        User updateUser = userService.updateUser(userDto, principal.getName(), request.getMethod());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
     }
 
@@ -134,7 +132,8 @@ public class UserController {
 
             List<Board> boardList = boards.getContent();
             List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardList,
-                    new TypeToken<List<BoardDto.ListResponse>>(){}.getType());
+                    new TypeToken<List<BoardDto.ListResponse>>() {
+                    }.getType());
 
             if(boardListResponses != null && !boardListResponses.isEmpty()) {
                 int size = boardListResponses.size();

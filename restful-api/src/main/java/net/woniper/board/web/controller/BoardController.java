@@ -23,6 +23,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -42,8 +43,6 @@ public class BoardController {
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
-
-    // todo PATCH 추가
 
     /**
      * 게시글 생성
@@ -72,7 +71,7 @@ public class BoardController {
 
     /**
      * 게시글 수정
-     * @param board
+     * @param boardDto
      * @param result
      * @return
      */
@@ -82,17 +81,16 @@ public class BoardController {
             @ApiResponse(code = 406, message = "fail insert board"),
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
-    @RequestMapping(value = "/{boardId}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{boardId}", method = {RequestMethod.PUT, RequestMethod.PATCH}, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
-                                         @ApiParam(required = true) @RequestBody @Valid BoardDto board,
-                                         BindingResult result,
-                                         Principal principal) {
+                                         @ApiParam(required = true) @RequestBody @Valid BoardDto boardDto,
+                                         BindingResult result, Principal principal, HttpServletRequest request) {
 
         if(result.hasErrors()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Board updateBoard = boardService.updateBoard(boardId, board, principal.getName());
+        Board updateBoard = boardService.updateBoard(boardId, boardDto, principal.getName(), request.getMethod());
         BoardDto.Response responseBoard = getBoardResponse(updateBoard);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);
     }

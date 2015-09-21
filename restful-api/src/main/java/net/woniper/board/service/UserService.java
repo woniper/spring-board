@@ -27,7 +27,7 @@ public interface UserService {
 
     boolean isDuplicationNickName(String nickName);
 
-    User updateUser(UserDto.Request userDto, String username);
+    User updateUser(UserDto.Request userDto, String username, String method);
 
     boolean deleteUser(String username);
 }

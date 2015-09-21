@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by woniper on 15. 1. 26..
@@ -76,7 +77,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board updateBoard(Long boardId, BoardDto boardDto, String username) {
+    public Board updateBoard(Long boardId, BoardDto boardDto, String username, String method) {
         User user = userService.getUser(username);
         Board board = null;
         if(isAccessPossibleUser(user)) {
@@ -88,7 +89,11 @@ public class BoardServiceImpl implements BoardService {
         if(board == null)
             throw new BoardNotFoundException(boardId);
 
-        board.patch(boardDto);
+        if(RequestMethod.valueOf(method) == RequestMethod.PATCH)
+            board.patch(boardDto);
+        else
+            board.update(boardDto);
+
         return board;
     }
 

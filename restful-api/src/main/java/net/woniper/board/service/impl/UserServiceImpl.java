@@ -16,6 +16,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by woniper on 15. 1. 28..
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(UserDto.Request userDto, String username) {
+    public User updateUser(UserDto.Request userDto, String username, String method) {
         if(!userDto.getUsername().equals(username))
             throw new AccessDeniedException("accessDenied" + username);
 
@@ -103,7 +104,12 @@ public class UserServiceImpl implements UserService {
             throw new NickNameDuplicateException(userDto.getNickName());
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.patch(userDto);
+
+        if(RequestMethod.valueOf(method) == RequestMethod.PATCH)
+            user.patch(userDto);
+        else
+            user.update(userDto);
+
         return user;
     }
 
