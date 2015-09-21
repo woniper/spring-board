@@ -21,6 +21,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -91,7 +92,7 @@ public class BoardServiceTest {
         String username = admin.getUsername();
 
         // when
-        boardService.updateBoard(boardId, boardDto, username);
+        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         fail("Board Not Found Exception");
@@ -105,7 +106,7 @@ public class BoardServiceTest {
         String username = user.getUsername();
 
         // when
-        boardService.updateBoard(boardId, boardDto, username);
+        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         fail("Board Not Found Exception");

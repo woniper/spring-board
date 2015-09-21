@@ -20,6 +20,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.junit.Assert.*;
 
@@ -147,7 +148,7 @@ public class UserServiceTest {
         userDto.setLastName("lee");
 
         // when
-        userService.updateUser(userDto, admin.getUsername());
+        userService.updateUser(userDto, admin.getUsername(), RequestMethod.PUT.toString());
 
         // then
         fail("회원 수정 불가");
@@ -162,7 +163,7 @@ public class UserServiceTest {
         userDto.setLastName("lee");
 
         // when
-        User updateUser = userService.updateUser(userDto, user.getUsername());
+        User updateUser = userService.updateUser(userDto, user.getUsername(), RequestMethod.PUT.toString());
 
         // then
         assertEquals(userDto.getUsername(), updateUser.getUsername());
