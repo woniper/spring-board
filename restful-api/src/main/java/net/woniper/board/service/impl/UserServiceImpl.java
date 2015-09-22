@@ -8,6 +8,7 @@ import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -103,7 +104,9 @@ public class UserServiceImpl implements UserService {
         if(isDuplicationNickName(userDto.getNickName()))
             throw new NickNameDuplicateException(userDto.getNickName());
 
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        String password = userDto.getPassword();
+        if(StringUtils.isNotEmpty(password))
+            userDto.setPassword(passwordEncoder.encode(password));
 
         if(RequestMethod.valueOf(method) == RequestMethod.PATCH)
             user.patch(userDto);
