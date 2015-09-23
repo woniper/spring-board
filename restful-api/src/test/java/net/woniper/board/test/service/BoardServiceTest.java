@@ -23,8 +23,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Created by woniper on 15. 2. 4..
@@ -84,6 +83,20 @@ public class BoardServiceTest {
         fail("UserNotFoundException");
     }
 
+    @Test
+    public void test_createBoard() throws Exception {
+        // given
+        Board newBoard = EntityBuilder.createBoard(user);
+        BoardDto newBoardDto = modelMapper.map(newBoard, BoardDto.class);
+
+        // when
+        Board createBoard = boardService.createBoard(newBoardDto, user.getUsername());
+
+        // then
+        assertEquals(newBoard.getTitle(), createBoard.getTitle());
+        assertEquals(newBoard.getContent(), createBoard.getContent());
+    }
+
     @Test(expected = BoardNotFoundException.class)
     public void test_updateBoard_admin_notFoundException() throws Exception {
         // given
@@ -110,6 +123,73 @@ public class BoardServiceTest {
 
         // then
         fail("Board Not Found Exception");
+    }
+
+    @Test
+    public void test_updateBoard_patch_null() throws Exception {
+        // given
+        Long boardId = userBoard.getBoardId();
+        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        boardDto.setTitle(null);
+        boardDto.setContent("updateContent");
+        String username = user.getUsername();
+
+        // when
+        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PATCH.toString());
+
+        // then
+        assertNotNull(board.getTitle());
+        assertEquals(userBoard.getContent(), board.getContent());
+    }
+
+    @Test
+    public void test_updateBoard_patch_not_null() throws Exception {
+        // given
+        Long boardId = userBoard.getBoardId();
+        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        boardDto.setTitle("updateTitle");
+        boardDto.setContent("updateContent");
+        String username = user.getUsername();
+
+        // when
+        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PATCH.toString());
+
+        // then
+        assertEquals(boardDto.getTitle(), board.getTitle());
+        assertEquals(boardDto.getContent(), board.getContent());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_updateBoard_update_null() throws Exception {
+        // given
+        Long boardId = userBoard.getBoardId();
+        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        boardDto.setTitle(null);
+        boardDto.setContent("updateContent");
+        String username = user.getUsername();
+
+        // when
+        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+
+        // then
+        fail("IllegalArgumentException");
+    }
+
+    @Test
+    public void test_updateBoard_update_not_null() throws Exception {
+        // given
+        Long boardId = userBoard.getBoardId();
+        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        boardDto.setTitle("updateTitle");
+        boardDto.setContent("updateContent");
+        String username = user.getUsername();
+
+        // when
+        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+
+        // then
+        assertEquals(boardDto.getTitle(), board.getTitle());
+        assertEquals(boardDto.getContent(), board.getContent());
     }
 
     @Test
