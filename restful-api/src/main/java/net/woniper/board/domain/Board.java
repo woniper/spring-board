@@ -75,6 +75,12 @@ public class Board implements Serializable {
 
     @Transient
     public void update(BoardDto boardDto) {
+        String title = boardDto.getTitle();
+        String content = boardDto.getContent();
+
+        if(StringUtils.isEmpty(title) || StringUtils.isEmpty(content))
+            throw new IllegalArgumentException("board title or content is null");
+
         setTitle(boardDto.getTitle());
         setContent(boardDto.getContent());
     }

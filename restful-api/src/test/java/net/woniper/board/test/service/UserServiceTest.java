@@ -182,22 +182,17 @@ public class UserServiceTest {
         assertEquals(userDto.getNickName(), updateUser.getNickName());
     }
 
-    /**
-     * password, nickName 이외 속성값은 DB not null 이기 때문에 테스트를 위해 수정하지 않음.
-     * @throws Exception
-     */
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void test_회원수정_update_null() throws Exception {
         // given
         userDto.setPassword(null);
         userDto.setNickName("updateNickName");
 
         // when
-        User updateUser = userService.updateUser(userDto, user.getUsername(), RequestMethod.PUT.toString());
+        userService.updateUser(userDto, user.getUsername(), RequestMethod.PUT.toString());
 
         // then
-        assertNull(updateUser.getPassword());
-        assertEquals(userDto.getNickName(), updateUser.getNickName());
+        fail("IllegalArgumentException");
     }
 
     @Test

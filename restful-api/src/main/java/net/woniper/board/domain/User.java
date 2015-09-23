@@ -25,6 +25,7 @@ public class User implements Serializable {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -89,6 +90,15 @@ public class User implements Serializable {
 
     @Transient
     public void update(UserDto.Request userDto) {
+        String password = userDto.getPassword();
+        String nickName = userDto.getNickName();
+        String firstName = userDto.getFirstName();
+        String lastName = userDto.getLastName();
+
+        if(StringUtils.isEmpty(password) || StringUtils.isEmpty(nickName) ||
+           StringUtils.isEmpty(firstName) || StringUtils.isEmpty(lastName))
+            throw new IllegalArgumentException("argument is null");
+
         setPassword(userDto.getPassword());
         setNickName(userDto.getNickName());
         setFirstName(userDto.getFirstName());
