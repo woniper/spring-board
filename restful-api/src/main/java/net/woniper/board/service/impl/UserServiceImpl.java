@@ -86,12 +86,10 @@ public class UserServiceImpl implements UserService {
         throw new AccessDeniedException("accessDenied " + username);
     }
 
-    @Override
-    public boolean isDuplicationUserName(String username) {
+    private boolean isDuplicationUserName(String username) {
         return userRepository.findByUsername(username) != null;
     }
-    @Override
-    public boolean isDuplicationNickName(String nickName) {
+    private boolean isDuplicationNickName(String nickName) {
         return userRepository.findByNickName(nickName) != null;
     }
 
