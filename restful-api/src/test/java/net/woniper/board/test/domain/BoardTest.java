@@ -1,6 +1,7 @@
 package net.woniper.board.test.domain;
 
 import net.woniper.board.domain.Board;
+import net.woniper.board.domain.Comment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +15,9 @@ public class BoardTest {
     @Before
     public void setUp() throws Exception {
         board = new Board("title", "content");
+        Comment comment = new Comment();
+        comment.setContent("comment");
+        comment.setBoard(board);
     }
 
     @Test
