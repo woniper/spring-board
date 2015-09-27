@@ -11,7 +11,7 @@ public enum AuthorityType {
     public static class AuthorityTypeProperty extends PropertyEditorSupport {
         @Override
         public void setAsText(String text) throws IllegalArgumentException {
-            setAsText(text.toUpperCase());
+            setValue(text.toUpperCase());
         }
     }
 }
