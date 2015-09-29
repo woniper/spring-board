@@ -50,7 +50,7 @@ public class Board implements Serializable {
     }
 
     public void setUser(User user) {
-        if(this.user != null) {
+        if (this.user != null) {
             this.user.getBoards().remove(this);
         }
         this.user = user;
@@ -66,10 +66,10 @@ public class Board implements Serializable {
     public void patch(BoardDto boardDto) {
         String title = boardDto.getTitle();
         String content = boardDto.getContent();
-        if(StringUtils.isNotEmpty(title))
+        if (StringUtils.isNotEmpty(title))
             setTitle(title);
 
-        if(StringUtils.isNotEmpty(content))
+        if (StringUtils.isNotEmpty(content))
             setContent(content);
     }
 
@@ -78,7 +78,7 @@ public class Board implements Serializable {
         String title = boardDto.getTitle();
         String content = boardDto.getContent();
 
-        if(StringUtils.isEmpty(title) || StringUtils.isEmpty(content))
+        if (StringUtils.isEmpty(title) || StringUtils.isEmpty(content))
             throw new IllegalArgumentException("board title or content is null");
 
         setTitle(boardDto.getTitle());
