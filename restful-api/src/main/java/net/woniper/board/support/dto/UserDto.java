@@ -4,16 +4,18 @@ import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by woniper on 15. 1. 28..
  */
 @Getter @Setter
-public class UserDto {
+public class UserDto extends ResourceSupport implements Serializable {
 
     @Size(min = 5) @NotNull private String username;
     @NotNull private String firstName;

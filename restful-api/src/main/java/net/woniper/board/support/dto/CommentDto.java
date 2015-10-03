@@ -4,6 +4,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -14,7 +15,7 @@ import java.util.Date;
  */
 @ApiModel(value = "comment Request")
 @Getter @Setter
-public class CommentDto implements Serializable {
+public class CommentDto extends ResourceSupport implements Serializable {
 
     @NotNull
     private String content;

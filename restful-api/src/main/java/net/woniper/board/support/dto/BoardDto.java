@@ -4,6 +4,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
 import net.woniper.board.domain.type.AuthorityType;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @ApiModel(value = "board Request")
 @Getter @Setter
-public class BoardDto implements Serializable {
+public class BoardDto extends ResourceSupport implements Serializable {
 
     @NotNull @Size(min = 2)
     private String title;
