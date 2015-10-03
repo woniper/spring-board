@@ -36,6 +36,12 @@ public class SearchController {
         webDataBinder.registerCustomEditor(SearchType.class, new SearchType.SearchTypeProperty());
     }
 
+    /**
+     * 조회
+     * @param searchDto
+     * @param pageable
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity search(SearchDto searchDto, Pageable pageable) {
         Page<Board> boards = searchService.search(searchDto, pageable);

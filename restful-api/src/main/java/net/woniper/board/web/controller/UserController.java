@@ -44,6 +44,12 @@ public class UserController {
         webDataBinder.registerCustomEditor(AuthorityType.class, new AuthorityType.AuthorityTypeProperty());
     }
 
+    /**
+     * 회원가입
+     * @param userDto
+     * @param result
+     * @return
+     */
     @ApiOperation(value = "account user", response = UserDto.Response.class)
     @ApiResponses(value = {
         @ApiResponse(code = 201, message = "success account user", response = UserDto.Response.class),
@@ -61,6 +67,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(newUser, UserDto.Response.class));
     }
 
+    /**
+     * 회원 정보 수정
+     * @param userDto
+     * @param result
+     * @param principal
+     * @param request
+     * @return
+     */
     @ApiOperation(value = "update user", response = UserDto.Response.class)
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "success update user", response = UserDto.Response.class),
@@ -78,6 +92,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
     }
 
+    /**
+     * 회원 탈퇴 (비활성화)
+     * @param principal
+     * @return
+     */
     @ApiOperation(value = "delete user")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "success delete user"),
@@ -91,12 +110,23 @@ public class UserController {
         return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 회원 조회
+     * @param userId
+     * @param principal
+     * @return
+     */
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("userId") Long userId, Principal principal) {
         User user = userService.getUser(userId, principal.getName());
         return ResponseEntity.ok(modelMapper.map(user, UserDto.Response.class));
     }
 
+    /**
+     * 회원 리스트 조회
+     * @param pageable
+     * @return
+     */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getUsers(Pageable pageable) {
         Page<User> users = userService.getUser(pageable);
@@ -113,6 +143,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    /**
+     * 회원이 생성한 board 리스트 조회
+     * @param pageable
+     * @param principal
+     * @return
+     */
     @ApiOperation(value = "get user boards")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "success find user board"),

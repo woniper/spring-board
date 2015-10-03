@@ -227,6 +227,12 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseComment);
     }
 
+    /**
+     * 댓글 삭제
+     * @param commentId
+     * @param principal
+     * @return
+     */
     @ApiOperation(value = "delete comment")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "success delete comment"),
@@ -242,6 +248,14 @@ public class BoardController {
         }
     }
 
+    /**
+     * 댓글 수정
+     * @param commentId
+     * @param commentDto
+     * @param result
+     * @param principal
+     * @return
+     */
     @ApiOperation(value = "update comment")
     @ApiResponses(value = {
             @ApiResponse(code = 202, message = "success update comment", response = CommentDto.Response.class),
