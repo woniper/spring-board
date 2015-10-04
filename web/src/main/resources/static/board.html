@@ -50,17 +50,18 @@
                     last: false
                 }
             },
-            requestBoardContents: function(event) {
-                console.log(event.type);
+            requestBoardContents: function(e) {
                 var page = 0;
-                var state = this;
+                if(e != null)
+                    page = e.target.id;
+                var self = this;
                 $.ajax({
                     type: "GET",
                     url: "/boards?page="+ page +"&size=10&sort=createDate,desc",
                     contentType: "application/json",
                     success: function(data) {
                         if(data != null) {
-                            state.setState({
+                            self.setState({
                                 boardContents: data.content,
                                 currentPage: page,
                                 totalPages: data.totalPages,
@@ -75,19 +76,10 @@
                 });
             },
             componentDidMount: function() {
-                this.requestBoardContents(0);
+                this.requestBoardContents();
             },
             render: function() {
-                var self = this.state;
-                var boardContents = self.boardContents;
-                var totalPages = self.totalPages;
-                var currentPage = self.currentPage;
-                var pagingItem = [];
-
-                for(var i = currentPage; i < totalPages; i++) {
-                    pagingItem.push(<li><a id={i} onClick={self.requestBoardContents}>{i + 1}</a></li>)
-                }
-
+                var boardContents = this.state.boardContents;
                 return (
                     <div className="container-fluid">
                         <Header />
@@ -115,19 +107,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div className="row">
-                            <div className="col-lg-12 text-center">
-                                <div className="panel">
-                                    <div className="panel-body">
-                                        <ul className="pagination">
-                                            <li><a id={currentPage-1} onClick={self.requestBoardContents}>&laquo;</a></li>
-                                            { pagingItem }
-                                            <li><a id={currentPage+1} onClick={self.requestBoardContents}>&raquo;</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 )
             }
@@ -145,6 +124,38 @@
                    </tr>
                )
            }
+        });
+
+        var Pagenation = React.createClass({
+            propsType: {
+                requestBoardContents : React.PropTypes.func.isRequired,
+                totalPages : React.PropTypes.number.isRequired,
+                currentPage : React.PropTypes.number.isRequired
+            },
+            render: function() {
+               var totalPages = this.props.totalPages;
+               var currentPage = this.props.currentPage;
+               var pagingItem = [];
+
+               for(var i = currentPage; i < totalPages; i++) {
+                   pagingItem.push(<li><a id={i} onClick={this.props.requestBoardContents}>{i + 1}</a></li>)
+               }
+               return (
+                   <div className="row">
+                       <div className="col-lg-12 text-center">
+                           <div className="panel">
+                               <div className="panel-body">
+                                   <ul className="pagination">
+                                       <li><a id={currentPage-1} onClick={this.props.requestBoardContents}>&laquo;</a></li>
+                                       { pagingItem }
+                                       <li><a id={currentPage+1} onClick={this.props.requestBoardContents}>&raquo;</a></li>
+                                   </ul>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               )
+            }
         });
 
         var BoardRender = React.render(<Board />, document.getElementById("page-wrapper"));
