@@ -1,5 +1,6 @@
 package net.woniper.board.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 @Service
 @Transactional
+@Slf4j
 public class BoardServiceImpl implements BoardService {
 
     private BoardRepository boardRepository;

@@ -1,5 +1,6 @@
 package net.woniper.board.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.errors.support.BoardNotFoundException;
@@ -11,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by woniper on 15. 9. 28..
  */
 @Service
+@Transactional
+@Slf4j
 public class SearchServiceImpl implements SearchService {
 
     @Autowired private UserRepository userRepository;

@@ -1,5 +1,6 @@
 package net.woniper.board.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
 import net.woniper.board.domain.User;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
+@Slf4j
 public class CommentServiceImpl implements CommentService {
 
     @Autowired private CommentRepository commentRepository;
