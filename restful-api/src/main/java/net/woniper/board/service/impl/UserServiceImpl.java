@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService {
         User user = getUser(username);
         User resultUser = getUser(userId);
         if(isAccessUser(user, resultUser)) {
+            log.info("request User : {}, response User : {}", user, resultUser);
             return resultUser;
         }
         throw new AccessDeniedException("accessDenied " + username);

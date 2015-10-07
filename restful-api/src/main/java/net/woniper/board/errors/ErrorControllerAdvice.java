@@ -109,7 +109,7 @@ public class ErrorControllerAdvice {
             username = principal.getName();
         }
 
-        log.error("username : {%s}, error : {%s}",username, exception.getMessage());
+        log.error("username : {%s}, error : {%s}", username, exception.getMessage());
     }
 
 
