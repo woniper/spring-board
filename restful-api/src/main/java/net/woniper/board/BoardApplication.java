@@ -1,31 +1,46 @@
 package net.woniper.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.woniper.board.utils.annotation.HateoasAttributeProcessor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.web.context.request.WebRequestInterceptor;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.persistence.EntityManagerFactory;
+import java.util.List;
 
 /**
  * Created by woniper on 15. 1. 26..
  */
 @SpringBootApplication
+@EnableAsync
 public class BoardApplication {
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     @Bean
     WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurerAdapter() {
+
+            @Override
+            public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
+                returnValueHandlers.add(new HateoasAttributeProcessor());
+            }
 
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
@@ -70,4 +85,11 @@ public class BoardApplication {
         return new StandardPasswordEncoder();
     }
 
+    @Bean
+    public SimpleMailMessage simpleMailMessage() {
+        SimpleMailMessage smm = new SimpleMailMessage();
+        smm.setTo(mailUsername);
+        smm.setFrom(mailUsername);
+        return smm;
+    }
 }
