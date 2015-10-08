@@ -7,6 +7,7 @@ import net.woniper.board.errors.support.NickNameDuplicateException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.repository.UserRepository;
+import net.woniper.board.service.MailService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private MailService mailService;
     @Autowired private ModelMapper modelMapper;
     @Autowired private PasswordEncoder passwordEncoder;
 
@@ -36,6 +38,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @Autowired
+    public void setMailService(MailService mailService) {
+        this.mailService = mailService;
     }
 
     @Override
@@ -50,7 +57,9 @@ public class UserServiceImpl implements UserService {
 
         User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        mailService.send("account " + user.getUsername(), user.toString());
+        return user;
     }
 
     @Override
