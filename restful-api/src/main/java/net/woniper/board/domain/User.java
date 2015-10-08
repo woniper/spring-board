@@ -19,7 +19,7 @@ import java.util.List;
  */
 @Entity(name = "user")
 @Getter @Setter
-@ToString(exclude = "boards")
+@ToString(exclude = {"boards", "password"})
 @Slf4j
 public class User implements Serializable {
 
