@@ -3,6 +3,8 @@ package net.woniper.board.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.support.dto.BoardDto;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,6 +19,8 @@ import java.util.List;
 */
 @Entity(name = "board")
 @Getter @Setter
+@ToString(exclude = {"user", "comments"})
+@Slf4j
 public class Board implements Serializable {
 
     @Id
@@ -71,6 +75,7 @@ public class Board implements Serializable {
 
         if (StringUtils.isNotEmpty(content))
             setContent(content);
+        log.info("patch board {}", this);
     }
 
     @Transient
@@ -83,6 +88,7 @@ public class Board implements Serializable {
 
         setTitle(boardDto.getTitle());
         setContent(boardDto.getContent());
+        log.info("update board {}", this);
     }
 
     @Transient

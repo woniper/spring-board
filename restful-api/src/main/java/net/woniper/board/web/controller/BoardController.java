@@ -1,6 +1,7 @@
 package net.woniper.board.web.controller;
 
 import com.wordnik.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
 import net.woniper.board.domain.User;
@@ -33,6 +34,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/boards")
+@Slf4j
 public class BoardController {
 
     @Autowired private BoardService boardService;
@@ -64,6 +66,7 @@ public class BoardController {
         }
 
         Board board = boardService.createBoard(boardDto, principal.getName());
+        log.info("create board {}", board);
         BoardDto.Response responseBoard = getBoardResponse(board);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseBoard);
@@ -218,6 +221,7 @@ public class BoardController {
         }
 
         Comment comment = commentService.createComment(commentDto, boardId);
+        log.info("create comment {}", comment);
         CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
         User user = comment.getBoard().getUser();
         responseComment.setUserId(user.getUserId());

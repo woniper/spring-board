@@ -2,6 +2,7 @@ package net.woniper.board.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.support.dto.CommentDto;
 import org.apache.commons.lang3.StringUtils;
 
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @Entity(name = "comment")
 @Getter @Setter
+@Slf4j
 public class Comment implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,10 +44,12 @@ public class Comment implements Serializable {
         String content = commentDto.getContent();
         if(StringUtils.isNotEmpty(content))
             setContent(content);
+        log.info("patch comment {}", this);
     }
 
     @Transient
     public void update(CommentDto commentDto) {
         setContent(commentDto.getContent());
+        log.info("update comment {}", this);
     }
 }

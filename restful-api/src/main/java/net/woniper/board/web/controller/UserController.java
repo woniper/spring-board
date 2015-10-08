@@ -1,6 +1,7 @@
 package net.woniper.board.web.controller;
 
 import com.wordnik.swagger.annotations.*;
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
@@ -33,6 +34,7 @@ import java.util.List;
 @Api(value = "/users", description = "user account, update, delete")
 @RestController
 @RequestMapping(value = "/users")
+@Slf4j
 public class UserController {
 
     @Autowired private UserService userService;
@@ -64,6 +66,7 @@ public class UserController {
         }
 
         User newUser = userService.createUser(userDto);
+        log.info("user account : {}", newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(newUser, UserDto.Response.class));
     }
 

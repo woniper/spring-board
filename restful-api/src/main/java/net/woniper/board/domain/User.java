@@ -2,6 +2,8 @@ package net.woniper.board.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.support.dto.UserDto;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,8 @@ import java.util.List;
  */
 @Entity(name = "user")
 @Getter @Setter
+@ToString(exclude = "boards")
+@Slf4j
 public class User implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -86,6 +90,7 @@ public class User implements Serializable {
             setFirstName(firstName);
         if(StringUtils.isNotEmpty(lastName))
             setLastName(lastName);
+        log.info("patch User : {}", this);
     }
 
     @Transient
@@ -103,5 +108,6 @@ public class User implements Serializable {
         setNickName(userDto.getNickName());
         setFirstName(userDto.getFirstName());
         setLastName(userDto.getLastName());
+        log.info("update User : {}", this);
     }
 }
