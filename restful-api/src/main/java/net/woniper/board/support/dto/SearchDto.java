@@ -3,6 +3,7 @@ package net.woniper.board.support.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.woniper.board.support.type.SearchType;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @AllArgsConstructor
 @Getter @Setter
+@ToString
 public class SearchDto extends ResourceSupport  implements Serializable {
 
     private SearchType type = SearchType.ALL;

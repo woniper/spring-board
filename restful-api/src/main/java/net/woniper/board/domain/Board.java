@@ -1,9 +1,8 @@
 package net.woniper.board.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.Builder;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.support.dto.BoardDto;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +18,10 @@ import java.util.List;
 */
 @Entity(name = "board")
 @Getter @Setter
-@ToString(exclude = {"user", "comments"})
 @Slf4j
+@Builder
+@ToString(exclude = {"user", "comments"})
+@NoArgsConstructor
 public class Board implements Serializable {
 
     @Id
@@ -45,8 +46,6 @@ public class Board implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
-
-    public Board() {}
 
     public Board(String title, String content) {
         setTitle(title);

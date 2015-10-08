@@ -3,6 +3,7 @@ package net.woniper.board.support.dto;
 import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -25,12 +26,14 @@ public class UserDto extends ResourceSupport implements Serializable {
 
     @ApiModel(value = "user Request")
     @Getter @Setter
+    @ToString
     public static class Request extends UserDto {
         @Size(min = 5) @NotNull private String password;
     }
 
     @ApiModel(value = "user Response")
     @Getter @Setter
+    @ToString
     public static class Response extends UserDto {
         private Long userId;
         private Date joinDate;

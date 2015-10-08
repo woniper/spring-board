@@ -3,6 +3,7 @@ package net.woniper.board.support.dto;
 import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -40,6 +41,7 @@ public class BoardDto extends ResourceSupport implements Serializable {
 
     @ApiModel(value = "board list Response")
     @Getter @Setter
+    @ToString
     public static class ListResponse extends BoardDto {
         private Long boardId;
         private int readCount;

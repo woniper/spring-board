@@ -1,8 +1,10 @@
 package net.woniper.board.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Builder;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.support.dto.UserDto;
@@ -19,8 +21,10 @@ import java.util.List;
  */
 @Entity(name = "user")
 @Getter @Setter
-@ToString(exclude = {"boards", "password"})
 @Slf4j
+@Builder
+@ToString(exclude = {"boards", "password"})
+@NoArgsConstructor
 public class User implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -51,8 +55,6 @@ public class User implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Board> boards = new ArrayList<>();
-
-    public User() {}
 
     public User(String username, String password, String firstName, String lastName,
                 String nickName, AuthorityType authorityType, boolean active) {

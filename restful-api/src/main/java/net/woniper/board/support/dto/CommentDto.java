@@ -3,6 +3,7 @@ package net.woniper.board.support.dto;
 import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -22,6 +23,7 @@ public class CommentDto extends ResourceSupport implements Serializable {
 
     @ApiModel(value = "comment Response")
     @Getter @Setter
+    @ToString
     public static class Response extends CommentDto {
         private Long commentId;
         private int depth;

@@ -1,7 +1,10 @@
 package net.woniper.board.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Builder;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.support.dto.CommentDto;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +19,9 @@ import java.util.Date;
 @Entity(name = "comment")
 @Getter @Setter
 @Slf4j
+@Builder
+@ToString(exclude = {"board"})
+@NoArgsConstructor
 public class Comment implements Serializable {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
