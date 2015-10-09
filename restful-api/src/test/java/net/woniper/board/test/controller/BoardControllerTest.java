@@ -1,7 +1,6 @@
 package net.woniper.board.test.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import net.woniper.board.BoardApplication;
+import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.User;
@@ -10,26 +9,13 @@ import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
-import net.woniper.board.test.config.TestDatabaseConfig;
-import net.woniper.board.builder.EntityBuilder;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.Filter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,37 +26,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
  * Created by woniper on 15. 1. 27..
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {BoardApplication.class, TestDatabaseConfig.class})
-@WebAppConfiguration
-@IntegrationTest("server.port=8888")
-@Transactional
-public class BoardControllerTest {
+public class BoardControllerTest extends BaseControllerTest {
 
     @Autowired private BoardRepository boardRepository;
     @Autowired private BoardService boardService;
     @Autowired private UserService userService;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private ModelMapper modelMapper;
-    @Autowired private WebApplicationContext webApplicationContext;
-    @Autowired private Filter springSecurityFilterChain;
 
-    private MockMvc mock;
     private Board board;
     private User admin;
     private User user;
 
-    private String mediaType = MediaType.APPLICATION_JSON_VALUE;
-
     @Before
     public void setUp() throws Exception {
-        this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
-
         admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
         user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
         board = boardRepository.save(EntityBuilder.createBoard(admin));
