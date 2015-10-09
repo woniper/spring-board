@@ -1,6 +1,5 @@
 package net.woniper.board.test.service;
 
-import net.woniper.board.BoardApplication;
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
@@ -9,17 +8,10 @@ import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.errors.support.UsernameDuplicateException;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.UserDto;
-import net.woniper.board.test.config.TestDatabaseConfig;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import static org.junit.Assert.*;
@@ -27,12 +19,7 @@ import static org.junit.Assert.*;
 /**
  * Created by woniper on 15. 2. 4..
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {BoardApplication.class, TestDatabaseConfig.class})
-@WebAppConfiguration
-@IntegrationTest("server.port=8888")
-@Transactional
-public class UserServiceTest {
+public class UserServiceTest extends BaseServiceTest {
 
     @Autowired private UserService userService;
 
