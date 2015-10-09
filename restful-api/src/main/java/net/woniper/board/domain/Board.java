@@ -22,6 +22,7 @@ import java.util.List;
 @Builder
 @ToString(exclude = {"user", "comments"})
 @NoArgsConstructor
+@AllArgsConstructor
 public class Board implements Serializable {
 
     @Id

@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Builder;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.support.dto.UserDto;
@@ -22,7 +21,6 @@ import java.util.List;
 @Entity(name = "user")
 @Getter @Setter
 @Slf4j
-@Builder
 @ToString(exclude = {"boards", "password"})
 @NoArgsConstructor
 public class User implements Serializable {
