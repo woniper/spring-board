@@ -11,6 +11,7 @@ import net.woniper.board.service.impl.BoardServiceImpl;
 import net.woniper.board.service.impl.CommentServiceImpl;
 import net.woniper.board.service.impl.UserServiceImpl;
 import net.woniper.board.test.config.TestDatabaseConfig;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -23,6 +24,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -37,6 +41,13 @@ import static org.junit.Assert.assertNotNull;
 public class BaseServiceTest {
 
     @Autowired protected ModelMapper modelMapper;
+
+    @PersistenceContext EntityManager entityManager;
+
+    @After
+    public void after() throws Exception {
+        entityManager.flush();
+    }
 
     @Test
     public void testContextLoader() throws Exception {

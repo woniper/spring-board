@@ -3,6 +3,7 @@ package net.woniper.board.test.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
 import net.woniper.board.test.config.TestDatabaseConfig;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.Filter;
 
 import static org.junit.Assert.assertNotNull;
@@ -37,12 +40,19 @@ public class BaseControllerTest {
     @Autowired protected WebApplicationContext webApplicationContext;
     @Autowired protected Filter springSecurityFilterChain;
 
+    @PersistenceContext EntityManager entityManager;
+
     protected MockMvc mock;
     protected String mediaType = MediaType.APPLICATION_JSON_VALUE;
 
     @Before
     public void baseSetUp() throws Exception {
         this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
+    }
+
+    @After
+    public void after() throws Exception {
+        entityManager.flush();
     }
 
     @Test
