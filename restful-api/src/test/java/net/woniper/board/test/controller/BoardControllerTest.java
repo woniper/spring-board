@@ -94,9 +94,9 @@ public class BoardControllerTest extends BaseControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/boards/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(admin)))
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(boardDto)));
+                .with(user(new SecurityUserDetails(admin)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         equalsResultDataAndThen(resultActions, status().isAccepted(), board, admin);
@@ -111,9 +111,9 @@ public class BoardControllerTest extends BaseControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/boards/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(user)))
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(boardDto)));
+                .with(user(new SecurityUserDetails(user)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         resultActions.andDo(print())
@@ -130,9 +130,9 @@ public class BoardControllerTest extends BaseControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(put("/boards/" + newBoard.getBoardId())
-                                            .with(user(new SecurityUserDetails(admin)))
-                                            .contentType(mediaType)
-                                            .content(objectMapper.writeValueAsBytes(boardDto)));
+                .with(user(new SecurityUserDetails(admin)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(boardDto)));
 
         // then
         equalsResultDataAndThen(resultActions, status().isAccepted(), newBoard, user);
@@ -147,7 +147,7 @@ public class BoardControllerTest extends BaseControllerTest {
     public void test_게시글_삭제() throws Exception {
         // when
         ResultActions resultActions = mock.perform(delete("/boards/" + board.getBoardId())
-                                            .with(user(new SecurityUserDetails(admin))));
+                .with(user(new SecurityUserDetails(admin))));
 
         //then
         resultActions.andDo(print())
@@ -197,8 +197,10 @@ public class BoardControllerTest extends BaseControllerTest {
         createBoardList(20, admin);
 
         // when
-        ResultActions resultActions = mock.perform(get("/boards?page=0&size=20")
-                                            .with(user(new SecurityUserDetails(admin))));
+        ResultActions resultActions = mock.perform(get("/boards")
+                .param("page", "0")
+                .param("size", "20")
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
@@ -236,7 +238,7 @@ public class BoardControllerTest extends BaseControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(get("/boards/" + boardId.intValue())
-                    .with(user(new SecurityUserDetails(admin))));
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())

@@ -53,8 +53,8 @@ public class UserControllerTest extends BaseControllerTest {
 
         // when
         ResultActions resultActions = mock.perform(post("/users")
-                    .contentType(mediaType)
-                    .content(objectMapper.writeValueAsBytes(newUser)));
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(newUser)));
 
         // then
         equalsResultDataAndThen(resultActions, status().isCreated(), newUser);
@@ -83,8 +83,8 @@ public class UserControllerTest extends BaseControllerTest {
     public void test_회원_탈퇴() throws Exception {
         // when
         ResultActions resultActions = mock.perform(delete("/users")
-                                            .contentType(mediaType)
-                                            .with(user(new SecurityUserDetails(admin))));
+                .contentType(mediaType)
+                .with(user(new SecurityUserDetails(admin))));
 
         // then
         resultActions.andDo(print())
