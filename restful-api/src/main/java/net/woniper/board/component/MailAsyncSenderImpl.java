@@ -1,7 +1,7 @@
-package net.woniper.board.service.impl;
+package net.woniper.board.component;
 
 import lombok.extern.slf4j.Slf4j;
-import net.woniper.board.service.MailService;
+import net.woniper.board.component.MailAsyncSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Slf4j
-public class MailServiceImpl implements MailService {
+public class MailAsyncSenderImpl implements MailAsyncSender {
 
     private MailSender mailSender;
     private SimpleMailMessage mailTemplate;

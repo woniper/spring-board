@@ -1,9 +1,9 @@
-package net.woniper.board.service;
+package net.woniper.board.component;
 
 /**
  * Created by woniper on 2015. 10. 8..
  */
-public interface MailService {
+public interface MailAsyncSender {
 
     void send(String subject, String body);
 
