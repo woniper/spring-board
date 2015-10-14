@@ -140,7 +140,19 @@ public class BoardControllerTest extends BaseControllerTest {
 
     @Test
     public void test_게시글_수정_valid_check() throws Exception {
-        // todo
+        // given
+        Long boardId = board.getBoardId();
+        BoardDto boardDto = modelMapper.map(board, BoardDto.class);
+        boardDto.setTitle("");
+
+        // when
+        ResultActions resultActions = mock.perform(put("/boards/" + boardId)
+                .with(user(new SecurityUserDetails(admin)))
+                .contentType(mediaType)
+                .content(objectMapper.writeValueAsBytes(boardDto)));
+
+        // then
+        resultActions.andDo(print()).andExpect(status().isBadRequest());
     }
 
     @Test
