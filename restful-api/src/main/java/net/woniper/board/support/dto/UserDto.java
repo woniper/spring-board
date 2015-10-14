@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -18,17 +18,17 @@ import java.util.Date;
 @Getter @Setter
 public class UserDto extends ResourceSupport implements Serializable {
 
-    @Size(min = 5) @NotNull private String username;
-    @NotNull private String firstName;
-    @NotNull private String lastName;
-    @NotNull private String nickName;
+    @Size(min = 5) @NotEmpty private String username;
+    @NotEmpty private String firstName;
+    @NotEmpty private String lastName;
+    @NotEmpty private String nickName;
     private AuthorityType authorityType;
 
     @ApiModel(value = "user Request")
     @Getter @Setter
     @ToString
     public static class Request extends UserDto {
-        @Size(min = 5) @NotNull private String password;
+        @Size(min = 5) @NotEmpty private String password;
     }
 
     @ApiModel(value = "user Response")

@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -20,10 +20,10 @@ import java.util.List;
 @Getter @Setter
 public class BoardDto extends ResourceSupport implements Serializable {
 
-    @NotNull @Size(min = 2)
+    @NotEmpty @Size(min = 2)
     private String title;
 
-    @NotNull @Size(min = 2)
+    @NotEmpty @Size(min = 2)
     private String content;
 
     public BoardDto() {}

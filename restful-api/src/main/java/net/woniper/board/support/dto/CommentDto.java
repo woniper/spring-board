@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.hateoas.ResourceSupport;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,7 +18,7 @@ import java.util.Date;
 @Getter @Setter
 public class CommentDto extends ResourceSupport implements Serializable {
 
-    @NotNull
+    @NotEmpty
     private String content;
 
     @ApiModel(value = "comment Response")
