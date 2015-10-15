@@ -1,14 +1,18 @@
-package net.woniper.board;
+package net.woniper.board.web;
 
+import net.woniper.board.component.FileUploaderImpl;
 import net.woniper.board.domain.User;
 import net.woniper.board.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +22,7 @@ import java.util.Map;
 public class WebController {
 
     @Autowired private UserService userService;
+    @Autowired private FileUploaderImpl fileUploaderImpl;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public Map<String, Object> test(Principal principal) {
@@ -47,6 +52,11 @@ public class WebController {
         }
 
         return map;
+    }
+
+    @RequestMapping(value = "/uploads", method = RequestMethod.POST)
+    public List<String> uploads(@RequestParam(value = "file") List<MultipartFile> files) {
+        return fileUploaderImpl.uploads(files);
     }
 
 }
