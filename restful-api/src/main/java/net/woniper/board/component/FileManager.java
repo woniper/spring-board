@@ -1,5 +1,6 @@
 package net.woniper.board.component;
 
+import net.woniper.board.support.dto.FileDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -10,9 +11,10 @@ import java.util.List;
  */
 public interface FileManager {
 
-    List<String> uploads(List<MultipartFile> files);
+    List<FileDto> saveFiles(List<MultipartFile> files);
 
-    String update(String oldFileName, MultipartFile file);
+    FileDto updateFile(String oldFileName, MultipartFile file);
 
-    File download(String fileName);
+    File getFile(String fileName);
+
 }

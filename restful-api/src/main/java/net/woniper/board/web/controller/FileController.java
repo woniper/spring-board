@@ -2,7 +2,7 @@ package net.woniper.board.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.component.FileManager;
-import org.apache.commons.lang3.StringUtils;
+import net.woniper.board.support.dto.FileDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -18,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by woniper on 2015. 10. 16..
@@ -33,8 +31,8 @@ public class FileController {
 
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public ResponseEntity<?> download(@RequestParam("fileName") String fileName) {
-        File file = fileManager.download(fileName);
-        if(file != null && file.exists()) {
+        File file = fileManager.getFile(fileName);
+        if(file != null) {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.parseMediaType("application/x-msdownload"));
@@ -53,18 +51,20 @@ public class FileController {
     }
 
     @RequestMapping(value = "/uploads", method = RequestMethod.POST)
-    public List<String> uploadFiles(@RequestParam("file") List<MultipartFile> files) {
-        return fileManager.uploads(files);
+    public ResponseEntity<?> uploadFiles(@RequestParam("file") List<MultipartFile> files) {
+        List<FileDto> fileDtos = fileManager.saveFiles(files);
+        if(fileDtos != null && !fileDtos.isEmpty())
+            return ResponseEntity.ok(fileDtos);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @RequestMapping(value = "/file-update", method = RequestMethod.POST)
     public ResponseEntity<?> updateFile(@RequestParam("fileName") String oldFileName,
                                         @RequestParam("file") MultipartFile file) {
-        String newFileName = fileManager.update(oldFileName, file);
-        if(StringUtils.isNotBlank(newFileName)) {
-            Map<String, String> resultMap = new HashMap<>();
-            resultMap.put("fileName", newFileName);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(resultMap);
+        FileDto fileDto = fileManager.updateFile(oldFileName, file);
+        if(fileDto != null) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(fileDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
     }

@@ -1,6 +1,7 @@
 package net.woniper.board.component;
 
 import lombok.extern.slf4j.Slf4j;
+import net.woniper.board.support.dto.FileDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -24,39 +25,56 @@ public class FileManagerImpl implements FileManager {
     private String filePath;
 
     @Override
-    public List<String> uploads(List<MultipartFile> files) {
+    public List<FileDto> saveFiles(List<MultipartFile> files) {
         Assert.notNull(files);
         mkdir();
-        List<String> filePaths = new ArrayList<>();
+        List<FileDto> fileDtos = new ArrayList<>();
         for (MultipartFile file : files) {
             String fileName = getFileName(file.getOriginalFilename());
             try (BufferedOutputStream stream = new BufferedOutputStream(
                     new FileOutputStream(new File(filePath + fileName)))) {
                 stream.write(file.getBytes());
-                log.info("=======> upload file name : {}, size : {}", fileName, file.getSize());
-                filePaths.add(fileName);
+
+                FileDto fileDto = new FileDto();
+                fileDto.setFileName(file.getOriginalFilename());
+                fileDto.setFileSize(file.getSize());
+                fileDto.setOldFileName(file.getOriginalFilename());
+                fileDto.setOldFileSize(file.getSize());
+
+                log.info("=======> upload file info : {}", fileDto.toString());
+
+                fileDtos.add(fileDto);
             } catch (IOException e) {
                 log.error("=======> file upload fail, file name : {}, size : {}", fileName, file.getSize());
                 e.printStackTrace();
             }
         }
-        return filePaths;
+        return fileDtos;
     }
 
     @Override
-    public String update(String oldFileName, MultipartFile file) {
+    public FileDto updateFile(String oldFileName, MultipartFile file) {
         Assert.notNull(oldFileName);
         Assert.notNull(file);
 
         File oldFile = new File(filePath + oldFileName);
 
-        if(oldFile.exists() && oldFile.delete()) {
+        if(oldFile.exists()) {
             String fileName = getFileName(file.getOriginalFilename());
             try(BufferedOutputStream stream = new BufferedOutputStream(
                     new FileOutputStream(new File(filePath + fileName)))) {
                 stream.write(file.getBytes());
-                log.info("=======> update file name : {}, size : {}", fileName, file.getSize());
-                return fileName;
+
+                FileDto fileDto = new FileDto();
+                fileDto.setFileName(file.getOriginalFilename());
+                fileDto.setFileSize(file.getSize());
+                fileDto.setOldFileName(oldFile.getName());
+                fileDto.setOldFileSize(oldFile.length());
+
+                log.info("=======> update file info :{}", fileDto.toString());
+
+                oldFile.delete();
+                return fileDto;
             } catch (IOException e) {
                 log.error("=======> file update fail, file name : {}, size : {}", fileName, file.getSize());
                 e.printStackTrace();
@@ -66,7 +84,7 @@ public class FileManagerImpl implements FileManager {
     }
 
     @Override
-    public File download(String fileName) {
+    public File getFile(String fileName) {
         return new File(filePath + fileName);
     }
 
