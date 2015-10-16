@@ -1,6 +1,5 @@
 package net.woniper.board.web;
 
-import net.woniper.board.component.FileManagerImpl;
 import net.woniper.board.domain.User;
 import net.woniper.board.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import java.util.Map;
 public class WebController {
 
     @Autowired private UserService userService;
-    @Autowired private FileManagerImpl fileUploaderImpl;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public Map<String, Object> test(Principal principal) {
