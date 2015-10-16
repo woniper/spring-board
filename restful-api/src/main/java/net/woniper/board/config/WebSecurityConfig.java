@@ -34,6 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger", "/swagger/index.html").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
                 .antMatchers(HttpMethod.GET, "/users/**", "/users/boards/**", "/test").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/uploads/**", "/download/**", "/file-update/**").hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.POST).hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.PUT).hasAnyRole("ADMIN", "USER")
                 .antMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN", "USER")
