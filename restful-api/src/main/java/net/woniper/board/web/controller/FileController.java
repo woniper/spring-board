@@ -77,6 +77,7 @@ public class FileController {
                 InputStream inputStream = new FileInputStream(imageFile);
                 return ResponseEntity.status(HttpStatus.OK)
                         .contentType(ImageFileUtils.getMediaType(imageFile.getName()))
+                        .contentLength(imageFile.length())
                         .body(IOUtils.toByteArray(inputStream));
 
             } catch (FileNotFoundException e) {
