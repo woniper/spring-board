@@ -3,6 +3,8 @@ package net.woniper.board.web.controller;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.component.FileManager;
 import net.woniper.board.support.dto.FileDto;
+import net.woniper.board.utils.ImageFileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -67,6 +67,28 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(fileDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
+    }
+
+    @RequestMapping(value = "/image", method = RequestMethod.GET)
+    public ResponseEntity<?> imageView(@RequestParam("name") String imageName) {
+        File imageFile = fileManager.getFile(imageName);
+        if(imageFile != null) {
+            try {
+                InputStream inputStream = new FileInputStream(imageFile);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(ImageFileUtils.getMediaType(imageFile.getName()))
+                        .body(IOUtils.toByteArray(inputStream));
+
+            } catch (FileNotFoundException e) {
+                log.error("file Not Found Exception : {}", e.getMessage());
+                e.printStackTrace();
+            } catch (IOException e) {
+                log.error("file toByteArray Exception : {}", e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 
