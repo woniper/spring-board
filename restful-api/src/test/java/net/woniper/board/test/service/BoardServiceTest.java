@@ -36,9 +36,9 @@ public class BoardServiceTest extends BaseServiceTest {
         user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
 
         adminBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Response.class), admin.getUsername());
+                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Request.class), admin.getUsername());
         userBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Response.class), user.getUsername());
+                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class), user.getUsername());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class BoardServiceTest extends BaseServiceTest {
     @Test(expected = UserNotFoundException.class)
     public void test_createBoard_UserNotFound() throws Exception {
         // given
-        BoardDto boardDto = modelMapper.map(EntityBuilder.createBoard(user), BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class);
 
         // when
         boardService.createBoard(boardDto, "notUser");
@@ -71,7 +71,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_createBoard() throws Exception {
         // given
         Board newBoard = EntityBuilder.createBoard(user);
-        BoardDto newBoardDto = modelMapper.map(newBoard, BoardDto.class);
+        BoardDto.Request newBoardDto = modelMapper.map(newBoard, BoardDto.Request.class);
 
         // when
         Board createBoard = boardService.createBoard(newBoardDto, user.getUsername());
@@ -85,7 +85,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_admin_notFoundException() throws Exception {
         // given
         Long boardId = Long.MAX_VALUE;
-        BoardDto boardDto = modelMapper.map(adminBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(adminBoard, BoardDto.Request.class);
         String username = admin.getUsername();
 
         // when
@@ -99,7 +99,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_user_notFoundException() throws Exception {
         // given
         Long boardId = Long.MAX_VALUE;
-        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(userBoard, BoardDto.Request.class);
         String username = user.getUsername();
 
         // when
@@ -113,7 +113,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_patch_null() throws Exception {
         // given
         Long boardId = userBoard.getBoardId();
-        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(userBoard, BoardDto.Request.class);
         boardDto.setTitle(null);
         boardDto.setContent("updateContent");
         String username = user.getUsername();
@@ -130,7 +130,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_patch_not_null() throws Exception {
         // given
         Long boardId = userBoard.getBoardId();
-        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(userBoard, BoardDto.Request.class);
         boardDto.setTitle("updateTitle");
         boardDto.setContent("updateContent");
         String username = user.getUsername();
@@ -147,7 +147,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_update_null() throws Exception {
         // given
         Long boardId = userBoard.getBoardId();
-        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(userBoard, BoardDto.Request.class);
         boardDto.setTitle(null);
         boardDto.setContent("updateContent");
         String username = user.getUsername();
@@ -163,7 +163,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_updateBoard_update_not_null() throws Exception {
         // given
         Long boardId = userBoard.getBoardId();
-        BoardDto boardDto = modelMapper.map(userBoard, BoardDto.class);
+        BoardDto.Request boardDto = modelMapper.map(userBoard, BoardDto.Request.class);
         boardDto.setTitle("updateTitle");
         boardDto.setContent("updateContent");
         String username = user.getUsername();

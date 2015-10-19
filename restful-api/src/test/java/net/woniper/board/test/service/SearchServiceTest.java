@@ -89,8 +89,8 @@ public class SearchServiceTest extends BaseServiceTest {
 
     private void fixture() {
         User user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
-        boardService.createBoard(new BoardDto("tt1", "cc1"), user.getUsername());
-        boardService.createBoard(new BoardDto("tt2", "cc2"), user.getUsername());
-        boardService.createBoard(new BoardDto("tt3", "cc3"), user.getUsername());
+        boardService.createBoard(new BoardDto.Request("tt1", "cc1"), user.getUsername());
+        boardService.createBoard(new BoardDto.Request("tt2", "cc2"), user.getUsername());
+        boardService.createBoard(new BoardDto.Request("tt3", "cc3"), user.getUsername());
     }
 }

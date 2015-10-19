@@ -42,9 +42,9 @@ public class CommentServiceTest extends BaseServiceTest {
         user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
 
         adminBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Response.class), admin.getUsername());
+                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Request.class), admin.getUsername());
         userBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Response.class), user.getUsername());
+                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class), user.getUsername());
 
         adminComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(adminBoard),
                 CommentDto.class), adminBoard.getBoardId());
