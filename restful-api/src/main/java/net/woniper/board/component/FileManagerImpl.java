@@ -36,9 +36,9 @@ public class FileManagerImpl implements FileManager {
                 stream.write(file.getBytes());
 
                 FileDto fileDto = new FileDto();
-                fileDto.setFileName(file.getOriginalFilename());
+                fileDto.setFileName(fileName);
                 fileDto.setFileSize(file.getSize());
-                fileDto.setOldFileName(file.getOriginalFilename());
+                fileDto.setOldFileName(fileName);
                 fileDto.setOldFileSize(file.getSize());
 
                 log.info("=======> upload file info : {}", fileDto.toString());
@@ -66,9 +66,9 @@ public class FileManagerImpl implements FileManager {
                 stream.write(file.getBytes());
 
                 FileDto fileDto = new FileDto();
-                fileDto.setFileName(file.getOriginalFilename());
+                fileDto.setFileName(fileName);
                 fileDto.setFileSize(file.getSize());
-                fileDto.setOldFileName(oldFile.getName());
+                fileDto.setOldFileName(oldFileName);
                 fileDto.setOldFileSize(oldFile.length());
 
                 log.info("=======> update file info :{}", fileDto.toString());
