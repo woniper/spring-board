@@ -48,6 +48,9 @@ public class Board implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @ElementCollection
+    private List<String> attachFiles = new ArrayList<>();
+
     public Board(String title, String content) {
         setTitle(title);
         setContent(content);
@@ -94,5 +97,10 @@ public class Board implements Serializable {
     @Transient
     public void read() {
         readCount++;
+    }
+
+    @Transient
+    public void addAttachFile(String filePath) {
+        this.attachFiles.add(filePath);
     }
 }

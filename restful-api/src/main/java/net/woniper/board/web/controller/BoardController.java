@@ -58,7 +58,7 @@ public class BoardController {
             @ApiResponse(code = 400, message = "Bad Request", response = ObjectError.class)
     })
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createNewBoard(@ApiParam(required = true) @RequestBody @Valid BoardDto boardDto,
+    public ResponseEntity<?> createNewBoard(@ApiParam(required = true) @RequestBody @Valid BoardDto.Request boardDto,
                                             BindingResult result,
                                             Principal principal) {
         if(result.hasErrors()) {
@@ -86,7 +86,7 @@ public class BoardController {
     })
     @RequestMapping(value = "/{boardId}", method = {RequestMethod.PUT, RequestMethod.PATCH}, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
-                                         @ApiParam(required = true) @RequestBody @Valid BoardDto boardDto,
+                                         @ApiParam(required = true) @RequestBody @Valid BoardDto.Request boardDto,
                                          BindingResult result, Principal principal, HttpServletRequest request) {
 
         if(result.hasErrors()) {

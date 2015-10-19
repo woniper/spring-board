@@ -2,6 +2,7 @@ package net.woniper.board.support.dto;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import net.woniper.board.domain.type.AuthorityType;
@@ -33,10 +34,21 @@ public class BoardDto extends ResourceSupport implements Serializable {
         setContent(content);
     }
 
+    @Getter @Setter
+    @NoArgsConstructor
+    public static class Request extends BoardDto {
+        private List<String> attachFiles;
+
+        public Request(String title, String content) {
+            super(title, content);
+        }
+    }
+
     @ApiModel(value = "board Response")
     @Getter @Setter
     public static class Response extends ListResponse {
         private List<CommentDto.Response> comments;
+        private List<String> attachFiles;
     }
 
     @ApiModel(value = "board list Response")
@@ -52,6 +64,5 @@ public class BoardDto extends ResourceSupport implements Serializable {
         private String nickName;
         private AuthorityType authorityType;
     }
-
 
 }

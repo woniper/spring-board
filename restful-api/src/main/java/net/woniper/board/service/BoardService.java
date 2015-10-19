@@ -16,7 +16,7 @@ public interface BoardService {
 
     void setUserRepository(UserRepository userRepository);
 
-    Board createBoard(BoardDto boardDto, String username);
+    Board createBoard(BoardDto.Request boardDto, String username);
 
     Board getBoard(Long boardId);
 
@@ -24,7 +24,7 @@ public interface BoardService {
 
     Page<Board> getBoard(Pageable pageable, String username);
 
-    Board updateBoard(Long boardId, BoardDto boardDto, String username, String method);
+    Board updateBoard(Long boardId, BoardDto.Request boardDto, String username, String method);
 
     boolean deleteBoard(Long boardId, String username);
 

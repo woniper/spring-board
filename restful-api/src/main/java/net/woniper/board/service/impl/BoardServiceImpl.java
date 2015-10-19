@@ -44,7 +44,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board createBoard(BoardDto boardDto, String username) {
+    public Board createBoard(BoardDto.Request boardDto, String username) {
         Board board = modelMapper.map(boardDto, Board.class);
         User user = userRepository.findByUsername(username);
         if(user == null)
@@ -79,7 +79,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board updateBoard(Long boardId, BoardDto boardDto, String username, String method) {
+    public Board updateBoard(Long boardId, BoardDto.Request boardDto, String username, String method) {
         User user = userService.getUser(username);
         Board board = null;
         if(isAccessPossibleUser(user)) {
