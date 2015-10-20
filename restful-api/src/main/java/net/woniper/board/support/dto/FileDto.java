@@ -12,9 +12,17 @@ import lombok.ToString;
 public class FileDto {
 
     private String fileName;
-    private long fileSize;
 
-    private String oldFileName;
-    private long oldFileSize;
+    @Getter @Setter
+    public static class Request extends FileDto {
+
+    }
+
+    @Getter @Setter
+    public static class Response extends FileDto {
+        private long fileSize;
+        private String oldFileName;
+        private long oldFileSize;
+    }
 
 }

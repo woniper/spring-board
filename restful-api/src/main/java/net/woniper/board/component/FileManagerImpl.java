@@ -1,7 +1,11 @@
 package net.woniper.board.component;
 
 import lombok.extern.slf4j.Slf4j;
+import net.woniper.board.domain.FileInfo;
+import net.woniper.board.repository.FileInfoRepository;
 import net.woniper.board.support.dto.FileDto;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -12,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -24,18 +29,24 @@ public class FileManagerImpl implements FileManager {
     @Value("${file.upload.path}")
     private String filePath;
 
+    @Value("${file.upload.daily.folder}")
+    private boolean isDailyFolder;
+
+    @Autowired private FileInfoRepository fileInfoRepository;
+    @Autowired private ModelMapper modelMapper;
+
     @Override
-    public List<FileDto> saveFiles(List<MultipartFile> files) {
+    public List<FileDto.Response> saveFiles(List<MultipartFile> files) {
         Assert.notNull(files);
         mkdir();
-        List<FileDto> fileDtos = new ArrayList<>();
+        List<FileDto.Response> fileDtos = new ArrayList<>();
         for (MultipartFile file : files) {
-            String fileName = getFileName(file.getOriginalFilename());
+            String fileName = createFileName(file.getOriginalFilename());
             try (BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(new File(filePath + fileName)))) {
+                    new FileOutputStream(new File(getSaveFolderPath() + fileName)))) {
                 stream.write(file.getBytes());
 
-                FileDto fileDto = new FileDto();
+                FileDto.Response fileDto = new FileDto.Response();
                 fileDto.setFileName(fileName);
                 fileDto.setFileSize(file.getSize());
                 fileDto.setOldFileName(fileName);
@@ -44,6 +55,7 @@ public class FileManagerImpl implements FileManager {
                 log.info("=======> upload file info : {}", fileDto.toString());
 
                 fileDtos.add(fileDto);
+                saveFileInfo(fileDto);
             } catch (IOException e) {
                 log.error("=======> file upload fail, file name : {}, size : {}", fileName, file.getSize());
                 e.printStackTrace();
@@ -53,19 +65,19 @@ public class FileManagerImpl implements FileManager {
     }
 
     @Override
-    public FileDto updateFile(String oldFileName, MultipartFile file) {
+    public FileDto.Response updateFile(String oldFileName, MultipartFile file) {
         Assert.notNull(oldFileName);
         Assert.notNull(file);
 
         File oldFile = new File(filePath + oldFileName);
 
         if(oldFile.exists()) {
-            String fileName = getFileName(file.getOriginalFilename());
+            String fileName = createFileName(file.getOriginalFilename());
             try(BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(new File(filePath + fileName)))) {
+                    new FileOutputStream(new File(getSaveFolderPath() + fileName)))) {
                 stream.write(file.getBytes());
 
-                FileDto fileDto = new FileDto();
+                FileDto.Response fileDto = new FileDto.Response();
                 fileDto.setFileName(fileName);
                 fileDto.setFileSize(file.getSize());
                 fileDto.setOldFileName(oldFileName);
@@ -74,6 +86,8 @@ public class FileManagerImpl implements FileManager {
                 log.info("=======> update file info :{}", fileDto.toString());
 
                 oldFile.delete();
+                saveFileInfo(fileDto);
+
                 return fileDto;
             } catch (IOException e) {
                 log.error("=======> file update fail, file name : {}, size : {}", fileName, file.getSize());
@@ -85,21 +99,51 @@ public class FileManagerImpl implements FileManager {
 
     @Override
     public File getFile(String fileName) {
-        return new File(filePath + fileName);
+        FileInfo fileInfo = fileInfoRepository.findByFileName(fileName);
+        return fileInfo.isDailyFolder() ? new File(filePath + fileInfo.getfileFullPath())
+                : new File(fileInfo.getfileFullPath());
     }
 
     /**
      * file upload 경로 폴더 생성
      */
     private void mkdir() {
-        File file = new File(filePath);
+        File file = new File(getSaveFolderPath());
         if(!file.exists()) {
             file.mkdirs();
             log.info("=======> upload File Path Directory mkdir!!");
         }
     }
 
-    private String getFileName(String originalFileName) {
-        return System.currentTimeMillis() + "_" + originalFileName;
+    private void saveFileInfo(FileDto.Response fileDto) {
+        FileInfo fileInfo = modelMapper.map(fileDto, FileInfo.class);
+        fileInfo.setDailyFolder(isDailyFolder);
+        if(isDailyFolder)
+            fileInfo.setDailyFolderPath(getDailyFolderPath());
+        fileInfoRepository.save(fileInfo);
+    }
+
+    /**
+     * 저장위치
+     * @return
+     */
+    private String getSaveFolderPath() {
+        return isDailyFolder ? filePath + getDailyFolderPath() : filePath;
+    }
+
+    private String getDailyFolderPath() {
+        Calendar calendar = Calendar.getInstance();
+        return String.format("%04d%s%02d%s%02d%s", calendar.get(Calendar.YEAR), File.separator
+                , calendar.get(Calendar.MONTH) + 1, File.separator
+                , calendar.get(Calendar.DAY_OF_MONTH), File.separator);
+    }
+
+    /**
+     * 파일 이름 생성
+     * @param fileName
+     * @return
+     */
+    private String createFileName(String fileName) {
+        return System.currentTimeMillis() + "_" + fileName;
     }
 }

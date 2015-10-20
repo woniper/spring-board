@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface FileManager {
 
-    List<FileDto> saveFiles(List<MultipartFile> files);
+    List<FileDto.Response> saveFiles(List<MultipartFile> files);
 
-    FileDto updateFile(String oldFileName, MultipartFile file);
+    FileDto.Response updateFile(String oldFileName, MultipartFile file);
 
     File getFile(String fileName);
 

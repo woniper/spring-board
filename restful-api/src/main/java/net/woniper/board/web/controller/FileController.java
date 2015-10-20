@@ -52,7 +52,7 @@ public class FileController {
 
     @RequestMapping(value = "/uploads", method = RequestMethod.POST)
     public ResponseEntity<?> uploadFiles(@RequestParam("file") List<MultipartFile> files) {
-        List<FileDto> fileDtos = fileManager.saveFiles(files);
+        List<FileDto.Response> fileDtos = fileManager.saveFiles(files);
         if(fileDtos != null && !fileDtos.isEmpty())
             return ResponseEntity.ok(fileDtos);
 
@@ -62,7 +62,7 @@ public class FileController {
     @RequestMapping(value = "/file-update", method = RequestMethod.POST)
     public ResponseEntity<?> updateFile(@RequestParam("fileName") String oldFileName,
                                         @RequestParam("file") MultipartFile file) {
-        FileDto fileDto = fileManager.updateFile(oldFileName, file);
+        FileDto.Response fileDto = fileManager.updateFile(oldFileName, file);
         if(fileDto != null) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(fileDto);
         }
@@ -71,6 +71,7 @@ public class FileController {
 
     @RequestMapping(value = "/image", method = RequestMethod.GET)
     public ResponseEntity<?> imageView(@RequestParam("name") String imageName) {
+        // todo 한글 encoding 문제
         File imageFile = fileManager.getFile(imageName);
         if(imageFile != null) {
             try {

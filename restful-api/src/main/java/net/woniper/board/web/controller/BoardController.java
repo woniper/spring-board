@@ -4,6 +4,7 @@ import com.wordnik.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
+import net.woniper.board.domain.FileInfo;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.BoardService;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -293,6 +295,14 @@ public class BoardController {
         responseBoard.setUsername(user.getUsername());
         responseBoard.setNickName(user.getNickName());
         responseBoard.setAuthorityType(user.getAuthorityType());
+
+        List<FileInfo> fileInfos = board.getFileInfos();
+        List<String> attachFiles = new ArrayList<>();
+        for (FileInfo info : fileInfos) {
+            attachFiles.add(info.getFileName());
+        }
+        responseBoard.setAttachFiles(attachFiles);
+
         return responseBoard;
     }
 
