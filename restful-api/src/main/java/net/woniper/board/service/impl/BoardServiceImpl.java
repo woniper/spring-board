@@ -7,6 +7,7 @@ import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.errors.support.BoardNotFoundException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.repository.BoardRepository;
+import net.woniper.board.repository.FileInfoRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.UserService;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 /**
  * Created by woniper on 15. 1. 26..
  */
@@ -29,6 +32,8 @@ public class BoardServiceImpl implements BoardService {
 
     private BoardRepository boardRepository;
     private UserRepository userRepository;
+    @Autowired private FileInfoRepository fileInfoRepository;
+
     @Autowired private UserService userService;
     @Autowired private ModelMapper modelMapper;
 
@@ -51,6 +56,12 @@ public class BoardServiceImpl implements BoardService {
             throw new UserNotFoundException(username);
 
         board.setUser(user);
+        List<String> attachFiles = boardDto.getAttachFiles();
+        if(attachFiles != null && !attachFiles.isEmpty()) {
+            for (String file : attachFiles) {
+                board.addAttachFile(fileInfoRepository.findByFileName(file));
+            }
+        }
         return boardRepository.save(board);
     }
 
@@ -87,6 +98,8 @@ public class BoardServiceImpl implements BoardService {
         } else{
             board = boardRepository.findByBoardIdAndUser(boardId, user);
         }
+
+        // todo : file update
 
         if(board == null)
             throw new BoardNotFoundException(boardId);
