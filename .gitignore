@@ -25,4 +25,7 @@ local.properties
 *.ear
 hs_err_pid*
 
+#Web-Vaadin
+mvnw*
+
 
