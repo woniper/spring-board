@@ -26,14 +26,22 @@ import java.util.List;
 @Component
 public class FileManagerImpl implements FileManager {
 
-    @Value("${file.upload.path}")
     private String filePath;
 
-    @Value("${file.upload.daily.folder}")
     private boolean isDailyFolder;
 
     @Autowired private FileInfoRepository fileInfoRepository;
     @Autowired private ModelMapper modelMapper;
+
+    @Value("${file.upload.path}")
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    @Value("${file.upload.daily.folder}")
+    public void setIsDailyFolder(boolean isDailyFolder) {
+        this.isDailyFolder = isDailyFolder;
+    }
 
     @Override
     public List<FileDto.Response> saveFiles(List<MultipartFile> files) {
