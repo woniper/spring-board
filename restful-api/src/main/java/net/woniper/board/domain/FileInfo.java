@@ -32,7 +32,7 @@ public class FileInfo implements Serializable {
 
     private String dailyFolderPath;
 
-    public String getfileFullPath() {
+    public String getFileFullPath() {
         return isDailyFolder() ? getDailyFolderPath() + getFileName() : getFileName();
     }
 
