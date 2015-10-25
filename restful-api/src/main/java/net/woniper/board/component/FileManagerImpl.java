@@ -108,8 +108,8 @@ public class FileManagerImpl implements FileManager {
     @Override
     public File getFile(String fileName) {
         FileInfo fileInfo = fileInfoRepository.findByFileName(fileName);
-        return fileInfo.isDailyFolder() ? new File(filePath + fileInfo.getfileFullPath())
-                : new File(fileInfo.getfileFullPath());
+        return fileInfo.isDailyFolder() ? new File(filePath + fileInfo.getFileFullPath())
+                : new File(fileInfo.getFileFullPath());
     }
 
     /**
