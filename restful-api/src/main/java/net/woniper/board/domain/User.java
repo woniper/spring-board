@@ -21,6 +21,7 @@ import java.util.List;
 @Entity(name = "user")
 @Getter @Setter
 @Slf4j
+//@Builder
 @ToString(exclude = {"boards", "password"})
 @NoArgsConstructor
 public class User implements Serializable {
