@@ -1,7 +1,6 @@
 package net.woniper.board;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.woniper.board.utils.annotation.HateoasAttributeProcessor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,14 +13,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.persistence.EntityManagerFactory;
-import java.util.List;
 
 /**
  * Created by woniper on 15. 1. 26..
@@ -36,11 +33,6 @@ public class BoardApplication {
     @Bean
     WebMvcConfigurer webMvcConfigurer() {
         return new WebMvcConfigurerAdapter() {
-
-            @Override
-            public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-                returnValueHandlers.add(new HateoasAttributeProcessor());
-            }
 
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
