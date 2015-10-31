@@ -1,7 +1,10 @@
 package net.woniper.board;
 
 import net.woniper.board.domain.Board;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.repository.BoardRepository;
+import net.woniper.board.repository.KindBoardRepository;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
 import net.woniper.board.service.UserService;
@@ -21,9 +24,12 @@ public class DatabaseLoader implements CommandLineRunner {
     @Autowired private UserService userService;
     @Autowired private BoardService boardService;
     @Autowired private CommentService commentService;
+    @Autowired private KindBoardRepository kindBoardRepository;
+    @Autowired private BoardRepository boardRepository;
 
     @Override
     public void run(String... args) throws Exception {
+        // User
         UserDto.Request userDto = new UserDto.Request();
         userDto.setUsername("lkw1989");
         userDto.setPassword("12345");
@@ -33,10 +39,15 @@ public class DatabaseLoader implements CommandLineRunner {
         userDto.setAuthorityType(AuthorityType.ADMIN);
         userService.createUser(userDto);
 
-        for (int i = 0; i < 30; i++) {
-            String username = userDto.getUsername();
+        // KindBoard
+        KindBoard kindBoard = kindBoardRepository.save(new KindBoard("일반 게시판"));
+        kindBoardRepository.save(new KindBoard("Q&A"));
+
+        for (int i = 0; i < 20; i++) {
             BoardDto.Request boardDto = new BoardDto.Request("test title" + i, "test content" + i);
-            Board board = boardService.createBoard(boardDto, username);
+            boardDto.setKindId(kindBoard.getKindBoardId());
+            Board board = boardService.createBoard(boardDto, userDto.getUsername());
+
             CommentDto commentDto = new CommentDto();
             commentDto.setContent("test comment content" + i);
             commentService.createComment(commentDto, board.getBoardId());
