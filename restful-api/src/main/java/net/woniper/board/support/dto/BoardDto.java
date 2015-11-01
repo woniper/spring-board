@@ -27,6 +27,9 @@ public class BoardDto extends ResourceSupport implements Serializable {
     @NotEmpty @Size(min = 2)
     private String content;
 
+    @NotEmpty
+    private String kindBoardName;
+
     public BoardDto() {}
 
     public BoardDto(String title, String content) {

@@ -45,7 +45,7 @@ public class DatabaseLoader implements CommandLineRunner {
 
         for (int i = 0; i < 20; i++) {
             BoardDto.Request boardDto = new BoardDto.Request("test title" + i, "test content" + i);
-            boardDto.setKindId(kindBoard.getKindBoardId());
+            boardDto.setKindBoardName(kindBoard.getKindBoardName());
             Board board = boardService.createBoard(boardDto, userDto.getUsername());
 
             CommentDto commentDto = new CommentDto();

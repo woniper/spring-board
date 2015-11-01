@@ -2,6 +2,7 @@ package net.woniper.board.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.Board;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.errors.support.BoardNotFoundException;
@@ -10,6 +11,7 @@ import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.FileInfoRepository;
 import net.woniper.board.repository.UserRepository;
 import net.woniper.board.service.BoardService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
 import org.modelmapper.ModelMapper;
@@ -35,6 +37,7 @@ public class BoardServiceImpl implements BoardService {
     @Autowired private FileInfoRepository fileInfoRepository;
 
     @Autowired private UserService userService;
+    @Autowired private KindBoardService kindBoardService;
     @Autowired private ModelMapper modelMapper;
 
     @Autowired
@@ -51,11 +54,11 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Board createBoard(BoardDto.Request boardDto, String username) {
         Board board = modelMapper.map(boardDto, Board.class);
-        User user = userRepository.findByUsername(username);
-        if(user == null)
-            throw new UserNotFoundException(username);
-
+        User user = userService.getUser(username);
         board.setUser(user);
+        KindBoard kindBoard = kindBoardService.getKindBoard(boardDto.getKindBoardName());
+        board.setKindBoard(kindBoard);
+
         List<String> attachFiles = boardDto.getAttachFiles();
         if(attachFiles != null && !attachFiles.isEmpty()) {
             for (String file : attachFiles) {
@@ -103,6 +106,9 @@ public class BoardServiceImpl implements BoardService {
 
         if(board == null)
             throw new BoardNotFoundException(boardId);
+
+        KindBoard kindBoard = kindBoardService.getKindBoard(boardDto.getKindBoardName());
+        board.setKindBoard(kindBoard);
 
         if(RequestMethod.valueOf(method) == RequestMethod.PATCH)
             board.patch(boardDto);

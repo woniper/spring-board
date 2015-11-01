@@ -185,6 +185,8 @@ public class UserController {
                     boardDto.setUsername(user.getUsername());
                     boardDto.setNickName(user.getNickName());
                     boardDto.setAuthorityType(user.getAuthorityType());
+
+                    boardDto.setKindBoardName(boardList.get(i).getKindBoard().getKindBoardName());
                 }
                 Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());
                 return ResponseEntity.ok(boardPages);

@@ -152,6 +152,9 @@ public class BoardController {
 
             responseBoard.setComments(comments);
         }
+
+        responseBoard.setKindBoardName(board.getKindBoard().getKindBoardName());
+
         return ResponseEntity.ok(responseBoard);
     }
 
@@ -189,6 +192,7 @@ public class BoardController {
                     boardDto.setUsername(user.getUsername());
                     boardDto.setNickName(user.getNickName());
                     boardDto.setAuthorityType(user.getAuthorityType());
+                    boardDto.setKindBoardName(boardList.get(i).getKindBoard().getKindBoardName());
                 }
 
                 Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());

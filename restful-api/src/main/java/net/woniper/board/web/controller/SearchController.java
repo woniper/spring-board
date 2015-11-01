@@ -57,6 +57,8 @@ public class SearchController {
             boardDto.setUsername(user.getUsername());
             boardDto.setNickName(user.getNickName());
             boardDto.setAuthorityType(user.getAuthorityType());
+
+            boardDto.setKindBoardName(boardContents.get(i).getKindBoard().getKindBoardName());
         }
 
         Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());
