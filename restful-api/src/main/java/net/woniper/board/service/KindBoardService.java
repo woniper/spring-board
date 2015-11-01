@@ -8,4 +8,6 @@ import net.woniper.board.domain.KindBoard;
 public interface KindBoardService {
 
     KindBoard getKindBoard(Long kindBoardId);
+
+    KindBoard getKindBoard(String kindBoardName);
 }

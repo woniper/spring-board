@@ -21,9 +21,18 @@ public class KindBoardServiceImpl implements KindBoardService {
 
     @Override
     public KindBoard getKindBoard(Long kindBoardId) {
-        KindBoard kindBoard = kindBoardRepository.getOne(kindBoardId);
+        KindBoard kindBoard = kindBoardRepository.findOne(kindBoardId);
         if(kindBoard == null)
             throw new KindBoardNotFoundException(String.valueOf(kindBoardId));
+
+        return kindBoard;
+    }
+
+    @Override
+    public KindBoard getKindBoard(String kindBoardName) {
+        KindBoard kindBoard = kindBoardRepository.findByKindBoardName(kindBoardName);
+        if(kindBoard == null)
+            throw new KindBoardNotFoundException(kindBoardName);
 
         return kindBoard;
     }
