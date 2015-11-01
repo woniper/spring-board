@@ -51,6 +51,9 @@ public class Board implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<FileInfo> fileInfos = new ArrayList<>();
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private KindBoard kindBoard;
+
     public Board(String title, String content) {
         setTitle(title);
         setContent(content);
@@ -73,11 +76,13 @@ public class Board implements Serializable {
     public void patch(BoardDto boardDto) {
         String title = boardDto.getTitle();
         String content = boardDto.getContent();
+        String kindBoardName = boardDto.getKindBoardName();
         if (StringUtils.isNotEmpty(title))
             setTitle(title);
 
         if (StringUtils.isNotEmpty(content))
             setContent(content);
+
         log.info("patch board {}", this);
     }
 

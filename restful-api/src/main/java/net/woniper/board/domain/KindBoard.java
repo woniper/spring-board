@@ -1,8 +1,11 @@
 package net.woniper.board.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -27,6 +30,7 @@ public class KindBoard {
 
     public KindBoard(String kindBoardName) {
         setKindBoardName(kindBoardName);
+        this.createDate = Calendar.getInstance().getTime();
     }
 
 }
