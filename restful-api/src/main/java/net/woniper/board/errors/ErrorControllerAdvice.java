@@ -83,6 +83,15 @@ public class ErrorControllerAdvice {
         return error;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(value = {KindBoardNotFoundException.class})
+    public ErrorResponse commentNotFoundException(KindBoardNotFoundException exception, Principal principal) {
+        printLog(exception, principal);
+        ErrorResponse error = getNotFoundErrorResponse();
+        error.setDeveloperMassage("KindBoard Not Found Exception : " + exception.getKindBoard());
+        return error;
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public @ResponseBody ErrorResponse exception(Exception exception, Principal principal) {
