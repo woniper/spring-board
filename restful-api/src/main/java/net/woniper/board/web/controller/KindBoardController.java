@@ -32,4 +32,9 @@ public class KindBoardController {
         kindBoardService.updateKindBoard(kindId, kindBoardName);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<?> createKindBoard(@RequestParam(value = "kindBoardName") String kindBoardName) {
+        return ResponseEntity.ok(kindBoardService.createKindBoard(kindBoardName));
+    }
 }

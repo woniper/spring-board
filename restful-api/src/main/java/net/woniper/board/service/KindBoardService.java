@@ -16,4 +16,6 @@ public interface KindBoardService {
     List<KindBoard> getKindBoard();
 
     void updateKindBoard(Long kindId, String kindBoardName);
+
+    KindBoard createKindBoard(String kindBoardName);
 }

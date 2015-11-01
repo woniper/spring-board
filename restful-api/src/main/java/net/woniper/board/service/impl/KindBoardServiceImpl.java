@@ -49,4 +49,9 @@ public class KindBoardServiceImpl implements KindBoardService {
         KindBoard kindBoard = getKindBoard(kindId);
         kindBoard.setKindBoardName(kindBoardName);
     }
+
+    @Override
+    public KindBoard createKindBoard(String kindBoardName) {
+        return kindBoardRepository.save(new KindBoard(kindBoardName));
+    }
 }
