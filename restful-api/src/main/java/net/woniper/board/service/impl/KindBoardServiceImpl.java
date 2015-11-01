@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * Created by woniper on 2015. 10. 30..
  */
@@ -35,5 +37,16 @@ public class KindBoardServiceImpl implements KindBoardService {
             throw new KindBoardNotFoundException(kindBoardName);
 
         return kindBoard;
+    }
+
+    @Override
+    public List<KindBoard> getKindBoard() {
+        return kindBoardRepository.findAll();
+    }
+
+    @Override
+    public void updateKindBoard(Long kindId, String kindBoardName) {
+        KindBoard kindBoard = getKindBoard(kindId);
+        kindBoard.setKindBoardName(kindBoardName);
     }
 }
