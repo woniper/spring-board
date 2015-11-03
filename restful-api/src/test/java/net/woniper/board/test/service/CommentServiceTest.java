@@ -3,11 +3,10 @@ package net.woniper.board.test.service;
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
-import net.woniper.board.domain.User;
-import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
-import net.woniper.board.service.UserService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.CommentDto;
 import org.junit.Before;
@@ -23,12 +22,9 @@ import static org.junit.Assert.fail;
  */
 public class CommentServiceTest extends BaseServiceTest {
 
-    @Autowired private UserService userService;
     @Autowired private BoardService boardService;
     @Autowired private CommentService commentService;
-
-    private User admin;
-    private User user;
+    @Autowired private KindBoardService kindBoardService;
 
     private Board adminBoard;
     private Board userBoard;
@@ -36,15 +32,19 @@ public class CommentServiceTest extends BaseServiceTest {
     private Comment adminComment;
     private Comment userComment;
 
+    private KindBoard kindBoard;
+
     @Before
     public void setUp() throws Exception {
-        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+        kindBoard = kindBoardService.createKindBoard("General");
+        Board newAdminBoard = EntityBuilder.createBoard(admin);
+        newAdminBoard.setKindBoard(kindBoard);
 
-        adminBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Request.class), admin.getUsername());
-        userBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class), user.getUsername());
+        Board newUserBoard = EntityBuilder.createBoard(user);
+        newUserBoard.setKindBoard(kindBoard);
+
+        adminBoard = boardService.createBoard(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
+        userBoard = boardService.createBoard(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
 
         adminComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(adminBoard),
                 CommentDto.class), adminBoard.getBoardId());

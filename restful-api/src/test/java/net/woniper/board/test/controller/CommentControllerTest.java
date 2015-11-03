@@ -4,11 +4,10 @@ import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
 import net.woniper.board.domain.Comment;
-import net.woniper.board.domain.User;
-import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.CommentRepository;
-import net.woniper.board.service.UserService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.support.dto.CommentDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,22 +28,24 @@ public class CommentControllerTest extends BaseControllerTest {
 
     @Autowired private BoardRepository boardRepository;
     @Autowired private CommentRepository commentRepository;
-    @Autowired private UserService userService;
+    @Autowired private KindBoardService kindBoardService;
 
     // fixture data
-    private User admin;
-    private User user;
     private Board adminBoard;
     private Board userBoard;
     private Comment adminComment;
     private Comment userComment;
+    private KindBoard kindBoard;
 
     @Before
     public void setUp() throws Exception {
-        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
-        adminBoard = boardRepository.save(EntityBuilder.createBoard(admin));
-        userBoard = boardRepository.save(EntityBuilder.createBoard(user));
+        kindBoard = kindBoardService.createKindBoard("General");
+        Board newAdminBoard = EntityBuilder.createBoard(admin);
+        newAdminBoard.setKindBoard(kindBoard);
+        Board newUserBoard = EntityBuilder.createBoard(user);
+        newUserBoard.setKindBoard(kindBoard);
+        adminBoard = boardRepository.save(newAdminBoard);
+        userBoard = boardRepository.save(newUserBoard);
         adminComment = commentRepository.save(EntityBuilder.createComment(adminBoard));
         userComment = commentRepository.save(EntityBuilder.createComment(userBoard));
     }

@@ -1,6 +1,9 @@
 package net.woniper.board.test.service;
 
 import net.woniper.board.BoardApplication;
+import net.woniper.board.builder.EntityBuilder;
+import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.repository.CommentRepository;
 import net.woniper.board.repository.UserRepository;
@@ -12,6 +15,7 @@ import net.woniper.board.service.impl.CommentServiceImpl;
 import net.woniper.board.service.impl.UserServiceImpl;
 import net.woniper.board.test.config.TestDatabaseConfig;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -41,11 +45,21 @@ import static org.junit.Assert.assertNotNull;
 public class BaseServiceTest {
 
     @Autowired protected ModelMapper modelMapper;
+    @Autowired protected UserService userService;
 
-    @PersistenceContext EntityManager entityManager;
+    @PersistenceContext protected EntityManager entityManager;
+
+    protected User admin;
+    protected User user;
+
+    @Before
+    public void baseSetUp() throws Exception {
+        this.admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
+        this.user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+    }
 
     @After
-    public void after() throws Exception {
+    public void baseAfter() throws Exception {
         entityManager.flush();
     }
 

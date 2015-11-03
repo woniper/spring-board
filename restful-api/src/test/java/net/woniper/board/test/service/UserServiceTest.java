@@ -26,15 +26,10 @@ public class UserServiceTest extends BaseServiceTest {
     private UserDto.Request adminDto;
     private UserDto.Request userDto;
 
-    private User admin;
-    private User user;
-
     @Before
     public void setUp() throws Exception {
         adminDto = EntityBuilder.createUser(AuthorityType.ADMIN);
         userDto = EntityBuilder.createUser(AuthorityType.USER);
-        admin = userService.createUser(adminDto);
-        user = userService.createUser(userDto);
     }
 
     @Test(expected = UsernameDuplicateException.class)

@@ -2,12 +2,11 @@ package net.woniper.board.test.service;
 
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.Board;
-import net.woniper.board.domain.User;
-import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.errors.support.BoardNotFoundException;
 import net.woniper.board.errors.support.UserNotFoundException;
 import net.woniper.board.service.BoardService;
-import net.woniper.board.service.UserService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.support.dto.BoardDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,24 +20,24 @@ import static org.junit.Assert.*;
  */
 public class BoardServiceTest extends BaseServiceTest {
 
-    @Autowired private UserService userService;
     @Autowired private BoardService boardService;
-
-    private User admin;
-    private User user;
+    @Autowired private KindBoardService kindBoardService;
 
     private Board adminBoard;
     private Board userBoard;
 
+    private KindBoard kindBoard;
+
     @Before
     public void setUp() throws Exception {
-        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+        kindBoard = kindBoardService.createKindBoard("General");
+        Board newAdminBoard = EntityBuilder.createBoard(admin);
+        newAdminBoard.setKindBoard(kindBoard);
+        Board newUserBoard = EntityBuilder.createBoard(user);
+        newUserBoard.setKindBoard(kindBoard);
 
-        adminBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Request.class), admin.getUsername());
-        userBoard = boardService.createBoard
-                (modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class), user.getUsername());
+        adminBoard = boardService.createBoard(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
+        userBoard = boardService.createBoard(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
     }
 
     @Test
@@ -71,6 +70,7 @@ public class BoardServiceTest extends BaseServiceTest {
     public void test_createBoard() throws Exception {
         // given
         Board newBoard = EntityBuilder.createBoard(user);
+        newBoard.setKindBoard(kindBoard);
         BoardDto.Request newBoardDto = modelMapper.map(newBoard, BoardDto.Request.class);
 
         // when

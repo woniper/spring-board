@@ -2,6 +2,10 @@ package net.woniper.board.test.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.woniper.board.BoardApplication;
+import net.woniper.board.builder.EntityBuilder;
+import net.woniper.board.domain.User;
+import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.service.UserService;
 import net.woniper.board.test.config.TestDatabaseConfig;
 import org.junit.After;
 import org.junit.Before;
@@ -39,15 +43,21 @@ public class BaseControllerTest {
     @Autowired protected ModelMapper modelMapper;
     @Autowired protected WebApplicationContext webApplicationContext;
     @Autowired protected Filter springSecurityFilterChain;
+    @Autowired protected UserService userService;
 
     @PersistenceContext EntityManager entityManager;
 
     protected MockMvc mock;
     protected String mediaType = MediaType.APPLICATION_JSON_VALUE;
 
+    protected User admin;
+    protected User user;
+
     @Before
     public void baseSetUp() throws Exception {
         this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
+        this.admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
+        this.user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
     }
 
     @After

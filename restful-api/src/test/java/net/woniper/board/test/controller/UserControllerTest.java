@@ -3,11 +3,11 @@ package net.woniper.board.test.controller;
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
-import net.woniper.board.repository.UserRepository;
-import net.woniper.board.service.UserService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.support.dto.UserDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,16 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest extends BaseControllerTest {
 
     @Autowired private BoardRepository boardRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private UserService userService;
-
-    private User admin;
-    private User user;
+    @Autowired private KindBoardService kindBoardService;
+    private KindBoard kindBoard;
 
     @Before
     public void setUp() throws Exception {
-        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+        kindBoard = kindBoardService.createKindBoard("General");
     }
 
     @Test
@@ -255,6 +251,7 @@ public class UserControllerTest extends BaseControllerTest {
             newBoard.setTitle("list title" + i);
             newBoard.setContent("list content" + i);
             newBoard.setUser(user);
+            newBoard.setKindBoard(kindBoard);
             list.add(newBoard);
         }
         return boardRepository.save(list);

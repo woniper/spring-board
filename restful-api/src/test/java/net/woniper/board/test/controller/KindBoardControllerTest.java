@@ -3,7 +3,6 @@ package net.woniper.board.test.controller;
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.KindBoard;
-import net.woniper.board.domain.User;
 import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.service.KindBoardService;
 import net.woniper.board.service.UserService;
@@ -29,13 +28,9 @@ public class KindBoardControllerTest extends BaseControllerTest {
     @Autowired private KindBoardService kindBoardService;
 
     private KindBoard kindBoard;
-    private User admin;
-    private User user;
 
     @Before
     public void setUp() throws Exception {
-        this.admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        this.user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
         this.kindBoard = kindBoardService.createKindBoard("ABC");
     }
 

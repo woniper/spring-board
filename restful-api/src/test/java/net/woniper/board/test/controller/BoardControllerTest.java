@@ -3,11 +3,11 @@ package net.woniper.board.test.controller;
 import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.config.SecurityUserDetails;
 import net.woniper.board.domain.Board;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.domain.User;
-import net.woniper.board.domain.type.AuthorityType;
 import net.woniper.board.repository.BoardRepository;
 import net.woniper.board.service.BoardService;
-import net.woniper.board.service.UserService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.support.dto.BoardDto;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,17 +34,17 @@ public class BoardControllerTest extends BaseControllerTest {
 
     @Autowired private BoardRepository boardRepository;
     @Autowired private BoardService boardService;
-    @Autowired private UserService userService;
+    @Autowired private KindBoardService kindBoardService;
 
     private Board board;
-    private User admin;
-    private User user;
+    private KindBoard kindBoard;
 
     @Before
     public void setUp() throws Exception {
-        admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
-        board = boardRepository.save(EntityBuilder.createBoard(admin));
+        kindBoard = kindBoardService.createKindBoard("General");
+        Board newBoard = EntityBuilder.createBoard(admin);
+        newBoard.setKindBoard(kindBoard);
+        board = boardRepository.save(newBoard);
     }
 
     @Test
@@ -53,6 +53,7 @@ public class BoardControllerTest extends BaseControllerTest {
         BoardDto newBoard = new BoardDto("newBoard", "newContent");
         newBoard.setTitle("newBoard");
         newBoard.setContent("newContent");
+        newBoard.setKindBoardName(kindBoard.getKindBoardName());
 
         // when
         ResultActions resultActions = mock.perform(post("/boards")
@@ -127,6 +128,7 @@ public class BoardControllerTest extends BaseControllerTest {
         newBoard.setTitle("update Title");
         newBoard.setContent("update Content");
         BoardDto boardDto = modelMapper.map(newBoard, BoardDto.class);
+        boardDto.setKindBoardName(kindBoard.getKindBoardName());
 
         // when
         ResultActions resultActions = mock.perform(put("/boards/" + newBoard.getBoardId())

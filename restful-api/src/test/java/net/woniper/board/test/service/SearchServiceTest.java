@@ -1,12 +1,10 @@
 package net.woniper.board.test.service;
 
-import net.woniper.board.builder.EntityBuilder;
 import net.woniper.board.domain.Board;
-import net.woniper.board.domain.User;
-import net.woniper.board.domain.type.AuthorityType;
+import net.woniper.board.domain.KindBoard;
 import net.woniper.board.service.BoardService;
+import net.woniper.board.service.KindBoardService;
 import net.woniper.board.service.SearchService;
-import net.woniper.board.service.UserService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.SearchDto;
 import net.woniper.board.support.type.SearchType;
@@ -27,8 +25,8 @@ import static org.junit.Assert.assertEquals;
 public class SearchServiceTest extends BaseServiceTest {
 
     @Autowired private SearchService searchService;
-    @Autowired private UserService userService;
     @Autowired private BoardService boardService;
+    @Autowired private KindBoardService kindBoardService;
 
     private Pageable pageable;
 
@@ -88,9 +86,9 @@ public class SearchServiceTest extends BaseServiceTest {
     }
 
     private void fixture() {
-        User user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
-        boardService.createBoard(new BoardDto.Request("tt1", "cc1"), user.getUsername());
-        boardService.createBoard(new BoardDto.Request("tt2", "cc2"), user.getUsername());
-        boardService.createBoard(new BoardDto.Request("tt3", "cc3"), user.getUsername());
+        KindBoard kindBoard = kindBoardService.createKindBoard("General");
+        boardService.createBoard(new BoardDto.Request("tt1", "cc1", kindBoard.getKindBoardName()), user.getUsername());
+        boardService.createBoard(new BoardDto.Request("tt2", "cc2", kindBoard.getKindBoardName()), user.getUsername());
+        boardService.createBoard(new BoardDto.Request("tt3", "cc3", kindBoard.getKindBoardName()), user.getUsername());
     }
 }
