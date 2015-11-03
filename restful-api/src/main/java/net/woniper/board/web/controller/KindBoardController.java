@@ -26,9 +26,8 @@ public class KindBoardController {
     }
 
     @RequestMapping(value = "/{kindId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> updateKindBoard(
-                    @PathVariable("kindId") Long kindId,
-                    @RequestParam(value = "kindBoardName") String kindBoardName) {
+    public ResponseEntity<?> updateKindBoard(@PathVariable("kindId") Long kindId,
+                                             @RequestParam(value = "kindBoardName") String kindBoardName) {
         kindBoardService.updateKindBoard(kindId, kindBoardName);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
