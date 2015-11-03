@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,8 +41,6 @@ public class KindBoardControllerTest extends BaseControllerTest {
 
     @Test
     public void test_조회_admin() throws Exception {
-        // given
-
         // when
         ResultActions result = mock.perform(get("/kindBoards/" + kindBoard.getKindBoardId().intValue())
                 .with(user(new SecurityUserDetails(admin))));
@@ -50,5 +49,46 @@ public class KindBoardControllerTest extends BaseControllerTest {
         result.andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.kindBoardName", is(kindBoard.getKindBoardName())));
+    }
+
+    @Test
+    public void test_조회_user() throws Exception {
+        // when
+        ResultActions result = mock.perform(get("/kindBoards/" + kindBoard.getKindBoardId().intValue())
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.kindBoardName", is(kindBoard.getKindBoardName())));
+    }
+
+    @Test
+    public void test_등록_admin() throws Exception {
+        // given
+        String kindBoardName = "TEST";
+
+        // when
+        ResultActions result = mock.perform(post("/kindBoards?kindBoardName=" + kindBoardName)
+                .with(user(new SecurityUserDetails(admin))));
+
+        // then
+        result.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.kindBoardName", is(kindBoardName)));
+    }
+
+    @Test
+    public void test_등록_user() throws Exception {
+        // given
+        String kindBoardName = "TEST";
+
+        // when
+        ResultActions result = mock.perform(post("/kindBoards?kindBoardName=" + kindBoardName)
+                .with(user(new SecurityUserDetails(user))));
+
+        // then
+        result.andDo(print())
+                .andExpect(status().isForbidden());
     }
 }
