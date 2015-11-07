@@ -36,7 +36,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
     }
 
     @Test(expected = KindBoardNotFoundException.class)
-    public void test_getKindBoard_notFoundException() throws Exception {
+    public void test_getKindBoard_id_notFoundException() throws Exception {
         // given
         Long kindBoardId = 0L;
 
@@ -48,12 +48,36 @@ public class KindBoardServiceTest extends BaseServiceTest {
     }
 
     @Test
-    public void test_getKindBoard() throws Exception {
+    public void test_getKindBoard_id() throws Exception {
         // given
         Long kindBoardId = kindBoard.getKindBoardId();
 
         // when
         KindBoard getKindBoard = kindBoardService.getKindBoard(kindBoardId);
+
+        // then
+        assertEquals(kindBoard.getKindBoardName(), getKindBoard.getKindBoardName());
+    }
+
+    @Test(expected = KindBoardNotFoundException.class)
+    public void test_getKindBoard_name_notFoundException() throws Exception {
+        // given
+        String kindBoardName = "";
+
+        // when
+        kindBoardService.getKindBoard(kindBoardName);
+
+        // then
+        fail("kindBoard NotFoundException");
+    }
+
+    @Test
+    public void test_getKindBoard_name() throws Exception {
+        // given
+        String kindBoardName = kindBoard.getKindBoardName();
+
+        // when
+        KindBoard getKindBoard = kindBoardService.getKindBoard(kindBoardName);
 
         // then
         assertEquals(kindBoard.getKindBoardName(), getKindBoard.getKindBoardName());
