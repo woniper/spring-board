@@ -44,6 +44,18 @@ public class ErrorControllerAdvice {
         return error;
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(KindBoardDuplicateException.class)
+    public ErrorResponse duplicateKindBoardException(KindBoardDuplicateException exception, Principal principal) {
+        printLog(exception, principal);
+        HttpStatus status = HttpStatus.CONFLICT;
+        ErrorResponse error = new ErrorResponse();
+        error.setStatus(status.value());
+        error.setMessage(status.getReasonPhrase());
+        error.setDeveloperMassage(exception.getKindBoardName() + " Duplicate KindBoard");
+        return error;
+    }
+
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(AccessDeniedException.class)
     public ErrorResponse accessDeniedException(AccessDeniedException exception, Principal principal) {

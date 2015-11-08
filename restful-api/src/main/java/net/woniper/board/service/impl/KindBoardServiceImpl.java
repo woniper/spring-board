@@ -2,6 +2,7 @@ package net.woniper.board.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.woniper.board.domain.KindBoard;
+import net.woniper.board.errors.support.KindBoardDuplicateException;
 import net.woniper.board.errors.support.KindBoardNotFoundException;
 import net.woniper.board.repository.KindBoardRepository;
 import net.woniper.board.service.KindBoardService;
@@ -52,6 +53,13 @@ public class KindBoardServiceImpl implements KindBoardService {
 
     @Override
     public KindBoard createKindBoard(String kindBoardName) {
+        if(isKindBoardDuplicate(kindBoardName))
+            throw new KindBoardDuplicateException(kindBoardName);
+
         return kindBoardRepository.save(new KindBoard(kindBoardName));
+    }
+
+    private boolean isKindBoardDuplicate(String kindBoardName) {
+        return kindBoardRepository.findByKindBoardName(kindBoardName) != null;
     }
 }
