@@ -25,8 +25,15 @@
     <script src="components/react/react.js"></script>
     <script src="components/react/JSXTransformer.js"></script>
     <script type="text/jsx" src="js/component/Navigation.js"></script>
+    <script type="text/jsx" src="js/component/Login.js"></script>
     <script type="text/jsx">
         var Header = React.createClass({
+            onClick: function() {
+                if(isLogin())
+                    location.href = "/write.html";
+                else
+                    location.href = "/login.html";
+            },
             render: function() {
                 return(
                     <div className="row">
@@ -36,7 +43,7 @@
                             </h1>
                             <ol className="breadcrumb">
                                 <li className="active right">
-                                    <button type="button" onclick="location.href='/write.html'" className="btn btn-sm btn-success">write</button>
+                                    <button type="button" onClick={this.onClick} className="btn btn-sm btn-success">write</button>
                                 </li>
                             </ol>
                         </div>
