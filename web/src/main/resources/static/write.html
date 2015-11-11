@@ -25,6 +25,66 @@
     <script src="components/react/react.js"></script>
     <script src="components/react/JSXTransformer.js"></script>
     <script type="text/jsx" src="js/component/Navigation.js"></script>
+    <script type="text/jsx" src="js/component/Login.js"></script>
+    <script type="text/jsx">
+        var WritePage = React.createClass({
+            render : function() {
+                return (
+                    <div className="container-fluid">
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <Header />
+                                <Body />
+                                <Footer />
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        });
+
+        var Header = React.createClass({
+            render: function() {
+                return (
+                    <div>
+                        <h1 className="page-header">Write Page</h1>
+                        <form role="form">
+                            <div className="form-group">
+                                <input className="form-control" placeholder="title" />
+                            </div>
+                        </form>
+                    </div>
+                )
+            }
+        });
+
+        var Body = React.createClass({
+            render : function() {
+                return (
+                    <div>
+                        <form role="form">
+                            <div className="form-group">
+                                <textarea rows="15" className="form-control"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                )
+            }
+        });
+
+        var Footer = React.createClass({
+            render : function() {
+                return (
+                    <p>
+                        <button type="button" className="btn btn-sm bg-success">저장</button>
+                        <button type="button" className="btn btn-sm bg-danger">초기화</button>
+                    </p>
+                )
+            }
+        });
+
+        React.render(<WritePage />, document.getElementById("page-wrapper"));
+    </script>
 
 </head>
 
