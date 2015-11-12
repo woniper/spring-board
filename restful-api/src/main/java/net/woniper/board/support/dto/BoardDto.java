@@ -45,6 +45,12 @@ public class BoardDto extends ResourceSupport implements Serializable {
         public Request(String title, String content) {
             super(title, content);
         }
+
+        public Request(String title, String content, String kindBoardName) {
+            setTitle(title);
+            setContent(content);
+            setKindBoardName(kindBoardName);
+        }
     }
 
     @ApiModel(value = "board Response")
