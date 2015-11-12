@@ -28,14 +28,40 @@
     <script type="text/jsx" src="js/component/Login.js"></script>
     <script type="text/jsx">
         var WritePage = React.createClass({
+            write : function() {
+                var titleValue = document.getElementById("title").value;
+                var contentValue = document.getElementById("content").value;
+
+                var board = {title : titleValue, content : contentValue, kindBoardName : "일반 게시판"};
+
+                $.ajax({
+                    type:"POST",
+                    url:"/boards",
+                    contentType:"application/json",
+                    data:JSON.stringify(board),
+                    dataType:"json",
+                    success:function(data) {
+                        location.href = "/";
+                    }
+                });
+            },
             render : function() {
                 return (
                     <div className="container-fluid">
                         <div className="row">
                             <div className="col-lg-12">
-                                <Header />
-                                <Body />
-                                <Footer />
+                                <h1 className="page-header">Write Page</h1>
+                                <form role="form">
+                                    <div className="form-group">
+                                        <input className="form-control" id="title" placeholder="title" />
+                                        <br/>
+                                        <textarea className="form-control" rows="15" id="content" />
+                                    </div>
+                                    <p>
+                                        <button type="button" className="btn btn-sm bg-success" onClick={this.write}>저장</button>
+                                        <button type="reset" className="btn btn-sm bg-danger">초기화</button>
+                                    </p>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -43,45 +69,6 @@
             }
         });
 
-        var Header = React.createClass({
-            render: function() {
-                return (
-                    <div>
-                        <h1 className="page-header">Write Page</h1>
-                        <form role="form">
-                            <div className="form-group">
-                                <input className="form-control" placeholder="title" />
-                            </div>
-                        </form>
-                    </div>
-                )
-            }
-        });
-
-        var Body = React.createClass({
-            render : function() {
-                return (
-                    <div>
-                        <form role="form">
-                            <div className="form-group">
-                                <textarea rows="15" className="form-control"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                )
-            }
-        });
-
-        var Footer = React.createClass({
-            render : function() {
-                return (
-                    <p>
-                        <button type="button" className="btn btn-sm bg-success">저장</button>
-                        <button type="button" className="btn btn-sm bg-danger">초기화</button>
-                    </p>
-                )
-            }
-        });
 
         React.render(<WritePage />, document.getElementById("page-wrapper"));
     </script>
