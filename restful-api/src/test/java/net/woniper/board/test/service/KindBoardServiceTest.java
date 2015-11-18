@@ -118,7 +118,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
     @Test
     public void test_getKindBoardList() throws Exception {
         // given
-        kindBoardRepository.deleteAll();
+//        kindBoardRepository.deleteAll();
         kindBoardService.createKindBoard("ADD1");
         kindBoardService.createKindBoard("ADD2");
         kindBoardService.createKindBoard("ADD3");
@@ -127,7 +127,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         List<KindBoard> kindBoards = kindBoardService.getKindBoard();
 
         // then
-        assertEquals(3, kindBoards.size());
+        assertEquals(6, kindBoards.size());
     }
 
     @Test(expected = KindBoardDuplicateException.class)
