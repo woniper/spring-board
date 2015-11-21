@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 
 /**
 * Created by woniper on 15. 1. 28..
@@ -54,5 +55,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 // 동시 로그인 세션 : 1, 중복 로그인시 기존 세션 종료 후 url : /
                 .sessionManagement().maximumSessions(1).expiredUrl("/");
+
+        // X-Frame-Option
+        http.authorizeRequests()
+                .anyRequest().authenticated()
+            .and()
+                .headers()
+                .addHeaderWriter(new StaticHeadersWriter("X-Content-Secutiry-Policy", "script-src 'self'"))
+                .frameOptions().disable();
     }
 }
