@@ -23,7 +23,7 @@ public class KindBoardServiceImpl implements KindBoardService {
     @Autowired private KindBoardRepository kindBoardRepository;
 
     @Override
-    public KindBoard getKindBoard(Long kindBoardId) {
+    public KindBoard find(Long kindBoardId) {
         KindBoard kindBoard = kindBoardRepository.findOne(kindBoardId);
         if(kindBoard == null)
             throw new KindBoardNotFoundException(String.valueOf(kindBoardId));
@@ -32,7 +32,7 @@ public class KindBoardServiceImpl implements KindBoardService {
     }
 
     @Override
-    public KindBoard getKindBoard(String kindBoardName) {
+    public KindBoard find(String kindBoardName) {
         KindBoard kindBoard = kindBoardRepository.findByKindBoardName(kindBoardName);
         if(kindBoard == null)
             throw new KindBoardNotFoundException(kindBoardName);
@@ -41,18 +41,18 @@ public class KindBoardServiceImpl implements KindBoardService {
     }
 
     @Override
-    public List<KindBoard> getKindBoard() {
+    public List<KindBoard> find() {
         return kindBoardRepository.findAll();
     }
 
     @Override
-    public void updateKindBoard(Long kindId, String kindBoardName) {
-        KindBoard kindBoard = getKindBoard(kindId);
+    public void update(Long kindId, String kindBoardName) {
+        KindBoard kindBoard = find(kindId);
         kindBoard.setKindBoardName(kindBoardName);
     }
 
     @Override
-    public KindBoard createKindBoard(String kindBoardName) {
+    public KindBoard save(String kindBoardName) {
         if(isKindBoardDuplicate(kindBoardName))
             throw new KindBoardDuplicateException(kindBoardName);
 

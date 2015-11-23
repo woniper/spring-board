@@ -17,23 +17,23 @@ public class KindBoardController {
 
     @RequestMapping(value = "/{kindId}", method = RequestMethod.GET)
     public ResponseEntity<?> getKindBoard(@PathVariable("kindId") Long kindId) {
-        return ResponseEntity.ok(kindBoardService.getKindBoard(kindId));
+        return ResponseEntity.ok(kindBoardService.find(kindId));
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getKindBoards() {
-        return ResponseEntity.ok(kindBoardService.getKindBoard());
+        return ResponseEntity.ok(kindBoardService.find());
     }
 
     @RequestMapping(value = "/{kindId}", method = RequestMethod.PUT)
     public ResponseEntity<?> updateKindBoard(@PathVariable("kindId") Long kindId,
                                              @RequestParam(value = "kindBoardName") String kindBoardName) {
-        kindBoardService.updateKindBoard(kindId, kindBoardName);
+        kindBoardService.update(kindId, kindBoardName);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createKindBoard(@RequestParam(value = "kindBoardName") String kindBoardName) {
-        return ResponseEntity.ok(kindBoardService.createKindBoard(kindBoardName));
+        return ResponseEntity.ok(kindBoardService.save(kindBoardName));
     }
 }

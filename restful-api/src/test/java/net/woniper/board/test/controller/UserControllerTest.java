@@ -37,7 +37,7 @@ public class UserControllerTest extends BaseControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        kindBoard = kindBoardService.createKindBoard("General");
+        kindBoard = kindBoardService.save("General");
     }
 
     @Test

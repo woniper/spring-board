@@ -30,14 +30,14 @@ public class BoardServiceTest extends BaseServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        kindBoard = kindBoardService.createKindBoard("General");
+        kindBoard = kindBoardService.save("General");
         Board newAdminBoard = EntityBuilder.createBoard(admin);
         newAdminBoard.setKindBoard(kindBoard);
         Board newUserBoard = EntityBuilder.createBoard(user);
         newUserBoard.setKindBoard(kindBoard);
 
-        adminBoard = boardService.createBoard(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
-        userBoard = boardService.createBoard(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
+        adminBoard = boardService.save(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
+        userBoard = boardService.save(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class BoardServiceTest extends BaseServiceTest {
         assertEquals(0, userBoard.getReadCount());
 
         // when
-        Board board = boardService.getBoard(userBoard.getBoardId());
+        Board board = boardService.find(userBoard.getBoardId());
 
         // then
         assertEquals(1, board.getReadCount());
@@ -60,7 +60,7 @@ public class BoardServiceTest extends BaseServiceTest {
         BoardDto.Request boardDto = modelMapper.map(EntityBuilder.createBoard(user), BoardDto.Request.class);
 
         // when
-        boardService.createBoard(boardDto, "notUser");
+        boardService.save(boardDto, "notUser");
 
         // then
         fail("UserNotFoundException");
@@ -74,7 +74,7 @@ public class BoardServiceTest extends BaseServiceTest {
         BoardDto.Request newBoardDto = modelMapper.map(newBoard, BoardDto.Request.class);
 
         // when
-        Board createBoard = boardService.createBoard(newBoardDto, user.getUsername());
+        Board createBoard = boardService.save(newBoardDto, user.getUsername());
 
         // then
         assertEquals(newBoard.getTitle(), createBoard.getTitle());
@@ -89,7 +89,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = admin.getUsername();
 
         // when
-        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+        boardService.update(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         fail("Board Not Found Exception");
@@ -103,7 +103,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+        boardService.update(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         fail("Board Not Found Exception");
@@ -119,7 +119,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PATCH.toString());
+        Board board = boardService.update(boardId, boardDto, username, RequestMethod.PATCH.toString());
 
         // then
         assertNotNull(board.getTitle());
@@ -136,7 +136,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PATCH.toString());
+        Board board = boardService.update(boardId, boardDto, username, RequestMethod.PATCH.toString());
 
         // then
         assertEquals(boardDto.getTitle(), board.getTitle());
@@ -153,7 +153,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+        boardService.update(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         fail("IllegalArgumentException");
@@ -169,7 +169,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        Board board = boardService.updateBoard(boardId, boardDto, username, RequestMethod.PUT.toString());
+        Board board = boardService.update(boardId, boardDto, username, RequestMethod.PUT.toString());
 
         // then
         assertEquals(boardDto.getTitle(), board.getTitle());
@@ -183,7 +183,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String adminUsername = admin.getUsername();
 
         // when
-        boolean isDelete = boardService.deleteBoard(userBoardId, adminUsername);
+        boolean isDelete = boardService.delete(userBoardId, adminUsername);
 
         // then
         assertEquals(true, isDelete);
@@ -196,7 +196,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        boolean isDelete = boardService.deleteBoard(adminBoardId, username);
+        boolean isDelete = boardService.delete(adminBoardId, username);
 
         // then
         assertEquals(false, isDelete);
@@ -209,7 +209,7 @@ public class BoardServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        boolean isDelete = boardService.deleteBoard(userBoardId, username);
+        boolean isDelete = boardService.delete(userBoardId, username);
 
         // then
         assertEquals(true, isDelete);

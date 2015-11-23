@@ -38,7 +38,7 @@ public class UserServiceTest extends BaseServiceTest {
         UserDto.Request usernameDuplUser = EntityBuilder.createUser(AuthorityType.USER);
 
         // when
-        userService.createUser(usernameDuplUser);
+        userService.save(usernameDuplUser);
 
         // then
         fail("username 중복 에러");
@@ -51,7 +51,7 @@ public class UserServiceTest extends BaseServiceTest {
         nickNameDuplUser.setUsername("duplUser");
 
         // when
-        userService.createUser(nickNameDuplUser);
+        userService.save(nickNameDuplUser);
 
         // then
         fail("nickName 중복 에러");
@@ -74,7 +74,7 @@ public class UserServiceTest extends BaseServiceTest {
         String username = "notUser";
 
         // when
-        userService.getUser(username);
+        userService.find(username);
 
         // then
         fail("Not Found User Name : " + username);
@@ -86,7 +86,7 @@ public class UserServiceTest extends BaseServiceTest {
         Long userId = Long.MAX_VALUE;
 
         // when
-        userService.getUser(userId);
+        userService.find(userId);
 
         // then
         fail("Not Foun User Id : " + userId);
@@ -95,7 +95,7 @@ public class UserServiceTest extends BaseServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void test_user가_다른회원_조회() throws Exception {
         // when
-        userService.getUser(admin.getUserId(), user.getUsername());
+        userService.find(admin.getUserId(), user.getUsername());
 
         // then
         fail("조회 불가");
@@ -104,7 +104,7 @@ public class UserServiceTest extends BaseServiceTest {
     @Test
     public void test_user_self_조회() throws Exception {
         // when
-        User selectUser = userService.getUser(user.getUserId(), user.getUsername());
+        User selectUser = userService.find(user.getUserId(), user.getUsername());
 
         // then
         assertEquals(user.getUserId(), selectUser.getUserId());
@@ -114,7 +114,7 @@ public class UserServiceTest extends BaseServiceTest {
     @Test
     public void test_admin이_user_조회() throws Exception {
         // when
-        User selectUser = userService.getUser(user.getUserId(), admin.getUsername());
+        User selectUser = userService.find(user.getUserId(), admin.getUsername());
 
         // then
         assertEquals(user.getUserId(), selectUser.getUserId());
@@ -130,7 +130,7 @@ public class UserServiceTest extends BaseServiceTest {
         userDto.setLastName("lee");
 
         // when
-        userService.updateUser(userDto, admin.getUsername(), RequestMethod.PUT.toString());
+        userService.update(userDto, admin.getUsername(), RequestMethod.PUT.toString());
 
         // then
         fail("회원 수정 불가");
@@ -143,7 +143,7 @@ public class UserServiceTest extends BaseServiceTest {
         userDto.setNickName("updateNickName");
 
         // when
-        User updateUser = userService.updateUser(userDto, user.getUsername(), RequestMethod.PATCH.toString());
+        User updateUser = userService.update(userDto, user.getUsername(), RequestMethod.PATCH.toString());
 
         // then
         assertNotNull(updateUser.getPassword());
@@ -157,7 +157,7 @@ public class UserServiceTest extends BaseServiceTest {
         userDto.setNickName("updateNickName");
 
         // when
-        User updateUser = userService.updateUser(userDto, user.getUsername(), RequestMethod.PATCH.toString());
+        User updateUser = userService.update(userDto, user.getUsername(), RequestMethod.PATCH.toString());
 
         // then
         assertEquals(userDto.getPassword(), updateUser.getPassword());
@@ -171,7 +171,7 @@ public class UserServiceTest extends BaseServiceTest {
         userDto.setNickName("updateNickName");
 
         // when
-        userService.updateUser(userDto, user.getUsername(), RequestMethod.PUT.toString());
+        userService.update(userDto, user.getUsername(), RequestMethod.PUT.toString());
 
         // then
         fail("IllegalArgumentException");
@@ -186,7 +186,7 @@ public class UserServiceTest extends BaseServiceTest {
         userDto.setLastName("lee");
 
         // when
-        User updateUser = userService.updateUser(userDto, user.getUsername(), RequestMethod.PUT.toString());
+        User updateUser = userService.update(userDto, user.getUsername(), RequestMethod.PUT.toString());
 
         // then
         assertEquals(userDto.getUsername(), updateUser.getUsername());
@@ -199,7 +199,7 @@ public class UserServiceTest extends BaseServiceTest {
     @Test
     public void test_회원탈퇴() throws Exception {
         // when
-        boolean isDelete = userService.deleteUser(user.getUsername());
+        boolean isDelete = userService.delete(user.getUsername());
 
         // then
         assertTrue(isDelete);

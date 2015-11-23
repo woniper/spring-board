@@ -31,16 +31,16 @@ public class CommentServiceImpl implements CommentService {
     @Autowired private ModelMapper modelMapper;
 
     @Override
-    public Comment createComment(CommentDto commentDto, Long boardId) {
-        Board board = boardService.getBoard(boardId);
+    public Comment save(CommentDto commentDto, Long boardId) {
+        Board board = boardService.find(boardId);
         Comment comment = modelMapper.map(commentDto, Comment.class);
         comment.setBoard(board);
         return commentRepository.save(comment);
     }
 
     @Override
-    public boolean deleteComment(Long commentId, String username) {
-        User user = userService.getUser(username);
+    public boolean delete(Long commentId, String username) {
+        User user = userService.find(username);
         Comment comment = getComment(commentId);
 
         if(isAccessCommentUser(comment, user)) {
@@ -52,8 +52,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment updateComment(Long commentId, CommentDto commentDto, String username) {
-        User user = userService.getUser(username);
+    public Comment update(Long commentId, CommentDto commentDto, String username) {
+        User user = userService.find(username);
         Comment comment = getComment(commentId);
         if(isAccessCommentUser(comment, user)) {
             comment.patch(commentDto);

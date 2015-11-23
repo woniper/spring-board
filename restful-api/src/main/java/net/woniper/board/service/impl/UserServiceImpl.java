@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserDto.Request userDto) {
+    public User save(UserDto.Request userDto) {
         if(isDuplicationUserName(userDto.getUsername())) {
             throw new UsernameDuplicateException(userDto.getUsername());
         }
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(String username) {
+    public User find(String username) {
         User user = userRepository.findByUsername(username);
 
         if(user == null)
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long userId) {
+    public User find(Long userId) {
         User user = userRepository.findOne(userId);
 
         if(user == null)
@@ -83,14 +83,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getUser(Pageable pageable) {
+    public Page<User> find(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @Override
-    public User getUser(Long userId, String username) {
-        User user = getUser(username);
-        User resultUser = getUser(userId);
+    public User find(Long userId, String username) {
+        User user = find(username);
+        User resultUser = find(userId);
         if(isAccessUser(user, resultUser)) {
             log.info("request User : {}, response User : {}", user, resultUser);
             return resultUser;
@@ -106,11 +106,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(UserDto.Request userDto, String username, String method) {
+    public User update(UserDto.Request userDto, String username, String method) {
         if(!userDto.getUsername().equals(username))
             throw new AccessDeniedException("accessDenied" + username);
 
-        User user = getUser(username);
+        User user = find(username);
         if(isDuplicationNickName(userDto.getNickName()))
             throw new NickNameDuplicateException(userDto.getNickName());
 
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean deleteUser(String username) {
+    public boolean delete(String username) {
         User user = userRepository.findByUsername(username);
         if(user != null) {
             user.setActive(false);

@@ -39,7 +39,7 @@ public class CommentControllerTest extends BaseControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        kindBoard = kindBoardService.createKindBoard("General");
+        kindBoard = kindBoardService.save("General");
         Board newAdminBoard = EntityBuilder.createBoard(admin);
         newAdminBoard.setKindBoard(kindBoard);
         Board newUserBoard = EntityBuilder.createBoard(user);

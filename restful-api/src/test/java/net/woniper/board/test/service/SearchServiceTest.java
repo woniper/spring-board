@@ -86,9 +86,9 @@ public class SearchServiceTest extends BaseServiceTest {
     }
 
     private void fixture() {
-        KindBoard kindBoard = kindBoardService.createKindBoard("General");
-        boardService.createBoard(new BoardDto.Request("tt1", "cc1", kindBoard.getKindBoardName()), user.getUsername());
-        boardService.createBoard(new BoardDto.Request("tt2", "cc2", kindBoard.getKindBoardName()), user.getUsername());
-        boardService.createBoard(new BoardDto.Request("tt3", "cc3", kindBoard.getKindBoardName()), user.getUsername());
+        KindBoard kindBoard = kindBoardService.save("General");
+        boardService.save(new BoardDto.Request("tt1", "cc1", kindBoard.getKindBoardName()), user.getUsername());
+        boardService.save(new BoardDto.Request("tt2", "cc2", kindBoard.getKindBoardName()), user.getUsername());
+        boardService.save(new BoardDto.Request("tt3", "cc3", kindBoard.getKindBoardName()), user.getUsername());
     }
 }

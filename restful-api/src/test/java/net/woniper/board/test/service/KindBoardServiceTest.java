@@ -34,10 +34,10 @@ public class KindBoardServiceTest extends BaseServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        this.kindBoard = kindBoardService.createKindBoard("TEST");
+        this.kindBoard = kindBoardService.save("TEST");
         BoardDto.Request boardDto = modelMapper.map(EntityBuilder.createBoard(admin), BoardDto.Request.class);
         boardDto.setKindBoardName(kindBoard.getKindBoardName());
-        this.board = boardService.createBoard(boardDto, admin.getUsername());
+        this.board = boardService.save(boardDto, admin.getUsername());
     }
 
     @Test(expected = KindBoardNotFoundException.class)
@@ -46,7 +46,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         Long kindBoardId = 0L;
 
         // when
-        kindBoardService.getKindBoard(kindBoardId);
+        kindBoardService.find(kindBoardId);
 
         // then
         fail("KindBoard NotFoundException");
@@ -58,7 +58,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         Long kindBoardId = kindBoard.getKindBoardId();
 
         // when
-        KindBoard getKindBoard = kindBoardService.getKindBoard(kindBoardId);
+        KindBoard getKindBoard = kindBoardService.find(kindBoardId);
 
         // then
         assertEquals(kindBoard.getKindBoardName(), getKindBoard.getKindBoardName());
@@ -70,7 +70,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         String kindBoardName = "";
 
         // when
-        kindBoardService.getKindBoard(kindBoardName);
+        kindBoardService.find(kindBoardName);
 
         // then
         fail("kindBoard NotFoundException");
@@ -82,7 +82,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         String kindBoardName = kindBoard.getKindBoardName();
 
         // when
-        KindBoard getKindBoard = kindBoardService.getKindBoard(kindBoardName);
+        KindBoard getKindBoard = kindBoardService.find(kindBoardName);
 
         // then
         assertEquals(kindBoard.getKindBoardName(), getKindBoard.getKindBoardName());
@@ -95,7 +95,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         String updateKindBoardName = "UPDATE";
 
         // when
-        kindBoardService.updateKindBoard(kindBoardId, updateKindBoardName);
+        kindBoardService.update(kindBoardId, updateKindBoardName);
 
         // then
         fail("kindBoard NotFoundException");
@@ -109,7 +109,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         String updateKindBoardName = "UPDATE";
 
         // when
-        kindBoardService.updateKindBoard(kindBoardId, updateKindBoardName);
+        kindBoardService.update(kindBoardId, updateKindBoardName);
 
         // then
         assertEquals(updateKindBoardName, kindBoard.getKindBoardName());
@@ -119,12 +119,12 @@ public class KindBoardServiceTest extends BaseServiceTest {
     public void test_getKindBoardList() throws Exception {
         // given
 //        kindBoardRepository.deleteAll();
-        kindBoardService.createKindBoard("ADD1");
-        kindBoardService.createKindBoard("ADD2");
-        kindBoardService.createKindBoard("ADD3");
+        kindBoardService.save("ADD1");
+        kindBoardService.save("ADD2");
+        kindBoardService.save("ADD3");
 
         // when
-        List<KindBoard> kindBoards = kindBoardService.getKindBoard();
+        List<KindBoard> kindBoards = kindBoardService.find();
 
         // then
         assertEquals(6, kindBoards.size());
@@ -136,7 +136,7 @@ public class KindBoardServiceTest extends BaseServiceTest {
         String kindBoardName = kindBoard.getKindBoardName();
 
         // when
-        kindBoardService.createKindBoard(kindBoardName);
+        kindBoardService.save(kindBoardName);
 
         // then
         fail("KindBoard DuplicateException");

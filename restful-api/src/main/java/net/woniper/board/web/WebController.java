@@ -24,7 +24,7 @@ public class WebController {
         Map<String, Object> map = new HashMap<>();
         map.put("title", "board");
 
-        User user = userService.getUser(principal.getName());
+        User user = userService.find(principal.getName());
         if(user != null) {
             map.put("username", user.getUsername());
             map.put("authority", user.getAuthorityType());
@@ -36,7 +36,7 @@ public class WebController {
     public Map<String, Object> session(Principal principal) {
         Map<String, Object> map = new HashMap<>();
         if(principal != null) {
-            User user = userService.getUser(principal.getName());
+            User user = userService.find(principal.getName());
             map.put("session", true);
             map.put("username", user.getUsername());
             map.put("name", user.getLastName() + " " + user.getFirstName());

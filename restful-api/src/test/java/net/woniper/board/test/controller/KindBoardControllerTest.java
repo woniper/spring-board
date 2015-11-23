@@ -28,7 +28,7 @@ public class KindBoardControllerTest extends BaseControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        this.kindBoard = kindBoardService.createKindBoard("ABC");
+        this.kindBoard = kindBoardService.save("ABC");
     }
 
     @Test

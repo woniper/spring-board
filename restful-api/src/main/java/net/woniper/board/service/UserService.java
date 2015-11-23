@@ -13,17 +13,17 @@ public interface UserService {
 
     void setUserRepository(UserRepository userRepository);
 
-    User createUser(UserDto.Request userDto);
+    User save(UserDto.Request userDto);
 
-    User getUser(String username);
+    User find(String username);
 
-    User getUser(Long userId);
+    User find(Long userId);
 
-    Page<User> getUser(Pageable pageable);
+    Page<User> find(Pageable pageable);
 
-    User getUser(Long userId, String username);
+    User find(Long userId, String username);
 
-    User updateUser(UserDto.Request userDto, String username, String method);
+    User update(UserDto.Request userDto, String username, String method);
 
-    boolean deleteUser(String username);
+    boolean delete(String username);
 }

@@ -36,20 +36,20 @@ public class CommentServiceTest extends BaseServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        kindBoard = kindBoardService.createKindBoard("General");
+        kindBoard = kindBoardService.save("General");
         Board newAdminBoard = EntityBuilder.createBoard(admin);
         newAdminBoard.setKindBoard(kindBoard);
 
         Board newUserBoard = EntityBuilder.createBoard(user);
         newUserBoard.setKindBoard(kindBoard);
 
-        adminBoard = boardService.createBoard(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
-        userBoard = boardService.createBoard(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
+        adminBoard = boardService.save(modelMapper.map(newAdminBoard, BoardDto.Request.class), admin.getUsername());
+        userBoard = boardService.save(modelMapper.map(newUserBoard, BoardDto.Request.class), user.getUsername());
 
-        adminComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(adminBoard),
+        adminComment = commentService.save(modelMapper.map(EntityBuilder.createComment(adminBoard),
                 CommentDto.class), adminBoard.getBoardId());
 
-        userComment = commentService.createComment(modelMapper.map(EntityBuilder.createComment(userBoard),
+        userComment = commentService.save(modelMapper.map(EntityBuilder.createComment(userBoard),
                 CommentDto.class), userBoard.getBoardId());
     }
 
@@ -60,7 +60,7 @@ public class CommentServiceTest extends BaseServiceTest {
         CommentDto commentDto = modelMapper.map(EntityBuilder.createComment(adminBoard), CommentDto.class);
 
         // when
-        Comment newComment = commentService.createComment(commentDto, boardId);
+        Comment newComment = commentService.save(commentDto, boardId);
 
         // then
         assertEquals(commentDto.getContent(), newComment.getContent());
@@ -73,7 +73,7 @@ public class CommentServiceTest extends BaseServiceTest {
         String username = admin.getUsername();
 
         // when
-        boolean isDelete = commentService.deleteComment(commentId, username);
+        boolean isDelete = commentService.delete(commentId, username);
 
         // then
         assertEquals(true, isDelete);
@@ -86,7 +86,7 @@ public class CommentServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        commentService.deleteComment(commentId, username);
+        commentService.delete(commentId, username);
 
         // then
         fail("not delete");
@@ -99,7 +99,7 @@ public class CommentServiceTest extends BaseServiceTest {
         String username = user.getUsername();
 
         // when
-        boolean isDelete = commentService.deleteComment(commentId, username);
+        boolean isDelete = commentService.delete(commentId, username);
 
         // then
         assertEquals(true, isDelete);
@@ -112,7 +112,7 @@ public class CommentServiceTest extends BaseServiceTest {
         String username = admin.getUsername();
 
         // when
-        boolean isDelete = commentService.deleteComment(commentId, username);
+        boolean isDelete = commentService.delete(commentId, username);
 
         // then
         assertEquals(true, isDelete);

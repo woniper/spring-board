@@ -41,7 +41,7 @@ public class BoardControllerTest extends BaseControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        kindBoard = kindBoardService.createKindBoard("General");
+        kindBoard = kindBoardService.save("General");
         Board newBoard = EntityBuilder.createBoard(admin);
         newBoard.setKindBoard(kindBoard);
         board = boardRepository.save(newBoard);

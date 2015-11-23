@@ -9,13 +9,13 @@ import java.util.List;
  */
 public interface KindBoardService {
 
-    KindBoard getKindBoard(Long kindBoardId);
+    KindBoard find(Long kindBoardId);
 
-    KindBoard getKindBoard(String kindBoardName);
+    KindBoard find(String kindBoardName);
 
-    List<KindBoard> getKindBoard();
+    List<KindBoard> find();
 
-    void updateKindBoard(Long kindId, String kindBoardName);
+    void update(Long kindId, String kindBoardName);
 
-    KindBoard createKindBoard(String kindBoardName);
+    KindBoard save(String kindBoardName);
 }

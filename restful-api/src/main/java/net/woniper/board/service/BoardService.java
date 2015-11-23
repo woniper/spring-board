@@ -16,16 +16,16 @@ public interface BoardService {
 
     void setUserRepository(UserRepository userRepository);
 
-    Board createBoard(BoardDto.Request boardDto, String username);
+    Board save(BoardDto.Request boardDto, String username);
 
-    Board getBoard(Long boardId);
+    Board find(Long boardId);
 
-    Page<Board> getBoard(Pageable pageable);
+    Page<Board> find(Pageable pageable);
 
-    Page<Board> getBoard(Pageable pageable, String username);
+    Page<Board> find(Pageable pageable, String username);
 
-    Board updateBoard(Long boardId, BoardDto.Request boardDto, String username, String method);
+    Board update(Long boardId, BoardDto.Request boardDto, String username, String method);
 
-    boolean deleteBoard(Long boardId, String username);
+    boolean delete(Long boardId, String username);
 
 }

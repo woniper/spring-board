@@ -67,7 +67,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Board board = boardService.createBoard(boardDto, principal.getName());
+        Board board = boardService.save(boardDto, principal.getName());
         log.info("create board {}", board);
         BoardDto.Response responseBoard = getBoardResponse(board);
 
@@ -95,7 +95,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Board updateBoard = boardService.updateBoard(boardId, boardDto, principal.getName(), request.getMethod());
+        Board updateBoard = boardService.update(boardId, boardDto, principal.getName(), request.getMethod());
         BoardDto.Response responseBoard = getBoardResponse(updateBoard);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseBoard);
     }
@@ -113,7 +113,7 @@ public class BoardController {
     @RequestMapping(value = "/{boardId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId,
                                          Principal principal) {
-        if(boardService.deleteBoard(boardId, principal.getName()))
+        if(boardService.delete(boardId, principal.getName()))
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         else
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -131,7 +131,7 @@ public class BoardController {
     })
     @RequestMapping(value = "/{boardId}", method = RequestMethod.GET)
     public ResponseEntity<?> getBoard(@ApiParam(required = true) @PathVariable("boardId") Long boardId) {
-        Board board = boardService.getBoard(boardId);
+        Board board = boardService.find(boardId);
         BoardDto.Response responseBoard = getBoardResponse(board);
         List<Comment> commentList = board.getComments();
 
@@ -175,7 +175,7 @@ public class BoardController {
     })
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getBoards(Pageable pageable) {
-        Page<Board> boards = boardService.getBoard(pageable);
+        Page<Board> boards = boardService.find(pageable);
 
         if(boards != null) {
             List<Board> boardList = boards.getContent();
@@ -226,7 +226,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Comment comment = commentService.createComment(commentDto, boardId);
+        Comment comment = commentService.save(commentDto, boardId);
         log.info("create comment {}", comment);
         CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
         User user = comment.getBoard().getUser();
@@ -251,7 +251,7 @@ public class BoardController {
     @RequestMapping(value = "/comments/{commentId}", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteComment(@ApiParam(required = true) @PathVariable("commentId") Long commentId,
                                            Principal principal) {
-        if(commentService.deleteComment(commentId, principal.getName())) {
+        if(commentService.delete(commentId, principal.getName())) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         } else {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -282,7 +282,7 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        Comment comment = commentService.updateComment(commentId, commentDto, principal.getName());
+        Comment comment = commentService.update(commentId, commentDto, principal.getName());
         CommentDto.Response responseComment = modelMapper.map(comment, CommentDto.Response.class);
         User user = comment.getBoard().getUser();
         responseComment.setUserId(user.getUserId());

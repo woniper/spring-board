@@ -52,11 +52,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board createBoard(BoardDto.Request boardDto, String username) {
+    public Board save(BoardDto.Request boardDto, String username) {
         Board board = modelMapper.map(boardDto, Board.class);
-        User user = userService.getUser(username);
+        User user = userService.find(username);
         board.setUser(user);
-        KindBoard kindBoard = kindBoardService.getKindBoard(boardDto.getKindBoardName());
+        KindBoard kindBoard = kindBoardService.find(boardDto.getKindBoardName());
         board.setKindBoard(kindBoard);
 
         List<String> attachFiles = boardDto.getAttachFiles();
@@ -69,7 +69,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board getBoard(Long boardId) {
+    public Board find(Long boardId) {
         Board board = boardRepository.findOne(boardId);
         if(board == null)
             throw new BoardNotFoundException(boardId);
@@ -79,12 +79,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<Board> getBoard(Pageable pageable) {
+    public Page<Board> find(Pageable pageable) {
         return boardRepository.findAll(pageable);
     }
 
     @Override
-    public Page<Board> getBoard(Pageable pageable, String username) {
+    public Page<Board> find(Pageable pageable, String username) {
         User user = userRepository.findByUsername(username);
         if(user == null)
             throw new UserNotFoundException(username);
@@ -93,8 +93,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board updateBoard(Long boardId, BoardDto.Request boardDto, String username, String method) {
-        User user = userService.getUser(username);
+    public Board update(Long boardId, BoardDto.Request boardDto, String username, String method) {
+        User user = userService.find(username);
         Board board = null;
         if(isAccessPossibleUser(user)) {
             board = boardRepository.findOne(boardId);
@@ -107,7 +107,7 @@ public class BoardServiceImpl implements BoardService {
         if(board == null)
             throw new BoardNotFoundException(boardId);
 
-        KindBoard kindBoard = kindBoardService.getKindBoard(boardDto.getKindBoardName());
+        KindBoard kindBoard = kindBoardService.find(boardDto.getKindBoardName());
         board.setKindBoard(kindBoard);
 
         if(RequestMethod.valueOf(method) == RequestMethod.PATCH)
@@ -119,12 +119,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean deleteBoard(Long boardId, String username) {
-        User user = userService.getUser(username);
+    public boolean delete(Long boardId, String username) {
+        User user = userService.find(username);
         Board board = null;
 
         if(AuthorityType.ADMIN.equals(user.getAuthorityType())) {
-            board = getBoard(boardId);
+            board = find(boardId);
         } else {
             board = boardRepository.findByBoardIdAndUser(boardId, user);
         }

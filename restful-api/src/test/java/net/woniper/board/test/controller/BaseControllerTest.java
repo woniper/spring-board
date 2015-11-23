@@ -56,8 +56,8 @@ public class BaseControllerTest {
     @Before
     public void baseSetUp() throws Exception {
         this.mock = webAppContextSetup(webApplicationContext).addFilter(springSecurityFilterChain).build();
-        this.admin = userService.createUser(EntityBuilder.createUser(AuthorityType.ADMIN));
-        this.user = userService.createUser(EntityBuilder.createUser(AuthorityType.USER));
+        this.admin = userService.save(EntityBuilder.createUser(AuthorityType.ADMIN));
+        this.user = userService.save(EntityBuilder.createUser(AuthorityType.USER));
     }
 
     @After

@@ -65,7 +65,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        User newUser = userService.createUser(userDto);
+        User newUser = userService.save(userDto);
         log.info("user account : {}", newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(modelMapper.map(newUser, UserDto.Response.class));
     }
@@ -91,7 +91,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
         }
 
-        User updateUser = userService.updateUser(userDto, principal.getName(), request.getMethod());
+        User updateUser = userService.update(userDto, principal.getName(), request.getMethod());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(modelMapper.map(updateUser, UserDto.Response.class));
     }
 
@@ -107,7 +107,7 @@ public class UserController {
     })
     @RequestMapping(method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteUser(Principal principal) {
-        if(userService.deleteUser(principal.getName()))
+        if(userService.delete(principal.getName()))
             return new ResponseEntity<> (HttpStatus.ACCEPTED);
 
         return new ResponseEntity<> (HttpStatus.BAD_REQUEST);
@@ -121,7 +121,7 @@ public class UserController {
      */
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public ResponseEntity<?> getUser(@PathVariable("userId") Long userId, Principal principal) {
-        User user = userService.getUser(userId, principal.getName());
+        User user = userService.find(userId, principal.getName());
         return ResponseEntity.ok(modelMapper.map(user, UserDto.Response.class));
     }
 
@@ -132,7 +132,7 @@ public class UserController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getUsers(Pageable pageable) {
-        Page<User> users = userService.getUser(pageable);
+        Page<User> users = userService.find(pageable);
 
         if(users != null) {
             List<User> userList = users.getContent();
@@ -165,7 +165,7 @@ public class UserController {
     @RequestMapping(value = "/boards", method = RequestMethod.GET)
     public ResponseEntity<?> getUserBoardList(Pageable pageable,
                                               Principal principal) {
-        Page<Board> boards = boardService.getBoard(pageable, principal.getName());
+        Page<Board> boards = boardService.find(pageable, principal.getName());
 
         if(boards != null) {
 
