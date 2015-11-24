@@ -7,7 +7,6 @@ import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.SearchDto;
 import net.woniper.board.support.type.SearchType;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by woniper on 15. 9. 24..
@@ -46,8 +46,9 @@ public class SearchController {
     public ResponseEntity search(SearchDto searchDto, Pageable pageable) {
         Page<Board> boards = searchService.search(searchDto, pageable);
         List<Board> boardContents = boards.getContent();
-        List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardContents,
-                new TypeToken<List<BoardDto.ListResponse>>() {}.getType());
+        List<BoardDto.ListResponse> boardListResponses = boardContents.parallelStream()
+                .map(board -> modelMapper.map(board, BoardDto.ListResponse.class))
+                .collect(Collectors.toList());
 
         int size = boardContents.size();
         for (int i = 0; i < size; i++) {

@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by woniper on 15. 1. 28..
@@ -170,9 +171,9 @@ public class UserController {
         if(boards != null) {
 
             List<Board> boardList = boards.getContent();
-            List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardList,
-                    new TypeToken<List<BoardDto.ListResponse>>() {
-                    }.getType());
+            List<BoardDto.ListResponse> boardListResponses = boardList.parallelStream()
+                    .map(board -> modelMapper.map(board, BoardDto.ListResponse.class))
+                    .collect(Collectors.toList());
 
             if(boardListResponses != null && !boardListResponses.isEmpty()) {
                 int size = boardListResponses.size();

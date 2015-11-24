@@ -12,7 +12,6 @@ import net.woniper.board.service.CommentService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.CommentDto;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,6 +29,7 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by woniper on 15. 1. 26..
@@ -136,8 +136,9 @@ public class BoardController {
         List<Comment> commentList = board.getComments();
 
         if(commentList != null && !commentList.isEmpty()) {
-            List<CommentDto.Response> comments = modelMapper.map(commentList,
-                    new TypeToken<List<CommentDto.Response>>() {}.getType());
+            List<CommentDto.Response> comments = commentList.parallelStream()
+                    .map(comment -> modelMapper.map(comment, CommentDto.Response.class))
+                    .collect(Collectors.toList());
 
             int size = commentList.size();
             for (int i = 0; i < size; i++) {
@@ -179,8 +180,9 @@ public class BoardController {
 
         if(boards != null) {
             List<Board> boardList = boards.getContent();
-            List<BoardDto.ListResponse> boardListResponses = modelMapper.map(boardList,
-                    new TypeToken<List<BoardDto.ListResponse>>() {}.getType());
+            List<BoardDto.ListResponse> boardListResponses = boardList.parallelStream()
+                    .map(board -> modelMapper.map(board, BoardDto.ListResponse.class))
+                    .collect(Collectors.toList());
 
             if(boardListResponses != null && !boardListResponses.isEmpty()) {
                 int size = boardListResponses.size();
