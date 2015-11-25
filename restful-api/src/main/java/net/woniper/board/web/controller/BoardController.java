@@ -11,10 +11,10 @@ import net.woniper.board.service.BoardService;
 import net.woniper.board.service.CommentService;
 import net.woniper.board.support.dto.BoardDto;
 import net.woniper.board.support.dto.CommentDto;
+import net.woniper.board.utils.DataUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -177,30 +177,10 @@ public class BoardController {
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<?> getBoards(Pageable pageable) {
         Page<Board> boards = boardService.find(pageable);
+        Page<BoardDto.ListResponse> boardListResponses = DataUtil.getListBoardPage(boards, pageable);
 
-        if(boards != null) {
-            List<Board> boardList = boards.getContent();
-            List<BoardDto.ListResponse> boardListResponses = boardList.parallelStream()
-                    .map(board -> modelMapper.map(board, BoardDto.ListResponse.class))
-                    .collect(Collectors.toList());
-
-            if(boardListResponses != null && !boardListResponses.isEmpty()) {
-                int size = boardListResponses.size();
-                for (int i = 0; i < size; i++) {
-                    User user = boardList.get(i).getUser();
-                    BoardDto.ListResponse boardDto = boardListResponses.get(i);
-
-                    boardDto.setUserId(user.getUserId());
-                    boardDto.setUsername(user.getUsername());
-                    boardDto.setNickName(user.getNickName());
-                    boardDto.setAuthorityType(user.getAuthorityType());
-                    boardDto.setKindBoardName(boardList.get(i).getKindBoard().getKindBoardName());
-                }
-
-                Page<BoardDto.ListResponse> boardPages = new PageImpl<>(boardListResponses, pageable, boards.getTotalElements());
-                return ResponseEntity.ok(boardPages);
-            }
-        }
+        if(boardListResponses != null)
+            return ResponseEntity.ok(boardListResponses);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
