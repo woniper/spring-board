@@ -35,7 +35,6 @@ public class UserServiceImpl implements UserService {
     @Autowired private PasswordEncoder passwordEncoder;
 
     @Autowired
-    @Override
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

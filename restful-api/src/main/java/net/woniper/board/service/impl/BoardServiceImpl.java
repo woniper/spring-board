@@ -41,12 +41,11 @@ public class BoardServiceImpl implements BoardService {
     @Autowired private ModelMapper modelMapper;
 
     @Autowired
-    @Override
     public void setBoardRepository(BoardRepository boardRepository) {
         this.boardRepository = boardRepository;
     }
+
     @Autowired
-    @Override
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
