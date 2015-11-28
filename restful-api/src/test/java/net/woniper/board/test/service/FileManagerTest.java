@@ -30,7 +30,7 @@ public class FileManagerTest extends BaseServiceTest {
     @Before
     public void setUp() throws Exception {
         fileManager.setIsDailyFolder(false);
-        fileManager.setFilePath(filePath + "test");
+        fileManager.setFilePath(filePath + "test/");
         multipartFile = new MockMultipartFile("mockFile.jpg", "orgMockFile.jpg", null, "bar".getBytes());
         fileDto = fileManager.saveFiles(Arrays.asList(multipartFile)).get(0);
     }
